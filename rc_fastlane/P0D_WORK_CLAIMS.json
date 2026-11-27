@@ -37315,33 +37315,33 @@
           "additional_round_team_fence": 2
         }
       },
-      "source_head": "c2e902081bab11b1cb128fbf7b06160263f50718",
-      "prepared_candidate_head": "c2e902081bab11b1cb128fbf7b06160263f50718",
-      "prepared_candidate_tree": "4144f7dd79fe72b454417ea1c61724e1011642d8",
+      "source_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+      "prepared_candidate_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+      "prepared_candidate_tree": "ffef9da37d3d0556bf1f047374e47defe2c104ba",
       "source_blob_submissions": [
         {
           "mode": "100644",
-          "blob": "208152355c709b0a4b6b890763b3851fe9a5b2cd",
+          "blob": "866902567db297fb2f881c35c7499a70de54768a",
           "path": ".github/workflows/p0d-rc-fastlane.yml",
-          "bytes": 206450
+          "bytes": 206574
         },
         {
           "mode": "100644",
-          "blob": "40cb78c446c1b518d52cc2f6d33258bd80d543d5",
+          "blob": "8263f6d4e6e84e57bbfcc528f2874dc6d9f2acf7",
           "path": "rc_fastlane/apply_active_results.py",
-          "bytes": 4369
+          "bytes": 5644
         },
         {
           "mode": "100644",
-          "blob": "0980a346cbf39f4a40780bff3ae31c16542420ed",
+          "blob": "00063fbbcd21cbe40569213ab5375984f0c23c11",
           "path": "rc_fastlane/features/active_results/source_lock.json",
-          "bytes": 233
+          "bytes": 315
         },
         {
           "mode": "100644",
-          "blob": "b0b70bf1e9affbd143db7a85453c292c4e725c7c",
+          "blob": "5d7a44bfe28ff0f7ee8a00560edf45e58a7c267e",
           "path": "rc_fastlane/verify_p0_results78_native.py",
-          "bytes": 7420
+          "bytes": 10717
         },
         {
           "mode": "100644",
@@ -37352,20 +37352,21 @@
       ],
       "actual_candidate_readback": {
         "pr": 391,
-        "exact_head": "c2e902081bab11b1cb128fbf7b06160263f50718",
-        "exact_tree": "4144f7dd79fe72b454417ea1c61724e1011642d8",
+        "exact_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "exact_tree": "ffef9da37d3d0556bf1f047374e47defe2c104ba",
         "exact_parent": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
         "preserved_author_parent": "21ac3592eba4e6e3b027212fbb8e8c105cf83ac9",
-        "source_lease": "35e17620db117c30176f38c4812bdf31b2e5e522",
-        "source_lease_return": "808256ee50a1adefe7f02e741bfafb6c001ed82d",
-        "prepared_at": "2026-11-27T12:54:16.379Z"
+        "source_lease": "b52895bc31c6f68f8daaf9785aff036566ac6a6f",
+        "source_lease_return": "bf97415b0aab7557a6c159fab1c76ef814bf9e3a",
+        "prepared_at": "2026-11-27T13:08:40.700Z",
+        "prior_head": "c2e902081bab11b1cb128fbf7b06160263f50718"
       },
       "actual_binding_lease": {
-        "commit": "6f1617b6da50ffbed796d6e46a763bb15b071fff",
-        "operation_id": "e54bba74-201d-43c0-987c-4845c266b98f"
+        "commit": "ed34ce6a8b962543886a07ddae11ce23f24303a7",
+        "operation_id": "9f1f41b3-e502-42ae-a2e7-d7c69d00a6aa"
       },
       "qa_correction_grant": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "status": "CONSUMED_EXACT_SCOPED_CORRECTION",
         "permitted_pr": 391,
         "branch": "feature/p0d-prep-results-return-20261114",
         "prior_remote_head": "c2e902081bab11b1cb128fbf7b06160263f50718",
@@ -37411,7 +37412,10 @@
         "independent_context": "/root/p0_offer_review26",
         "grant_lease": "f7e692c6c59e851779c71c6b9a8ec15d35f01a68",
         "grant_operation": "6cccf5c6-6873-4dfa-86b2-c66ce2e0541e",
-        "expires_at": "2026-11-27T14:06:52.386Z"
+        "expires_at": "2026-11-27T14:06:52.386Z",
+        "applied_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "applied_lease": "b52895bc31c6f68f8daaf9785aff036566ac6a6f",
+        "lease_returned_at_ref": "bf97415b0aab7557a6c159fab1c76ef814bf9e3a"
       }
     }
   ],
