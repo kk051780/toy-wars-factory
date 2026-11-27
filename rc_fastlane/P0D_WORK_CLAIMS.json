@@ -45055,7 +45055,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-NINJA-COMBO008-S4-20261128",
       "feature_id": "GQ219_PRIVATE_NINJA_COMBO008_AND_HERO_S4_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -45069,7 +45069,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "PRIVATE real Ninja lobby selection and original A with stage-backed B031/C061/D008. Seven HeroArt S4 silhouettes preserve existing avatar and growth retirement. Use V4.2 #220's scoped genuine same-run identical BR compile reuse, positive archive verification cache, full final admission negatives normal/-O on one freshly built restored root each. No scope approval or archive input expansion, no active/runtime authority changes.",
       "resources": [
@@ -45372,7 +45372,7 @@
         "operation_id": "4e7c982a-7810-4642-9b65-cb36d4f36813"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "d69486222fd699a690c836efe820d392f88dff60",
         "permitted_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
@@ -45403,7 +45403,38 @@
           "review": 6094302341,
           "trusted_queue_run": 46083363857,
           "trusted_queue_job": 140787227652
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "639baaacc1198764c712f98f55a4281820fa84bd",
+        "writer_return": "1c0beca5404507e7b7098e3675c7088dceb34a7e",
+        "adopted_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "adopted_at": "2026-11-27T23:37:27.994Z"
+      },
+      "actual_official_rc": {
+        "head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "previous": "d69486222fd699a690c836efe820d392f88dff60",
+        "tree": "c07af585318b463500c63e429df6bbcbb5534132",
+        "active_baseline_head": "d69486222fd699a690c836efe820d392f88dff60",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_place_bytes": 729423,
+        "active_zip_bytes": 227522,
+        "active_artifact": 15229761144,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46083527767,
+        "private_job": 140787746699,
+        "private_steps": 48,
+        "private_artifact": 15237948007,
+        "private_zip_bytes": 31799571,
+        "private_zip_digest": "sha256:cee418c9bc0eb86ae24383bf844a8002a51d4d3632c9744940f45dc2a4418f18",
+        "private_place_bytes": 987760,
+        "private_place_sha256": "8d46bd14e45f2b06d365b4cf08068a0b6d3523e20956f3bd35d2331cf44b9ad4",
+        "private_off_place_bytes": 963229,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7230392201",
+        "device_evidence": "NOT_TESTED_PER_V42",
+        "independent_context": "/root/p0_offer_review26",
+        "trial_profile": "PRIVATE_COMPANION REAL69_UNION22",
+        "trial_entry": "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
       }
     },
     {
@@ -45414,7 +45445,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1053,
       "base_rc_sha": "90dac5a091b2b84666c253c1ad953f050c9862d6",
       "base_rc_tree": "c07af585318b463500c63e429df6bbcbb5534132",
       "prep_branch": "quality/gq219-private-wing-warrior-effects-20261128",
@@ -45488,7 +45519,7 @@
       },
       "authority_basis": "#1011 V4.2 effect batch and registered #218/#220. Fixed #219 catalog and old gameplay proof preserved. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-wing-warrior-effects-20261128",
         "formal_parent": "90dac5a091b2b84666c253c1ad953f050c9862d6",
         "tree": "2e7156663bf2a5cb9969cc601a397528d573b59b",
@@ -45640,6 +45671,146 @@
           "existing_bot_full_body_scenarios": 9,
           "device": "NOT_TESTED_V4.2"
         }
+      },
+      "source_head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+      "prepared_candidate_head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+      "prepared_candidate_tree": "2e7156663bf2a5cb9969cc601a397528d573b59b",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "1e0e7dc9fcf13f20a7aa46176769bf6b437ff72f",
+          "bytes": 76115
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "3b05e9ec71e0e3b272523435cff2a5dc45c4f087",
+          "bytes": 35258
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/__init__.py",
+          "mode": "100644",
+          "blob": "546b5f4d42ad67ad0e8eeb132eb0c72c74af7235",
+          "bytes": 5365
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/ability_cases.luau",
+          "mode": "100644",
+          "blob": "cc73b5b04f77f7b22934b4b9fe8aa7d4781aade8",
+          "bytes": 2230
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/fixture.luau",
+          "mode": "100644",
+          "blob": "b52268066810591d99b4cca0530dd39127d1b522",
+          "bytes": 4102
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/legacy_cases.luau",
+          "mode": "100644",
+          "blob": "2494ad2036b220dde36f8253b8dcd19bdd74d52f",
+          "bytes": 5162
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "385e626525ec122fcbed41b637b776f0c23abcab",
+          "bytes": 10884
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "82e4d0010f83d80407b2820e6c1348d492b8325c",
+          "bytes": 8308
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/__init__.py",
+          "mode": "100644",
+          "blob": "240beca293d7ba17c38044adc528b74a5a2b0e20",
+          "bytes": 8753
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+          "mode": "100644",
+          "blob": "bca6b780c7acf3ac7ea94bfd3269da7b70f0061a",
+          "bytes": 11181
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_s4/__init__.py",
+          "mode": "100644",
+          "blob": "4d3196629d47b41c63f2b1ceb2e04e839362d057",
+          "bytes": 12779
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "7d5506aa4c58a7bec97524bfe68af48ebc1ab3ea",
+          "bytes": 24191
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "9a0d8de5bcc39d77a2eaa84de3be9c8acc5bb036",
+          "bytes": 57592
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/__init__.py",
+          "mode": "100644",
+          "blob": "f4e51a8aa2754e8aeb32f592b241f70aae30ea5f",
+          "bytes": 10692
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/element_cases.luau",
+          "mode": "100644",
+          "blob": "19935eba1beafc78bcecfce1fb232b7905ade4b9",
+          "bytes": 6848
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/warrior_cases.luau",
+          "mode": "100644",
+          "blob": "9a8c5c8bac4fd896f4bfe5a0531ad63251dec45f",
+          "bytes": 13225
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/wing_cases.luau",
+          "mode": "100644",
+          "blob": "b91341e073e360c8e977a2fba69cc081048ec8b9",
+          "bytes": 8886
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "22bed623ef5d8c3529ed40c4e3bde8b7ca7cd9fb",
+          "bytes": 3547930
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "ca67bcb2f6627300b7cd7aac1a959454c2dcc113",
+          "bytes": 179538
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "a3d884dc82197804bd427460a88c9638f07253dc",
+          "bytes": 132648
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1053,
+        "exact_head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+        "exact_tree": "2e7156663bf2a5cb9969cc601a397528d573b59b",
+        "exact_parent": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "dec83387a717b8d6cffffcacea589c92ca533933",
+        "source_lease_return": "8f662958c5ffe1f66e855c3e419510494794b1e5",
+        "prepared_at": "2026-11-27T23:47:44.575Z"
+      },
+      "actual_binding_lease": {
+        "commit": "89f56dc3577fc11a62b73a4c21aab497d7a871dc",
+        "operation_id": "0602a577-735a-47e5-b144-63593ae5fe22"
       }
     }
   ],
