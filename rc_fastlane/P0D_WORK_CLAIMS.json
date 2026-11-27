@@ -38063,6 +38063,123 @@
           "trusted_queue_job": 140549255258
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ910-ACTIVE-H2-EXIT-395-20261127",
+      "feature_id": "GQ910_ACTIVE_H2_DEPARTURE_READY",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 910,
+      "source_issue": 395,
+      "integration_issue": 220,
+      "pr": 395,
+      "base_rc_sha": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+      "base_rc_tree": "c3445dba34d245ea807bd62c1a0024a307b94a05",
+      "prep_branch": "feature/p0d-prep-solo-raid-guard-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Reuse the original #397 author H2 departure overlay on current ACTIVE rich51 after exact #407, through #395 authored parent. Only Game PlayerRemoving plus actual Native and build hooks. Studio Score5 two humans falling to one eligible participant draws once and awaits fresh Ready before Classic; keep ownership, score, award idempotence, Classic and unrelated paths, PRIVATE remains exact.",
+      "resources": [
+        "ACTIVE67_STUDIO_H2_ROSTER_DEPARTURE",
+        "ACTIVE67_GAME_PLAYER_REMOVING_SINGLE",
+        "GQ910_ACTIVE_H2_DEPARTURE_READY"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_h2_exit.py",
+        "rc_fastlane/features/active_h2_exit/source_lock.json",
+        "rc_fastlane/verify_active_h2_exit_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/397",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "baf824fa-51a5-4729-acbc-50e359f86bac",
+      "issued_at": "2026-11-27T14:04:01.108Z",
+      "expires_at": "2026-11-27T16:04:01.108Z",
+      "actual_metadata_lease": {
+        "ref": "9c7e724f479d67b4f42532eafcce44014b8adf3b",
+        "blob": "34323a9b0da42c258f008ba24196eb6a8bcd15dc",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "baf824fa-51a5-4729-acbc-50e359f86bac",
+          "task_id": null,
+          "epoch": 933,
+          "acquired_at": "2026-11-27T14:03:46.500Z",
+          "expires_at": "2026-11-27T14:33:46.500Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 395,
+        "branch": "feature/p0d-prep-solo-raid-guard-20261114",
+        "old_pr_head": "3902d23ce87d5c0397b72e77fccad85b07c872ee",
+        "old_base_ref": "feature/p0d-prep-lobby-recovery-qa-20261114",
+        "formal_parent": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+        "tree": "58f9559183125c5d9387b0ef0ad0f5f39f55d192",
+        "local_head": "2ef596741b2209e4ffa25c98ffcb2dcea911b61c",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "4275902702bb1c5018bdb013bad0f4ac52c7d3a3",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 213701
+          },
+          {
+            "mode": "100644",
+            "blob": "0052c3c599c6a1595205483d2faabeb8949ea41e",
+            "path": "rc_fastlane/apply_active_h2_exit.py",
+            "bytes": 4564
+          },
+          {
+            "mode": "100644",
+            "blob": "58d012e2abd288d9954d6584c2bafcbfbfbb997a",
+            "path": "rc_fastlane/features/active_h2_exit/source_lock.json",
+            "bytes": 495
+          },
+          {
+            "mode": "100644",
+            "blob": "f735de29b3c7e8b69cdc471e90fff239abba56b0",
+            "path": "rc_fastlane/verify_active_h2_exit_native.py",
+            "bytes": 9888
+          },
+          {
+            "mode": "100644",
+            "blob": "48a9c8c61bdc06f80f12deb6715a5bd636978b4e",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 110964
+          }
+        ],
+        "expires_at": "2026-11-27T15:04:01.108Z",
+        "issued_from": {
+          "lease": "9c7e724f479d67b4f42532eafcce44014b8adf3b",
+          "owner": "baf824fa-51a5-4729-acbc-50e359f86bac"
+        },
+        "local_qa": {
+          "on": 639340,
+          "off": 638783,
+          "place_sha256": "ba80cd2c5f8bad6f0ef2f233a5298c46ef58e119178f3f26c51f1cadae445cf6",
+          "off_sha256": "f0bd729a813712bc959d57449fb9acf3375f8d1fef3d65c15fc7812dc5267225",
+          "mounts": 67,
+          "changed_existing_game_bytes": 557,
+          "bot_module_unchanged": true,
+          "native_cases": 18,
+          "true_baseline_failures": 3,
+          "wrong_off_rejected": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
