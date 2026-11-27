@@ -32716,7 +32716,7 @@
     {
       "claim_id": "P0D-GQ470-FIELD-EGG-TERMINAL-20261127",
       "feature_id": "GQ470_FIELD_EGG_FINISHED_PROMPT",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent; prepared field-egg patch reuse)",
       "parent_issue": 470,
@@ -32729,7 +32729,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "original_candidate": "43bbc8b3eb5ae5702bcb362f3a95f3db8fd16abf",
@@ -32996,7 +32996,7 @@
         }
       },
       "bounded_rc_integration": {
-        "status": "ONE_EXACT_FAST_FORWARD_AUTHORIZED_PENDING_LIVE_LEASE",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "daa6b076ac3502de632220aea9d7aec494232694",
         "permitted_head": "fb87f9f23d0a136da048804cef307a865483f133",
@@ -33009,7 +33009,7 @@
           "role": "FINITE_220_CODEx_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -33023,6 +33023,52 @@
           "decision": "Authenticated owner #1011 V2.2 and #220 V2.1, after signed independent context and trusted intake for this one head",
           "lease": "e6c9f4e16b72b35bd0424e2169ce0ef2b3e6df97",
           "owner": "9ad67814-1894-4d2c-b246-fcec9556f17e"
+        },
+        "writer_acquire_ref": "340bb91731fd4b051658ae8584ce1671f2270fa5",
+        "writer_return_ref": "66c4e3975d703fc577367e8d903cf1caf1b09585",
+        "exact_adoption_readback_at": "2026-11-27T05:05:54.792Z"
+      },
+      "actual_postpush": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "before_sha": "daa6b076ac3502de632220aea9d7aec494232694",
+        "head": "fb87f9f23d0a136da048804cef307a865483f133",
+        "tree": "dd25b6787638206291dbbd7de9809c1a9197d57c",
+        "merged_pr": 1038,
+        "metadata_lease": {
+          "commit": "eba05e4a417246c23ed5ba77e7588dae8e6ce775",
+          "owner": "f24e3102-55ff-4a99-8736-5bbbdacae291"
+        },
+        "official_ci": {
+          "run": 45943740838,
+          "job": 140323603440,
+          "steps": 48,
+          "conclusion": "success",
+          "native_field_cases": 8,
+          "artifact": 15173613341,
+          "zip": {
+            "bytes": 17647329,
+            "sha256": "000ee92e1e8d45a58bed43681cc9906d9dd110d6dbcd2534a0e1707be997be55"
+          }
+        },
+        "windows_rebuilt_place": {
+          "bytes": 849249,
+          "sha256": "9b40c14a44294464d2c86727c5347b14c6ff92b06c15ba248b7492fc89ccdeb0"
+        },
+        "immediate_off": {
+          "bytes": 848891,
+          "sha256": "ab621dff32fe89b61e8b1c54164f0b74f0802667bc2f73fe3adcd3bb23523b8a"
+        },
+        "older_rollbacks_verified": 12,
+        "source_lock": "6f76962b33682de03d951ac72c3670f935505a914397f54f65b6062b082a5703",
+        "studio": {
+          "state": "IN_PROGRESS_NOT_ACCEPTED",
+          "scope": "PC SOLO BR; natural finish and ordinary replay; exact same adopted SHA",
+          "owner": "/root",
+          "case": "rcfield27a",
+          "known_owned_pids": [
+            37452,
+            43436
+          ]
         }
       }
     }
