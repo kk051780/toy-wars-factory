@@ -39615,7 +39615,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing #479 FB026 undead summon, authenticated bounded ACTIVE P0D-015 vertical route. Selected role NECROMANCER uses original Game and neutral Horde owner HP/KO with three authored companions; no alternate P0D-015 module, no FB029/loot composite, no new Remote/Store/Score. Retain 18s cooldown and fixed Game authority; gate-safe spawn/wall, expired-task-safe recast. PRIVATE companion untouched.",
       "resources": [
@@ -39821,6 +39821,72 @@
       "actual_binding_lease": {
         "commit": "83ed82cea1f849999452ff8aede7811955e6bf70",
         "operation_id": "db9c6fc1-a75f-44f9-ac81-5795cb5a2798"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/479#pullrequestreview-6091037377",
+        "review_id": 6091037377,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "376be660477492d0a6621d8ca7f28033da396260",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46033413313,
+        "active_job": 140622673222,
+        "active_executed_steps": 95,
+        "active_place_bytes": 668223,
+        "active_place_sha256": "8752083f42edd699d994b99250388d7f17e4f059990bebbe21df8d82c3cea93d",
+        "immediate_off_bytes": 656824,
+        "active_artifact": 15216100336,
+        "active_zip_bytes": 200351,
+        "active_zip_digest": "sha256:dc82d679773704cbe13be8a4b45ec4b19a21b774e5fc6471de756eeeb9bcd043",
+        "private_ci": 46033413277,
+        "private_job": 140622672972,
+        "private_steps": 48,
+        "private_artifact": 15215637633,
+        "private_zip_bytes": 25667049,
+        "private_zip_digest": "sha256:202f930cce1d108329783bb6b8a5bf5514ad5661588df8ba8f3e773d0da6bdbb",
+        "source_lock": "9d581cc3efbc6290676b22430d819254b9eaf924e0eb73d902393f4bf2a01383",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "4dda01924f5bf88ed0529bd7a3bd9f9dc63788ef",
+        "operation_id": "97fd7240-f327-4646-bc62-b0a41259e821"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "permitted_head": "376be660477492d0a6621d8ca7f28033da396260",
+        "permitted_tree": "561fcb77b124445f1f423143bd0a1d1e263b745a",
+        "permitted_pr": 479,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T16:55:36.875Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact FB026 existing original #479 ACTIVE rich51. Selected NECROMANCER 3 author-derived server followers inside existing real Horde authority. Gate checks prevent misplaced summon, expired recast restarts, old task cannot strike or clear replacement. Game and 1 authorized new module only, private selected bodies, built-in Remote, score, data and delivery branches preserved.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "4dda01924f5bf88ed0529bd7a3bd9f9dc63788ef",
+          "owner": "97fd7240-f327-4646-bc62-b0a41259e821",
+          "review": 6091037377,
+          "trusted_queue_run": 46034742830,
+          "trusted_queue_job": 140627186966
+        }
       }
     }
   ],
