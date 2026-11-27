@@ -84,9 +84,10 @@ end
 
 
 def profile_sources(root, lock, compose):
-    final = root / "sources"
+    final = root / compose.ART_POLISH_OFF / "sources"
     parent = root / compose.GROWTH_MUSOU_OFF / "sources"
-    after = {name: row["after"] for name, row in lock["sources"].items()}
+    after = {name: row["after"] for name, row in lock["sources"].items()} | {
+        name: row["parent"]["after"] for name, row in lock["art_polish_followup"]["rows"].items()}
     before = after | {name: row["parent"]["after"]
                       for name, row in lock["growth_musou_followup"]["rows"].items()}
     return (("ON", final, after), ("OFF", parent, before))

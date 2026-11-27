@@ -1,4 +1,1792 @@
 {
+  "art_polish_followup": {
+    "donors": {
+      "castle": {
+        "git_blob": "9fc1e50ab63d7537f361c52a0572cb740c54e223",
+        "identity": {
+          "bytes": 8177,
+          "sha256": "8c97455b91f4354cde87f37f25dd607bc5a7fdd82d64cb5603535c52114ee7a8"
+        },
+        "path": "quality_gameplay/gq470_fortress_fairbudget_real69_20261121/patch_castle_fairbudget.py"
+      },
+      "field": {
+        "git_blob": "a38b813f7e10527c60ff74aaf458b0795e7d9bd4",
+        "identity": {
+          "bytes": 13379,
+          "sha256": "278daeaa68227e4e22826d6b182fc02ef6f0226a77a252f8a4457dcecb43c746"
+        },
+        "path": "quality_gameplay/gq470_fieldart_916_934_composite_20261121/compose.py"
+      },
+      "guardian": {
+        "git_blob": "58b12bb42e49f26df752b8c26d4c32c2057189fc",
+        "identity": {
+          "bytes": 9056,
+          "sha256": "df9e4b677cbe4260b1016db864025f898c2c71b8939f4969f8c271e4a084f2b5"
+        },
+        "path": "quality_gameplay/gq470_guardian_shapes_real69_20261121/guardian_art.py"
+      },
+      "guardian_gate": {
+        "git_blob": "56ef50a67e0ff2867bfb0581b0835de91eadfcbb",
+        "identity": {
+          "bytes": 4258,
+          "sha256": "27676a211444c4adee749023350ef0d2875b141c121d026a5c6b167d3b754d0b"
+        },
+        "path": "quality_gameplay/gq470_guardian_shapes_real69_20261121/art_gate_guardian.py"
+      },
+      "result_gate": {
+        "git_blob": "f9b8c8acc90f4009332e2c21938fb802b79f8f9a",
+        "identity": {
+          "bytes": 11467,
+          "sha256": "2677b4ce0868e2eef34c5b6389f031370ef58b53096ebfe0ef2d33458dc5b8e9"
+        },
+        "path": "quality_gameplay/gq470_result_card_art_real69_20261121/gate.py"
+      },
+      "result_patch": {
+        "git_blob": "440347278ac42caf28d57399fef9197b29f36807",
+        "identity": {
+          "bytes": 1772,
+          "sha256": "0126961eea0d50f30434c07f6103c9e46eb96c1af58fe857b112256b75d7c259"
+        },
+        "path": "quality_gameplay/gq470_result_card_art_real69_20261121/RESULT_MATTE_REAL69.patch"
+      },
+      "ridge": {
+        "git_blob": "3e5b8a0355bfb255208b480ac7c47879385da268",
+        "identity": {
+          "bytes": 18669,
+          "sha256": "b9a05f7110d89a3253b254f7026d2b8b1eaabca9853aced66c547bdd9d1ef229"
+        },
+        "path": "quality_gameplay/gq470_fb015_ridge_real69_20261120/patch_ridge69.py"
+      },
+      "skill": {
+        "git_blob": "b1757a9f5178ed271a653888807d6d647677c844",
+        "identity": {
+          "bytes": 9671,
+          "sha256": "76ed332c6855527b16d54df20655c1ae58ec61cbf23f9f0b6a9628cf22520254"
+        },
+        "path": "quality_gameplay/gq470_skillfx_shard_real69_20261121/patch_skillfx69.py"
+      },
+      "twin": {
+        "git_blob": "f4b5f16a0f544e250faf0d673f48aa708d5cbdf0",
+        "identity": {
+          "bytes": 9439,
+          "sha256": "2a0c1a83ee2c9bb170c9ea5e9a7b3385ddac479deb4aa91a7da4e24ff5ca1c83"
+        },
+        "path": "quality_gameplay/gq470_twin_npc_silhouettes_real69_20261121/patch_twin_npc69.py"
+      }
+    },
+    "origins": {
+      "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+        "head": "4500a087ca5a95b6ccefb690902792e22189e360",
+        "pr": 957
+      },
+      "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
+        "head": "94547fde9d1dce7fe75a8d93028fe16dbbf06dab",
+        "pr": 956
+      },
+      "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
+        "head": "728e18dc01639e4b7d6afa91fc0c9e1f020522e0",
+        "pr": 944
+      },
+      "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+        "head": "a2028bb20e42f6a01346aedfbdc39df2e64e21d9",
+        "pr": 946
+      },
+      "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
+        "head": "625b2d2776d98a6205dede85334b51981707280d",
+        "pr": 940
+      }
+    },
+    "parent_head": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+    "parent_place": {
+      "bytes": 877289,
+      "sha256": "b62cc94ed5d6b51dd3afca811b87df45104bc7931b8636fd69cba94667c78fb7"
+    },
+    "parent_tree": "7dd71263d1637e2e8a8ed850e36d476c3a750218",
+    "repaired_place": {
+      "bytes": 887813,
+      "sha256": "7143dd44abd692ffb632438c3966a2d806868175bda642aaa1541d1725dff242"
+    },
+    "rows": {
+      "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
+        "forward": [
+          {
+            "new": "-- GQ470_CASTLE_GUARDIAN_SEVEN_SILHOUETTES_REAL69_20261121\n-- Live castle guardians; lobby GQ805 shop silhouettes are a separate owner.\nlocal GUARDIAN_STYLE={\n WARRIOR={torso=Vector3.new(2.9,2.5,1.9),head=Vector3.new(1.75,1.5,1.55),\n  shoulder=Vector3.new(1.05,.9,1.4),gear=Vector3.new(.62,2.9,.6),\n  trim=Color3.fromRGB(183,169,140),helm=Color3.fromRGB(187,194,199),\n  boots=Color3.fromRGB(71,77,85),material=Enum.Material.Metal,lean=0},\n MAGE={torso=Vector3.new(1.8,2.45,1.25),head=Vector3.new(1.3,1.9,1.25),\n  shoulder=Vector3.new(.55,.55,1.0),gear=Vector3.new(.3,3.5,.3),\n  trim=Color3.fromRGB(155,189,210),helm=Color3.fromRGB(199,226,230),\n  boots=Color3.fromRGB(52,74,92),material=Enum.Material.SmoothPlastic,lean=0},\n NINJA={torso=Vector3.new(1.95,1.9,1.3),head=Vector3.new(1.45,1.2,1.3),\n  shoulder=Vector3.new(.65,.55,.9),gear=Vector3.new(.3,2.6,.3),\n  trim=Color3.fromRGB(85,72,125),helm=Color3.fromRGB(74,71,105),\n  boots=Color3.fromRGB(43,46,65),material=Enum.Material.SmoothPlastic,lean=6},\n TRAPPER={torso=Vector3.new(2.05,2.25,1.45),head=Vector3.new(1.35,1.5,1.5),\n  shoulder=Vector3.new(.78,.55,1.25),gear=Vector3.new(.33,2.8,.33),\n  trim=Color3.fromRGB(155,115,186),helm=Color3.fromRGB(171,148,195),\n  boots=Color3.fromRGB(72,55,99),material=Enum.Material.SmoothPlastic,lean=0},\n BUILDER={torso=Vector3.new(2.8,1.95,1.85),head=Vector3.new(1.65,1.2,1.55),\n  shoulder=Vector3.new(.95,.77,1.3),gear=Vector3.new(.82,2.9,.82),\n  trim=Color3.fromRGB(173,140,91),helm=Color3.fromRGB(184,166,124),\n  boots=Color3.fromRGB(79,73,62),material=Enum.Material.Metal,lean=0},\n BEAST={torso=Vector3.new(2.4,1.85,1.7),head=Vector3.new(1.7,1.3,1.65),\n  shoulder=Vector3.new(.85,.57,1.3),gear=Vector3.new(.4,2.8,.4),\n  trim=Color3.fromRGB(116,142,105),helm=Color3.fromRGB(132,156,114),\n  boots=Color3.fromRGB(55,74,61),material=Enum.Material.SmoothPlastic,lean=12},\n ZOMBIE={torso=Vector3.new(1.85,2.55,1.25),head=Vector3.new(1.35,1.72,1.33),\n  shoulder=Vector3.new(.68,.65,1.08),gear=Vector3.new(.38,3.4,.38),\n  trim=Color3.fromRGB(133,105,145),helm=Color3.fromRGB(155,138,160),\n  boots=Color3.fromRGB(68,60,72),material=Enum.Material.Slate,lean=-5},\n}\n",
+            "new_identity": {
+              "bytes": 2152,
+              "sha256": "2028c946c4934ce1ffe5b9909414aa12384fec9b5663253ce585bf259fb6a275"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 36,
+            "stop": 36
+          },
+          {
+            "new": " local v=assert(GUARDIAN_STYLE[role],\"unknown guardian silhouette\")\n -- Reuse existing 8 common Parts, preserve role extra parts and server combat.\n local torso=part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0)\n   *CFrame.Angles(math.rad(v.lean),0,0),v.torso,c.color)\n torso.Material=v.material\n part(model,\"Helm\",at*CFrame.new(0,4,0),v.head,v.helm,Enum.PartType.Ball)\n part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.25,.24,.17),\n   Color3.fromRGB(44,54,72))\n for _,side in ipairs({-1,1}) do\n  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),v.shoulder,v.trim,\n",
+            "new_identity": {
+              "bytes": 576,
+              "sha256": "9a2ee71dbd935787d8464cf3612d7b44148af17747f25bff2650ea68f97051a5"
+            },
+            "old": " part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0),Vector3.new(2.4,2.2,1.5),c.color)\n part(model,\"Helm\",at*CFrame.new(0,4,0),Vector3.new(1.6,1.5,1.45),Color3.fromRGB(232,218,176),\n",
+            "old_identity": {
+              "bytes": 179,
+              "sha256": "dc828e519b72233b411869e4c07b47971c359f06cd5e58110ec1d96a9b3b95d6"
+            },
+            "start": 39,
+            "stop": 41
+          },
+          {
+            "new": "  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),v.boots)\n",
+            "new_identity": {
+              "bytes": 83,
+              "sha256": "6387402ac0820d4192f23e98684771041c2d8590a4d65911bfc86aa59a5434f1"
+            },
+            "old": " part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.3,.25,.15),Color3.fromRGB(53,65,88))\n for _,side in ipairs({-1,1}) do\n  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),Vector3.new(.85,.7,1.25),\n   Color3.fromRGB(214,189,129),Enum.PartType.Ball)\n  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),\n   Color3.fromRGB(58,66,76))\n",
+            "old_identity": {
+              "bytes": 365,
+              "sha256": "e18cb75566b154b90ef92c633b08455bcbca541519a97758db44bcbf35bbb903"
+            },
+            "start": 42,
+            "stop": 48
+          },
+          {
+            "new": "    v.gear,Color3.fromRGB(211,189,142))\n",
+            "new_identity": {
+              "bytes": 40,
+              "sha256": "8631ff94d23c10caf9616ce03ca562b380724f535c8495a58e1917fb2fc2d981"
+            },
+            "old": "    Vector3.new(.45,3.1,.45),Color3.fromRGB(223,198,131))\n",
+            "old_identity": {
+              "bytes": 58,
+              "sha256": "8cfcdd639c9ab8f3b03dc8053e0a69636f409e92b15f3af8d2696c365d5a6d35"
+            },
+            "start": 51,
+            "stop": 52
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- GQ470_CASTLE_GUARDIAN_SEVEN_SILHOUETTES_REAL69_20261121\n-- Live castle guardians; lobby GQ805 shop silhouettes are a separate owner.\nlocal GUARDIAN_STYLE={\n WARRIOR={torso=Vector3.new(2.9,2.5,1.9),head=Vector3.new(1.75,1.5,1.55),\n  shoulder=Vector3.new(1.05,.9,1.4),gear=Vector3.new(.62,2.9,.6),\n  trim=Color3.fromRGB(183,169,140),helm=Color3.fromRGB(187,194,199),\n  boots=Color3.fromRGB(71,77,85),material=Enum.Material.Metal,lean=0},\n MAGE={torso=Vector3.new(1.8,2.45,1.25),head=Vector3.new(1.3,1.9,1.25),\n  shoulder=Vector3.new(.55,.55,1.0),gear=Vector3.new(.3,3.5,.3),\n  trim=Color3.fromRGB(155,189,210),helm=Color3.fromRGB(199,226,230),\n  boots=Color3.fromRGB(52,74,92),material=Enum.Material.SmoothPlastic,lean=0},\n NINJA={torso=Vector3.new(1.95,1.9,1.3),head=Vector3.new(1.45,1.2,1.3),\n  shoulder=Vector3.new(.65,.55,.9),gear=Vector3.new(.3,2.6,.3),\n  trim=Color3.fromRGB(85,72,125),helm=Color3.fromRGB(74,71,105),\n  boots=Color3.fromRGB(43,46,65),material=Enum.Material.SmoothPlastic,lean=6},\n TRAPPER={torso=Vector3.new(2.05,2.25,1.45),head=Vector3.new(1.35,1.5,1.5),\n  shoulder=Vector3.new(.78,.55,1.25),gear=Vector3.new(.33,2.8,.33),\n  trim=Color3.fromRGB(155,115,186),helm=Color3.fromRGB(171,148,195),\n  boots=Color3.fromRGB(72,55,99),material=Enum.Material.SmoothPlastic,lean=0},\n BUILDER={torso=Vector3.new(2.8,1.95,1.85),head=Vector3.new(1.65,1.2,1.55),\n  shoulder=Vector3.new(.95,.77,1.3),gear=Vector3.new(.82,2.9,.82),\n  trim=Color3.fromRGB(173,140,91),helm=Color3.fromRGB(184,166,124),\n  boots=Color3.fromRGB(79,73,62),material=Enum.Material.Metal,lean=0},\n BEAST={torso=Vector3.new(2.4,1.85,1.7),head=Vector3.new(1.7,1.3,1.65),\n  shoulder=Vector3.new(.85,.57,1.3),gear=Vector3.new(.4,2.8,.4),\n  trim=Color3.fromRGB(116,142,105),helm=Color3.fromRGB(132,156,114),\n  boots=Color3.fromRGB(55,74,61),material=Enum.Material.SmoothPlastic,lean=12},\n ZOMBIE={torso=Vector3.new(1.85,2.55,1.25),head=Vector3.new(1.35,1.72,1.33),\n  shoulder=Vector3.new(.68,.65,1.08),gear=Vector3.new(.38,3.4,.38),\n  trim=Color3.fromRGB(133,105,145),helm=Color3.fromRGB(155,138,160),\n  boots=Color3.fromRGB(68,60,72),material=Enum.Material.Slate,lean=-5},\n}\n",
+            "old_identity": {
+              "bytes": 2152,
+              "sha256": "2028c946c4934ce1ffe5b9909414aa12384fec9b5663253ce585bf259fb6a275"
+            },
+            "start": 36,
+            "stop": 68
+          },
+          {
+            "new": " part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0),Vector3.new(2.4,2.2,1.5),c.color)\n part(model,\"Helm\",at*CFrame.new(0,4,0),Vector3.new(1.6,1.5,1.45),Color3.fromRGB(232,218,176),\n   Enum.PartType.Ball)\n part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.3,.25,.15),Color3.fromRGB(53,65,88))\n",
+            "new_identity": {
+              "bytes": 297,
+              "sha256": "56f246cae4616fb690ce6d21e837ef6d28420c00d3d8b25853230c558553e489"
+            },
+            "old": " local v=assert(GUARDIAN_STYLE[role],\"unknown guardian silhouette\")\n -- Reuse existing 8 common Parts, preserve role extra parts and server combat.\n local torso=part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0)\n   *CFrame.Angles(math.rad(v.lean),0,0),v.torso,c.color)\n torso.Material=v.material\n part(model,\"Helm\",at*CFrame.new(0,4,0),v.head,v.helm,Enum.PartType.Ball)\n part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.25,.24,.17),\n   Color3.fromRGB(44,54,72))\n",
+            "old_identity": {
+              "bytes": 468,
+              "sha256": "92b81406f7c03db645716f8f2893f11f34dfcd6d7c497910e21b3d75e8d3aca0"
+            },
+            "start": 71,
+            "stop": 79
+          },
+          {
+            "new": "  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),Vector3.new(.85,.7,1.25),\n   Color3.fromRGB(214,189,129),Enum.PartType.Ball)\n  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),\n   Color3.fromRGB(58,66,76))\n",
+            "new_identity": {
+              "bytes": 237,
+              "sha256": "10bacf303819d34053d583f03e1a10d5ad8402090b7876baee3bc1ed43cf4fef"
+            },
+            "old": "  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),v.shoulder,v.trim,\n   Enum.PartType.Ball)\n  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),v.boots)\n",
+            "old_identity": {
+              "bytes": 181,
+              "sha256": "cc522a34066dce7abe263a3e37533a8cf707c1a4c86c66ccda49b5ce014cf943"
+            },
+            "start": 80,
+            "stop": 83
+          },
+          {
+            "new": "    Vector3.new(.45,3.1,.45),Color3.fromRGB(223,198,131))\n",
+            "new_identity": {
+              "bytes": 58,
+              "sha256": "8cfcdd639c9ab8f3b03dc8053e0a69636f409e92b15f3af8d2696c365d5a6d35"
+            },
+            "old": "    v.gear,Color3.fromRGB(211,189,142))\n",
+            "old_identity": {
+              "bytes": 40,
+              "sha256": "8631ff94d23c10caf9616ce03ca562b380724f535c8495a58e1917fb2fc2d981"
+            },
+            "start": 86,
+            "stop": 87
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 15746,
+            "sha256": "073c88a02e84d27c4f2cddd8ebd701c36e389f7050876b0551b4aa872301746c"
+          },
+          "before": {
+            "bytes": 13076,
+            "sha256": "3b8cf7e9b939213633fde964d81bb5e9508e4fe467ef932ddad0bfbe270bd96b"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": "local AttackGeometry=require(script.Parent:WaitForChild(\"EGGRUMBLE_AttackGeometry\"))\n",
+              "new_identity": {
+                "bytes": 85,
+                "sha256": "7fbe2e56a8a3ccdc83f7c35f98e146139ccab29c6c128ffd70a2334ce0f06a82"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 8,
+              "stop": 8
+            },
+            {
+              "new": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model,role:string):any\n",
+              "new_identity": {
+                "bytes": 104,
+                "sha256": "2b595c63ea0c9867325014a4034f926abe3655d4b3c3e5feff09227aee5cee45"
+              },
+              "old": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model):any\n",
+              "old_identity": {
+                "bytes": 92,
+                "sha256": "a106b40104d036730ff8d4051406af77b058299e469cdc4d54675c1206a821f2"
+              },
+              "start": 120,
+              "stop": 121
+            },
+            {
+              "new": "   and enemy(session,owner,id)\n   -- OWNER #804: only the NINJA guardian detects cloaked heroes.\n   -- An egg in the existing Rules state reveals a carrier to every role.\n   and (role==\"NINJA\" or session.rules.castles[id].heldEggs>0\n    or os.clock()>=(player:GetAttribute(\"EGGRUMBLE_StealthUntil\") or 0)) then\n",
+              "new_identity": {
+                "bytes": 311,
+                "sha256": "a1420031032748be80b6076c5b77ce9222a0180f143563c986849ca57d44588e"
+              },
+              "old": "   and enemy(session,owner,id) then\n",
+              "old_identity": {
+                "bytes": 36,
+                "sha256": "11442c81c3449af26b4a1ba4760234d676525cb9ecb6fb64f8d270c2e59ca9dc"
+              },
+              "start": 131,
+              "stop": 132
+            },
+            {
+              "new": "   ray.RespectCanCollide=true\n",
+              "new_identity": {
+                "bytes": 30,
+                "sha256": "05cf7095745ef03f531d64fa7ebefacffd486ffcf7596ff6b0696d873b77b5d9"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 150,
+              "stop": 150
+            },
+            {
+              "new": "-- The guardian's body sets the movement volume. Ornaments can extend beyond it.\nlocal GUARD_BODY_SIZE=Vector3.new(2.8,3.4,2.8)\nlocal GUARD_BODY_OFFSET=Vector3.new(0,1.85,0)\n\nlocal function clearGuardStep(at:Vector3,step:Vector3,ray:RaycastParams,overlap:OverlapParams):Vector3?\n local origin=CFrame.new(at+GUARD_BODY_OFFSET)\n local hit=workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray)\n if hit then\n  -- Let an oblique move continue along the wall if its tangent is clear.\n  local outward=Vector3.new(hit.Normal.X,0,hit.Normal.Z)\n  if outward.Magnitude<.5 then return nil end\n  outward=outward.Unit\n  step-=outward*step:Dot(outward)\n  if step.Magnitude<=.01 or workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray) then return nil end\n end\n -- A sweep does not report parts already intersecting its initial shape.\n -- Require a free end position so a short step cannot advance through them.\n if #workspace:GetPartBoundsInBox(origin+step,GUARD_BODY_SIZE,overlap)>0 then return nil end\n return at+step\nend\n\n",
+              "new_identity": {
+                "bytes": 1008,
+                "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 156,
+              "stop": 156
+            },
+            {
+              "new": " -- Freeze this match's castle roles before the shared lobby selections change.\n local castleRoles={}\n for owner in pairs(session.rules.castles) do\n  local humanId=tonumber(owner)\n  local selection=humanId and type(chosenRole)==\"table\" and chosenRole[humanId]\n  castleRoles[owner]=CONFIG[selection] and selection or \"WARRIOR\"\n end\n",
+              "new_identity": {
+                "bytes": 331,
+                "sha256": "3a5f2928a09c61d5b713d26e5a2b1e8e07fd91adca16da7cf27f8b6057266520"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 164,
+              "stop": 164
+            },
+            {
+              "new": "  local foe,dist=targetOf(session,d.owner,at,c.range,model,d.role)\n",
+              "new_identity": {
+                "bytes": 67,
+                "sha256": "e194662f730c7e6b5bc441c9bc8c6721adcc03e44e01eb7cb1b4b76f0b8d07bc"
+              },
+              "old": "  local foe,dist=targetOf(session,d.owner,at,c.range,model)\n",
+              "old_identity": {
+                "bytes": 60,
+                "sha256": "24192fc9cb98f65b0d3c393bfca96ffca733897dcb16f726aae696f5107bd655"
+              },
+              "start": 192,
+              "stop": 193
+            },
+            {
+              "new": "   local nextPos=clearGuardStep(at,delta.Unit*step,d.movementRay,d.movementOverlap)\n   if nextPos then model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0)) end\n",
+              "new_identity": {
+                "bytes": 168,
+                "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
+              },
+              "old": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
+              "old_identity": {
+                "bytes": 100,
+                "sha256": "8ef12bbba12f9bdda490824f4bfcc76e14b0ae9c4d6f2de46b8265af422435e7"
+              },
+              "start": 210,
+              "stop": 212
+            },
+            {
+              "new": "  local movementRay=RaycastParams.new()\n  movementRay.FilterType=Enum.RaycastFilterType.Exclude\n  movementRay.FilterDescendantsInstances={model}\n  movementRay.RespectCanCollide=true\n  local movementOverlap=OverlapParams.new()\n  movementOverlap.FilterType=Enum.RaycastFilterType.Exclude\n  movementOverlap.FilterDescendantsInstances={model}\n  movementOverlap.RespectCanCollide=true\n  movementOverlap.MaxParts=1\n",
+              "new_identity": {
+                "bytes": 409,
+                "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 227,
+              "stop": 227
+            },
+            {
+              "new": "   movementRay=movementRay,movementOverlap=movementOverlap,\n",
+              "new_identity": {
+                "bytes": 60,
+                "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 228,
+              "stop": 228
+            },
+            {
+              "new": "    local role=castleRoles[owner] or \"WARRIOR\"\n",
+              "new_identity": {
+                "bytes": 47,
+                "sha256": "dd7dbfb8b3ec88f0723a63e59b53266dfefb9b06b64a664ccefaf6cd01f5932c"
+              },
+              "old": "    local role=\"WARRIOR\"\n    local humanId=tonumber(owner)\n    if humanId and type(chosenRole)==\"table\" then\n     local selection=chosenRole[humanId]\n     if CONFIG[selection] then role=selection end\n    end\n",
+              "old_identity": {
+                "bytes": 208,
+                "sha256": "8a02bbbb59758f1d85299b33121bcea1ae88fa8f021a76a396b041f4901be2ae"
+              },
+              "start": 248,
+              "stop": 254
+            },
+            {
+              "new": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,shape:string,\n  attackRoot:BasePart,attackCharacter:Model):number\n",
+              "new_identity": {
+                "bytes": 147,
+                "sha256": "0efdb4b28eb79dbe47c01b9ae41b57ff8af499ce68726d1c8c3321cfc00eb135"
+              },
+              "old": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,_shape:string):number\n",
+              "old_identity": {
+                "bytes": 103,
+                "sha256": "18cf24d31a294ae93e7e0b499d67e551f994e3463bcd818d454e994c5a50d2b8"
+              },
+              "start": 265,
+              "stop": 266
+            },
+            {
+              "new": "  -- Combat supplies the actual human, beast or summoned-body origin.\n  -- Projected skill centers alone cannot establish line of sight.\n  if not attackRoot or not attackRoot:IsA(\"BasePart\") or not attackCharacter\n   or attackRoot.Parent~=attackCharacter\n   or (attackCharacter~=p.Character and not attackCharacter:IsDescendantOf(session.world)) then return 0 end\n",
+              "new_identity": {
+                "bytes": 364,
+                "sha256": "61db18dc639d4be1b6abbebfe3963994b9d9607cf254f9dd95ddfd3509bf620f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 271,
+              "stop": 271
+            },
+            {
+              "new": "    and AttackGeometry.allowed(attackRoot.Position,at,root.Position,radius,shape) then\n",
+              "new_identity": {
+                "bytes": 87,
+                "sha256": "3e39ee3d4ab8a9e1293e776c0779ee11aa4e865a8b7df10814699048c958441f"
+              },
+              "old": "    and (root.Position-at).Magnitude<=radius then\n",
+              "old_identity": {
+                "bytes": 50,
+                "sha256": "a42ed12d77fc57bb07b21443449926e6299830b4d8ef15650bf4a4f3c62ba509"
+              },
+              "start": 277,
+              "stop": 278
+            },
+            {
+              "new": "    ray.FilterDescendantsInstances={attackCharacter,d.model}\n    ray.RespectCanCollide=true\n    local origin=attackRoot.Position+Vector3.new(0,1.5,0)\n    if workspace:Raycast(origin,root.Position-origin,ray)==nil then\n",
+              "new_identity": {
+                "bytes": 218,
+                "sha256": "48cd4400693eef127a767a37ee75d4145885bb232d9b0b65f268cd5e7e198d1c"
+              },
+              "old": "    ray.FilterDescendantsInstances={p.Character,d.model}\n    if workspace:Raycast(at,root.Position-at,ray)==nil then\n",
+              "old_identity": {
+                "bytes": 117,
+                "sha256": "27d76db200b91666cd2bf8eaabcd7c803ae5daa9673c1cb63c1241291e40c916"
+              },
+              "start": 280,
+              "stop": 282
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local AttackGeometry=require(script.Parent:WaitForChild(\"EGGRUMBLE_AttackGeometry\"))\n",
+              "old_identity": {
+                "bytes": 85,
+                "sha256": "7fbe2e56a8a3ccdc83f7c35f98e146139ccab29c6c128ffd70a2334ce0f06a82"
+              },
+              "start": 8,
+              "stop": 9
+            },
+            {
+              "new": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model):any\n",
+              "new_identity": {
+                "bytes": 92,
+                "sha256": "a106b40104d036730ff8d4051406af77b058299e469cdc4d54675c1206a821f2"
+              },
+              "old": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model,role:string):any\n",
+              "old_identity": {
+                "bytes": 104,
+                "sha256": "2b595c63ea0c9867325014a4034f926abe3655d4b3c3e5feff09227aee5cee45"
+              },
+              "start": 121,
+              "stop": 122
+            },
+            {
+              "new": "   and enemy(session,owner,id) then\n",
+              "new_identity": {
+                "bytes": 36,
+                "sha256": "11442c81c3449af26b4a1ba4760234d676525cb9ecb6fb64f8d270c2e59ca9dc"
+              },
+              "old": "   and enemy(session,owner,id)\n   -- OWNER #804: only the NINJA guardian detects cloaked heroes.\n   -- An egg in the existing Rules state reveals a carrier to every role.\n   and (role==\"NINJA\" or session.rules.castles[id].heldEggs>0\n    or os.clock()>=(player:GetAttribute(\"EGGRUMBLE_StealthUntil\") or 0)) then\n",
+              "old_identity": {
+                "bytes": 311,
+                "sha256": "a1420031032748be80b6076c5b77ce9222a0180f143563c986849ca57d44588e"
+              },
+              "start": 132,
+              "stop": 137
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   ray.RespectCanCollide=true\n",
+              "old_identity": {
+                "bytes": 30,
+                "sha256": "05cf7095745ef03f531d64fa7ebefacffd486ffcf7596ff6b0696d873b77b5d9"
+              },
+              "start": 155,
+              "stop": 156
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- The guardian's body sets the movement volume. Ornaments can extend beyond it.\nlocal GUARD_BODY_SIZE=Vector3.new(2.8,3.4,2.8)\nlocal GUARD_BODY_OFFSET=Vector3.new(0,1.85,0)\n\nlocal function clearGuardStep(at:Vector3,step:Vector3,ray:RaycastParams,overlap:OverlapParams):Vector3?\n local origin=CFrame.new(at+GUARD_BODY_OFFSET)\n local hit=workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray)\n if hit then\n  -- Let an oblique move continue along the wall if its tangent is clear.\n  local outward=Vector3.new(hit.Normal.X,0,hit.Normal.Z)\n  if outward.Magnitude<.5 then return nil end\n  outward=outward.Unit\n  step-=outward*step:Dot(outward)\n  if step.Magnitude<=.01 or workspace:Blockcast(origin,GUARD_BODY_SIZE,step,ray) then return nil end\n end\n -- A sweep does not report parts already intersecting its initial shape.\n -- Require a free end position so a short step cannot advance through them.\n if #workspace:GetPartBoundsInBox(origin+step,GUARD_BODY_SIZE,overlap)>0 then return nil end\n return at+step\nend\n\n",
+              "old_identity": {
+                "bytes": 1008,
+                "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
+              },
+              "start": 162,
+              "stop": 183
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Freeze this match's castle roles before the shared lobby selections change.\n local castleRoles={}\n for owner in pairs(session.rules.castles) do\n  local humanId=tonumber(owner)\n  local selection=humanId and type(chosenRole)==\"table\" and chosenRole[humanId]\n  castleRoles[owner]=CONFIG[selection] and selection or \"WARRIOR\"\n end\n",
+              "old_identity": {
+                "bytes": 331,
+                "sha256": "3a5f2928a09c61d5b713d26e5a2b1e8e07fd91adca16da7cf27f8b6057266520"
+              },
+              "start": 191,
+              "stop": 198
+            },
+            {
+              "new": "  local foe,dist=targetOf(session,d.owner,at,c.range,model)\n",
+              "new_identity": {
+                "bytes": 60,
+                "sha256": "24192fc9cb98f65b0d3c393bfca96ffca733897dcb16f726aae696f5107bd655"
+              },
+              "old": "  local foe,dist=targetOf(session,d.owner,at,c.range,model,d.role)\n",
+              "old_identity": {
+                "bytes": 67,
+                "sha256": "e194662f730c7e6b5bc441c9bc8c6721adcc03e44e01eb7cb1b4b76f0b8d07bc"
+              },
+              "start": 226,
+              "stop": 227
+            },
+            {
+              "new": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
+              "new_identity": {
+                "bytes": 100,
+                "sha256": "8ef12bbba12f9bdda490824f4bfcc76e14b0ae9c4d6f2de46b8265af422435e7"
+              },
+              "old": "   local nextPos=clearGuardStep(at,delta.Unit*step,d.movementRay,d.movementOverlap)\n   if nextPos then model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0)) end\n",
+              "old_identity": {
+                "bytes": 168,
+                "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
+              },
+              "start": 244,
+              "stop": 246
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  local movementRay=RaycastParams.new()\n  movementRay.FilterType=Enum.RaycastFilterType.Exclude\n  movementRay.FilterDescendantsInstances={model}\n  movementRay.RespectCanCollide=true\n  local movementOverlap=OverlapParams.new()\n  movementOverlap.FilterType=Enum.RaycastFilterType.Exclude\n  movementOverlap.FilterDescendantsInstances={model}\n  movementOverlap.RespectCanCollide=true\n  movementOverlap.MaxParts=1\n",
+              "old_identity": {
+                "bytes": 409,
+                "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
+              },
+              "start": 261,
+              "stop": 270
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "   movementRay=movementRay,movementOverlap=movementOverlap,\n",
+              "old_identity": {
+                "bytes": 60,
+                "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
+              },
+              "start": 271,
+              "stop": 272
+            },
+            {
+              "new": "    local role=\"WARRIOR\"\n    local humanId=tonumber(owner)\n    if humanId and type(chosenRole)==\"table\" then\n     local selection=chosenRole[humanId]\n     if CONFIG[selection] then role=selection end\n    end\n",
+              "new_identity": {
+                "bytes": 208,
+                "sha256": "8a02bbbb59758f1d85299b33121bcea1ae88fa8f021a76a396b041f4901be2ae"
+              },
+              "old": "    local role=castleRoles[owner] or \"WARRIOR\"\n",
+              "old_identity": {
+                "bytes": 47,
+                "sha256": "dd7dbfb8b3ec88f0723a63e59b53266dfefb9b06b64a664ccefaf6cd01f5932c"
+              },
+              "start": 292,
+              "stop": 293
+            },
+            {
+              "new": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,_shape:string):number\n",
+              "new_identity": {
+                "bytes": 103,
+                "sha256": "18cf24d31a294ae93e7e0b499d67e551f994e3463bcd818d454e994c5a50d2b8"
+              },
+              "old": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,shape:string,\n  attackRoot:BasePart,attackCharacter:Model):number\n",
+              "old_identity": {
+                "bytes": 147,
+                "sha256": "0efdb4b28eb79dbe47c01b9ae41b57ff8af499ce68726d1c8c3321cfc00eb135"
+              },
+              "start": 304,
+              "stop": 306
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "  -- Combat supplies the actual human, beast or summoned-body origin.\n  -- Projected skill centers alone cannot establish line of sight.\n  if not attackRoot or not attackRoot:IsA(\"BasePart\") or not attackCharacter\n   or attackRoot.Parent~=attackCharacter\n   or (attackCharacter~=p.Character and not attackCharacter:IsDescendantOf(session.world)) then return 0 end\n",
+              "old_identity": {
+                "bytes": 364,
+                "sha256": "61db18dc639d4be1b6abbebfe3963994b9d9607cf254f9dd95ddfd3509bf620f"
+              },
+              "start": 311,
+              "stop": 316
+            },
+            {
+              "new": "    and (root.Position-at).Magnitude<=radius then\n",
+              "new_identity": {
+                "bytes": 50,
+                "sha256": "a42ed12d77fc57bb07b21443449926e6299830b4d8ef15650bf4a4f3c62ba509"
+              },
+              "old": "    and AttackGeometry.allowed(attackRoot.Position,at,root.Position,radius,shape) then\n",
+              "old_identity": {
+                "bytes": 87,
+                "sha256": "3e39ee3d4ab8a9e1293e776c0779ee11aa4e865a8b7df10814699048c958441f"
+              },
+              "start": 322,
+              "stop": 323
+            },
+            {
+              "new": "    ray.FilterDescendantsInstances={p.Character,d.model}\n    if workspace:Raycast(at,root.Position-at,ray)==nil then\n",
+              "new_identity": {
+                "bytes": 117,
+                "sha256": "27d76db200b91666cd2bf8eaabcd7c803ae5daa9673c1cb63c1241291e40c916"
+              },
+              "old": "    ray.FilterDescendantsInstances={attackCharacter,d.model}\n    ray.RespectCanCollide=true\n    local origin=attackRoot.Position+Vector3.new(0,1.5,0)\n    if workspace:Raycast(origin,root.Position-origin,ray)==nil then\n",
+              "old_identity": {
+                "bytes": 218,
+                "sha256": "48cd4400693eef127a767a37ee75d4145885bb232d9b0b65f268cd5e7e198d1c"
+              },
+              "start": 325,
+              "stop": 329
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
+        "forward": [
+          {
+            "new": "local ridgeVisuals:{[Instance]:{BasePart}}={}\nlocal function reclaimRidgeForCastle(arena:Instance):boolean\n local bucket=ridgeVisuals[arena]\n if not bucket then return false end\n while #bucket>0 do\n  local p=table.remove(bucket)\n  if p and p.Parent then\n   p:Destroy()\n   budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n   return true\n  end\n end\n return false\nend\n-- GQ470_FORTRESS_VISUAL_FAIR_BUDGET_REAL69_20261121\n-- Reserve ten existing identity parts per castle, without increasing the\n-- existing per-arena 320-Part limit or 19-Part optional castle detail limit.\nlocal MIN_CASTLE_ESSENTIAL_PARTS = 10\n-- Keep only this art author's instances; do not count gameplay geometry.\n-- Old castles/other art can be removed during a match: prune stale references\n-- before every new castle, so the counter never prevents later roofs/crests.\nlocal trackedArt:{[Instance]:{BasePart}}={}\nlocal function recountArenaArt(arena:Instance):{BasePart}\n local active:{BasePart}={}\n for _,p in ipairs(trackedArt[arena] or {}) do\n  if p.Parent and p:IsDescendantOf(arena) then table.insert(active,p) end\n end\n trackedArt[arena]=active\n budgets[arena]=#active\n return active\nend\nlocal function reserveCastleIdentity(arena:Instance):boolean\n local active=recountArenaArt(arena)\n while #active+MIN_CASTLE_ESSENTIAL_PARTS>MAX_VISUAL_PARTS_PER_ARENA do\n  -- Reclaim only expendable decorations, NEVER a roof/keystone/crest.\n  local optionalIndex:number?=nil\n  for index=#active,1,-1 do\n   if active[index]:GetAttribute(\"GQ470CastleOptional\")==true then\n    optionalIndex=index\n    break\n   end\n  end\n  if not optionalIndex then return false end\n  local old=table.remove(active,optionalIndex)\n  if old then old:Destroy() end\n  budgets[arena]=#active\n end\n return true\nend\n",
+            "new_identity": {
+              "bytes": 1754,
+              "sha256": "62a871c22551ced297c6ee3767a2b8a744b11a2a05d595cde52f620bc5049fac"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 13,
+            "stop": 13
+          },
+          {
+            "new": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then\n  if parent.Name~=\"EGGRUMBLE_CastleArt_VisualOnly\" or not reclaimRidgeForCastle(arena) then return nil end\n end\n",
+            "new_identity": {
+              "bytes": 171,
+              "sha256": "90854ea27d6b3ae1f345855879c20132b67a22f694392933914ff8a511d7a011"
+            },
+            "old": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then return nil end\n",
+            "old_identity": {
+              "bytes": 74,
+              "sha256": "2e2dee07884fa975aeb596f7e91136923b09db6b52f28e552f241cda3de0d737"
+            },
+            "start": 35,
+            "stop": 36
+          },
+          {
+            "new": " local tracked=trackedArt[arena]\n if not tracked then tracked={} trackedArt[arena]=tracked end\n table.insert(tracked,p)\n",
+            "new_identity": {
+              "bytes": 120,
+              "sha256": "eb8c318752ebd119a4dd7f08617b1a17d8b677822a2349ddf878dde63bbff0a7"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 55,
+            "stop": 55
+          },
+          {
+            "new": " -- Even when the StandardCore arrives before TacticalBattlefield, paint the\n -- existing 140 scenery parts first. paintArena retries all existing castles.\n if not builtArenas[arena] then return end\n",
+            "new_identity": {
+              "bytes": 199,
+              "sha256": "bc79a0094812be8db5a16797d0b10d5b18294b77d20353b4f7633ab47d41de10"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 60,
+            "stop": 60
+          },
+          {
+            "new": " -- Recount live owned decorations and reclaim optional trim, never base art.\n if not reserveCastleIdentity(arena) then return end\n",
+            "new_identity": {
+              "bytes": 131,
+              "sha256": "5092b8e7f496a7e7c065f34cf00c892f0835ee86d3c7d6db23d0a875bfade426"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 63,
+            "stop": 63
+          },
+          {
+            "new": " castle.Destroying:Connect(function() builtCastles[castle]=nil end)\n",
+            "new_identity": {
+              "bytes": 68,
+              "sha256": "51f514ca1ecf28bf755040b8b93fd6baac0dd2833b55d6e980fd9d1f679be51c"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 64,
+            "stop": 64
+          },
+          {
+            "new": "  if p then\n   used+=1\n   if used>MIN_CASTLE_ESSENTIAL_PARTS then\n    p:SetAttribute(\"GQ470CastleOptional\",true)\n   end\n  end\n",
+            "new_identity": {
+              "bytes": 126,
+              "sha256": "2bda84a5cebf0f37198c2f20d3839fb589b27f74e78862017b38dfa8ab4c5245"
+            },
+            "old": "  if p then used+=1 end\n",
+            "old_identity": {
+              "bytes": 24,
+              "sha256": "7962c262fc1947e6e0a5380400097c391a5192b2081d4ff4e5dbeddaf9f125c4"
+            },
+            "start": 75,
+            "stop": 76
+          },
+          {
+            "new": "-- GQ470_FB015_RIDGE_HORIZON_P0_20261120\n-- Visual-only horizon cliffs are strictly lower priority than all baseline\n-- terrain/ruin visuals and every current or future castle ornament.\n-- At most twelve noncolliding wedges; castles may reclaim them on budget hit.\nlocal function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)\n local bucket=ridgeVisuals[arena]\n -- A scene may be repainted; keep one bounded ridge set per arena, never 12 more.\n if bucket then return end\n bucket={}\n ridgeVisuals[arena]=bucket\n -- The arena teardown releases both its reference and decorative-Part list.\n arena.Destroying:Once(function()\n  ridgeVisuals[arena]=nil\n end)\n -- Three unequal stepped profiles, mirrored by shore without repeating\n -- identical silhouettes. Each side has six matte, nonphysical Wedges.\n local ridgeContours = {\n  {height=14,yaw=-19,drift=-16,depth=27,lean=-7,notch=3},\n  {height=23,yaw=13,drift=8,depth=35,lean=6,notch=1},\n  {height=17,yaw=27,drift=19,depth=25,lean=-4,notch=4},\n }\n for _,side in ipairs({-1,1}) do\n  for index=1,3 do\n   local contour=ridgeContours[index]\n   local x=side*410\n   local z=(index-2)*270+side*contour.drift\n   local at=ground(x,z)\n   local h=contour.height+(if side>0 then 3 else 0)\n   local turn=side*contour.yaw\n   local lean=side*contour.lean\n   -- Use existing matte stone palette for subtle depth and directional\n   -- contrast. These Color3 blends run once when an arena is built, not\n   -- during combat frames; zero new instances or texture fetches.\n   local baseTint=darkStone:Lerp(limestone,.07*(index-1))\n   local crownTint=limestone:Lerp(darkStone,.08*(3-index))\n   -- Reserve both pieces before sculpting a complete profile. If the 320\n   -- scene cap is almost full, skip this pair rather than leave a bare wedge.\n   if (budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA then\n    local basePart=createVisual(arena,art,\"HorizonCliffBase_\"..side..\"_\"..index,\"Wedge\",\n     Vector3.new(18,h,contour.depth),\n     CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))\n      *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),\n     baseTint,Enum.Material.Slate)\n    if basePart then\n     -- Matched limestone cap penetrates the base: no detached floating crown.\n     local crownPart=createVisual(arena,art,\"HorizonCliffCrown_\"..side..\"_\"..index,\"Wedge\",\n      Vector3.new(11,4,contour.depth-6),\n      CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))\n       *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),\n      crownTint,Enum.Material.Limestone)\n     if crownPart then\n      table.insert(bucket,basePart)\n      table.insert(bucket,crownPart)\n     else\n      -- Defensive rollback for a failed crown allocation; no half cliff.\n      basePart:Destroy()\n      budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n     end\n    end\n   end\n  end\n end\nend\n\n",
+            "new_identity": {
+              "bytes": 2888,
+              "sha256": "a5399036200137b42473d5f2c5adb47baab003cb9fb18933cac7672bbb8c707f"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 223,
+            "stop": 223
+          },
+          {
+            "new": " -- Match world replacement must release per-arena accounting references.\n arena.Destroying:Connect(function()\n  builtArenas[arena]=nil\n  budgets[arena]=nil\n  trackedArt[arena]=nil\n end)\n",
+            "new_identity": {
+              "bytes": 187,
+              "sha256": "67b02e6ac6391eb71a21f4bbe732e98aa911b2815d51ebfccad0a1b073db9935"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 229,
+            "stop": 229
+          },
+          {
+            "new": " -- GQ470_FB015_RIDGE_HORIZON_P0_20261120: add only after baseline and present castles.\n drawHorizonRidges(arena,art,onGround)\n",
+            "new_identity": {
+              "bytes": 127,
+              "sha256": "70d4e653041e8ee65440f3cef6ea881c96f0a8b9da4f750bc0e791e101a96d26"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 283,
+            "stop": 283
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "local ridgeVisuals:{[Instance]:{BasePart}}={}\nlocal function reclaimRidgeForCastle(arena:Instance):boolean\n local bucket=ridgeVisuals[arena]\n if not bucket then return false end\n while #bucket>0 do\n  local p=table.remove(bucket)\n  if p and p.Parent then\n   p:Destroy()\n   budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n   return true\n  end\n end\n return false\nend\n-- GQ470_FORTRESS_VISUAL_FAIR_BUDGET_REAL69_20261121\n-- Reserve ten existing identity parts per castle, without increasing the\n-- existing per-arena 320-Part limit or 19-Part optional castle detail limit.\nlocal MIN_CASTLE_ESSENTIAL_PARTS = 10\n-- Keep only this art author's instances; do not count gameplay geometry.\n-- Old castles/other art can be removed during a match: prune stale references\n-- before every new castle, so the counter never prevents later roofs/crests.\nlocal trackedArt:{[Instance]:{BasePart}}={}\nlocal function recountArenaArt(arena:Instance):{BasePart}\n local active:{BasePart}={}\n for _,p in ipairs(trackedArt[arena] or {}) do\n  if p.Parent and p:IsDescendantOf(arena) then table.insert(active,p) end\n end\n trackedArt[arena]=active\n budgets[arena]=#active\n return active\nend\nlocal function reserveCastleIdentity(arena:Instance):boolean\n local active=recountArenaArt(arena)\n while #active+MIN_CASTLE_ESSENTIAL_PARTS>MAX_VISUAL_PARTS_PER_ARENA do\n  -- Reclaim only expendable decorations, NEVER a roof/keystone/crest.\n  local optionalIndex:number?=nil\n  for index=#active,1,-1 do\n   if active[index]:GetAttribute(\"GQ470CastleOptional\")==true then\n    optionalIndex=index\n    break\n   end\n  end\n  if not optionalIndex then return false end\n  local old=table.remove(active,optionalIndex)\n  if old then old:Destroy() end\n  budgets[arena]=#active\n end\n return true\nend\n",
+            "old_identity": {
+              "bytes": 1754,
+              "sha256": "62a871c22551ced297c6ee3767a2b8a744b11a2a05d595cde52f620bc5049fac"
+            },
+            "start": 13,
+            "stop": 62
+          },
+          {
+            "new": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then return nil end\n",
+            "new_identity": {
+              "bytes": 74,
+              "sha256": "2e2dee07884fa975aeb596f7e91136923b09db6b52f28e552f241cda3de0d737"
+            },
+            "old": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then\n  if parent.Name~=\"EGGRUMBLE_CastleArt_VisualOnly\" or not reclaimRidgeForCastle(arena) then return nil end\n end\n",
+            "old_identity": {
+              "bytes": 171,
+              "sha256": "90854ea27d6b3ae1f345855879c20132b67a22f694392933914ff8a511d7a011"
+            },
+            "start": 84,
+            "stop": 87
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " local tracked=trackedArt[arena]\n if not tracked then tracked={} trackedArt[arena]=tracked end\n table.insert(tracked,p)\n",
+            "old_identity": {
+              "bytes": 120,
+              "sha256": "eb8c318752ebd119a4dd7f08617b1a17d8b677822a2349ddf878dde63bbff0a7"
+            },
+            "start": 106,
+            "stop": 109
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- Even when the StandardCore arrives before TacticalBattlefield, paint the\n -- existing 140 scenery parts first. paintArena retries all existing castles.\n if not builtArenas[arena] then return end\n",
+            "old_identity": {
+              "bytes": 199,
+              "sha256": "bc79a0094812be8db5a16797d0b10d5b18294b77d20353b4f7633ab47d41de10"
+            },
+            "start": 114,
+            "stop": 117
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- Recount live owned decorations and reclaim optional trim, never base art.\n if not reserveCastleIdentity(arena) then return end\n",
+            "old_identity": {
+              "bytes": 131,
+              "sha256": "5092b8e7f496a7e7c065f34cf00c892f0835ee86d3c7d6db23d0a875bfade426"
+            },
+            "start": 120,
+            "stop": 122
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " castle.Destroying:Connect(function() builtCastles[castle]=nil end)\n",
+            "old_identity": {
+              "bytes": 68,
+              "sha256": "51f514ca1ecf28bf755040b8b93fd6baac0dd2833b55d6e980fd9d1f679be51c"
+            },
+            "start": 123,
+            "stop": 124
+          },
+          {
+            "new": "  if p then used+=1 end\n",
+            "new_identity": {
+              "bytes": 24,
+              "sha256": "7962c262fc1947e6e0a5380400097c391a5192b2081d4ff4e5dbeddaf9f125c4"
+            },
+            "old": "  if p then\n   used+=1\n   if used>MIN_CASTLE_ESSENTIAL_PARTS then\n    p:SetAttribute(\"GQ470CastleOptional\",true)\n   end\n  end\n",
+            "old_identity": {
+              "bytes": 126,
+              "sha256": "2bda84a5cebf0f37198c2f20d3839fb589b27f74e78862017b38dfa8ab4c5245"
+            },
+            "start": 135,
+            "stop": 141
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "-- GQ470_FB015_RIDGE_HORIZON_P0_20261120\n-- Visual-only horizon cliffs are strictly lower priority than all baseline\n-- terrain/ruin visuals and every current or future castle ornament.\n-- At most twelve noncolliding wedges; castles may reclaim them on budget hit.\nlocal function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)\n local bucket=ridgeVisuals[arena]\n -- A scene may be repainted; keep one bounded ridge set per arena, never 12 more.\n if bucket then return end\n bucket={}\n ridgeVisuals[arena]=bucket\n -- The arena teardown releases both its reference and decorative-Part list.\n arena.Destroying:Once(function()\n  ridgeVisuals[arena]=nil\n end)\n -- Three unequal stepped profiles, mirrored by shore without repeating\n -- identical silhouettes. Each side has six matte, nonphysical Wedges.\n local ridgeContours = {\n  {height=14,yaw=-19,drift=-16,depth=27,lean=-7,notch=3},\n  {height=23,yaw=13,drift=8,depth=35,lean=6,notch=1},\n  {height=17,yaw=27,drift=19,depth=25,lean=-4,notch=4},\n }\n for _,side in ipairs({-1,1}) do\n  for index=1,3 do\n   local contour=ridgeContours[index]\n   local x=side*410\n   local z=(index-2)*270+side*contour.drift\n   local at=ground(x,z)\n   local h=contour.height+(if side>0 then 3 else 0)\n   local turn=side*contour.yaw\n   local lean=side*contour.lean\n   -- Use existing matte stone palette for subtle depth and directional\n   -- contrast. These Color3 blends run once when an arena is built, not\n   -- during combat frames; zero new instances or texture fetches.\n   local baseTint=darkStone:Lerp(limestone,.07*(index-1))\n   local crownTint=limestone:Lerp(darkStone,.08*(3-index))\n   -- Reserve both pieces before sculpting a complete profile. If the 320\n   -- scene cap is almost full, skip this pair rather than leave a bare wedge.\n   if (budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA then\n    local basePart=createVisual(arena,art,\"HorizonCliffBase_\"..side..\"_\"..index,\"Wedge\",\n     Vector3.new(18,h,contour.depth),\n     CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))\n      *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),\n     baseTint,Enum.Material.Slate)\n    if basePart then\n     -- Matched limestone cap penetrates the base: no detached floating crown.\n     local crownPart=createVisual(arena,art,\"HorizonCliffCrown_\"..side..\"_\"..index,\"Wedge\",\n      Vector3.new(11,4,contour.depth-6),\n      CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))\n       *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),\n      crownTint,Enum.Material.Limestone)\n     if crownPart then\n      table.insert(bucket,basePart)\n      table.insert(bucket,crownPart)\n     else\n      -- Defensive rollback for a failed crown allocation; no half cliff.\n      basePart:Destroy()\n      budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n     end\n    end\n   end\n  end\n end\nend\n\n",
+            "old_identity": {
+              "bytes": 2888,
+              "sha256": "a5399036200137b42473d5f2c5adb47baab003cb9fb18933cac7672bbb8c707f"
+            },
+            "start": 288,
+            "stop": 352
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- Match world replacement must release per-arena accounting references.\n arena.Destroying:Connect(function()\n  builtArenas[arena]=nil\n  budgets[arena]=nil\n  trackedArt[arena]=nil\n end)\n",
+            "old_identity": {
+              "bytes": 187,
+              "sha256": "67b02e6ac6391eb71a21f4bbe732e98aa911b2815d51ebfccad0a1b073db9935"
+            },
+            "start": 358,
+            "stop": 364
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- GQ470_FB015_RIDGE_HORIZON_P0_20261120: add only after baseline and present castles.\n drawHorizonRidges(arena,art,onGround)\n",
+            "old_identity": {
+              "bytes": 127,
+              "sha256": "70d4e653041e8ee65440f3cef6ea881c96f0a8b9da4f750bc0e791e101a96d26"
+            },
+            "start": 418,
+            "stop": 420
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 13624,
+            "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+          },
+          "before": {
+            "bytes": 13624,
+            "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+          },
+          "class": "Script",
+          "forward": [],
+          "inverse": [],
+          "route": "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
+        "forward": [
+          {
+            "new": "    -- GQ470_FB015_TWIN_CREATURE_SILHOUETTES_REAL69_20261121\n    -- Distinct species massing, not four recolored luminous spheres.\n    -- Same one noncolliding Body per NPC, no extra object/physics budget.\n    local bodySize = if info.id==\"AWARIN\" then Vector3.new(3.25,3.0,3.25)\n        elseif info.id==\"SANGORU\" then Vector3.new(2.9,4.15,2.9)\n        elseif info.id==\"RAIKO\" then Vector3.new(3.0,3.8,2.75)\n        else Vector3.new(4.2,2.8,3.4)\n    local body = part(\"Body\", bodySize, x, info.y,\n",
+            "new_identity": {
+              "bytes": 497,
+              "sha256": "4169692b5e64663e0088dd206d502bfc74c96ff1aebdb20df1bc21dd8f85a715"
+            },
+            "old": "    local body = part(\"Body\", Vector3.new(3.5, 3.5, 3.5), x, info.y,\n",
+            "old_identity": {
+              "bytes": 69,
+              "sha256": "170c0af0ceba064e099b62f51281275845a0a26c6e54ebbd7cf82141232b7a51"
+            },
+            "start": 528,
+            "stop": 529
+          },
+          {
+            "new": "    body.Reflectance = 0\n    body:SetAttribute(\"ArtSilhouette\",info.id)\n",
+            "new_identity": {
+              "bytes": 72,
+              "sha256": "96f1a0ca80f15e1f2a27a79ac8e145bd40ebba641c625ea82d87ce0e60fc0e55"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 531,
+            "stop": 531
+          },
+          {
+            "new": "            Enum.Material.SmoothPlastic, false, npc)\n",
+            "new_identity": {
+              "bytes": 53,
+              "sha256": "741c0ed0e8af84f391d59ba37f44a2851531fb1c16604c850bb8c241d920d57f"
+            },
+            "old": "            Enum.Material.Neon, false, npc)\n",
+            "old_identity": {
+              "bytes": 44,
+              "sha256": "65ac5f6f33d49324d51246b741d4d936d7e669b85f26d199b0675faa294fefb2"
+            },
+            "start": 534,
+            "stop": 535
+          },
+          {
+            "new": "        info.y + 2, info.localZ, info.tint, Enum.Material.SmoothPlastic, false, npc)\n",
+            "new_identity": {
+              "bytes": 85,
+              "sha256": "ab1f4ea1a13799f47a3bce47047e6800ea909bda0e13652da1450dbb99d6c1f1"
+            },
+            "old": "        info.y + 2, info.localZ, info.tint, Enum.Material.Neon, false, npc)\n",
+            "old_identity": {
+              "bytes": 76,
+              "sha256": "866207c34b0b559857ce3149be1030d7defd8d4c70212cc344d59762d6628ffc"
+            },
+            "start": 538,
+            "stop": 539
+          },
+          {
+            "new": "        -- Matte ornamentation retains the authored 8-NPC silhouette count.\n        -- No persistent glow overdraw or extra mobile lights.\n",
+            "new_identity": {
+              "bytes": 139,
+              "sha256": "1ececf6dc4da85a359c3b669ab6dd79c7f98401b00b5704ef4b499397ba7ded3"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 545,
+            "stop": 545
+          },
+          {
+            "new": "            tint,Enum.Material.SmoothPlastic,false,npc)\n",
+            "new_identity": {
+              "bytes": 56,
+              "sha256": "af338836b4fb1fce20aab1a744c439e2ed767832a52673b5493da71bb8ca3ad1"
+            },
+            "old": "            tint,Enum.Material.Neon,false,npc)\n",
+            "old_identity": {
+              "bytes": 47,
+              "sha256": "84945fd7127d4036ce2f84c019328386b2e1ae22fa034b18c7680fbcdee8c62f"
+            },
+            "start": 546,
+            "stop": 547
+          },
+          {
+            "new": "            local stem=decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+            "new_identity": {
+              "bytes": 78,
+              "sha256": "ad301815df6f33232f82232786058e7cebd289f8152cd6f699a508fd5ca7be27"
+            },
+            "old": "            decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+            "old_identity": {
+              "bytes": 67,
+              "sha256": "005ceec6dcdd35fae226d7676b8a9629f7600bc2edaf048b57a38d15cf60c8af"
+            },
+            "start": 562,
+            "stop": 563
+          },
+          {
+            "new": "            stem.CFrame=stem.CFrame*CFrame.Angles(0,0,math.rad(-side*12))\n            local fork=decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+            "new_identity": {
+              "bytes": 150,
+              "sha256": "24120a84e2ad180700d2d37e23513005c814fea2abb7c70b13f49f2feaa2a1d3"
+            },
+            "old": "            decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+            "old_identity": {
+              "bytes": 65,
+              "sha256": "8fd56b655abee905ff78e1c48e7893efea7303e56551ef1cc00b49b91a471631"
+            },
+            "start": 564,
+            "stop": 565
+          },
+          {
+            "new": "            fork.CFrame=fork.CFrame*CFrame.Angles(0,0,math.rad(side*30))\n",
+            "new_identity": {
+              "bytes": 73,
+              "sha256": "eda608e3fefafe1173b48a6afbfe20bba57a71de5b2c36c3abdcb173398db623"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 566,
+            "stop": 566
+          },
+          {
+            "new": "            local horn=decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+            "new_identity": {
+              "bytes": 77,
+              "sha256": "c988121fbc6001a86f4de2dbabed3f3c3df9578bc06a3fe255def3402f47b6c9"
+            },
+            "old": "            decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+            "old_identity": {
+              "bytes": 66,
+              "sha256": "32ab9b75819e48c78d4c86425d15f2e4465f2a1a8ab77492cc13e9cf4c1e50f4"
+            },
+            "start": 570,
+            "stop": 571
+          },
+          {
+            "new": "            horn.CFrame=horn.CFrame*CFrame.Angles(0,0,math.rad(side*17))\n            local flash=decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+            "new_identity": {
+              "bytes": 153,
+              "sha256": "3849599dfcc461c21eab021a43334a96e5666896f3c2a66cecd70002e3e2ec3f"
+            },
+            "old": "            decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+            "old_identity": {
+              "bytes": 68,
+              "sha256": "6774eb5a0ba811432bc9a78be76bdeccdf0b09e918e629e5f7040d6573ddad9a"
+            },
+            "start": 572,
+            "stop": 573
+          },
+          {
+            "new": "            flash.CFrame=flash.CFrame*CFrame.Angles(0,0,math.rad(-side*24))\n",
+            "new_identity": {
+              "bytes": 76,
+              "sha256": "ca6b4950cb4e19fcfa6c5bb246df34e857e761479a925658e132e352cc0a7aa8"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 574,
+            "stop": 574
+          }
+        ],
+        "inverse": [
+          {
+            "new": "    local body = part(\"Body\", Vector3.new(3.5, 3.5, 3.5), x, info.y,\n",
+            "new_identity": {
+              "bytes": 69,
+              "sha256": "170c0af0ceba064e099b62f51281275845a0a26c6e54ebbd7cf82141232b7a51"
+            },
+            "old": "    -- GQ470_FB015_TWIN_CREATURE_SILHOUETTES_REAL69_20261121\n    -- Distinct species massing, not four recolored luminous spheres.\n    -- Same one noncolliding Body per NPC, no extra object/physics budget.\n    local bodySize = if info.id==\"AWARIN\" then Vector3.new(3.25,3.0,3.25)\n        elseif info.id==\"SANGORU\" then Vector3.new(2.9,4.15,2.9)\n        elseif info.id==\"RAIKO\" then Vector3.new(3.0,3.8,2.75)\n        else Vector3.new(4.2,2.8,3.4)\n    local body = part(\"Body\", bodySize, x, info.y,\n",
+            "old_identity": {
+              "bytes": 497,
+              "sha256": "4169692b5e64663e0088dd206d502bfc74c96ff1aebdb20df1bc21dd8f85a715"
+            },
+            "start": 528,
+            "stop": 536
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "    body.Reflectance = 0\n    body:SetAttribute(\"ArtSilhouette\",info.id)\n",
+            "old_identity": {
+              "bytes": 72,
+              "sha256": "96f1a0ca80f15e1f2a27a79ac8e145bd40ebba641c625ea82d87ce0e60fc0e55"
+            },
+            "start": 538,
+            "stop": 540
+          },
+          {
+            "new": "            Enum.Material.Neon, false, npc)\n",
+            "new_identity": {
+              "bytes": 44,
+              "sha256": "65ac5f6f33d49324d51246b741d4d936d7e669b85f26d199b0675faa294fefb2"
+            },
+            "old": "            Enum.Material.SmoothPlastic, false, npc)\n",
+            "old_identity": {
+              "bytes": 53,
+              "sha256": "741c0ed0e8af84f391d59ba37f44a2851531fb1c16604c850bb8c241d920d57f"
+            },
+            "start": 543,
+            "stop": 544
+          },
+          {
+            "new": "        info.y + 2, info.localZ, info.tint, Enum.Material.Neon, false, npc)\n",
+            "new_identity": {
+              "bytes": 76,
+              "sha256": "866207c34b0b559857ce3149be1030d7defd8d4c70212cc344d59762d6628ffc"
+            },
+            "old": "        info.y + 2, info.localZ, info.tint, Enum.Material.SmoothPlastic, false, npc)\n",
+            "old_identity": {
+              "bytes": 85,
+              "sha256": "ab1f4ea1a13799f47a3bce47047e6800ea909bda0e13652da1450dbb99d6c1f1"
+            },
+            "start": 547,
+            "stop": 548
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "        -- Matte ornamentation retains the authored 8-NPC silhouette count.\n        -- No persistent glow overdraw or extra mobile lights.\n",
+            "old_identity": {
+              "bytes": 139,
+              "sha256": "1ececf6dc4da85a359c3b669ab6dd79c7f98401b00b5704ef4b499397ba7ded3"
+            },
+            "start": 554,
+            "stop": 556
+          },
+          {
+            "new": "            tint,Enum.Material.Neon,false,npc)\n",
+            "new_identity": {
+              "bytes": 47,
+              "sha256": "84945fd7127d4036ce2f84c019328386b2e1ae22fa034b18c7680fbcdee8c62f"
+            },
+            "old": "            tint,Enum.Material.SmoothPlastic,false,npc)\n",
+            "old_identity": {
+              "bytes": 56,
+              "sha256": "af338836b4fb1fce20aab1a744c439e2ed767832a52673b5493da71bb8ca3ad1"
+            },
+            "start": 557,
+            "stop": 558
+          },
+          {
+            "new": "            decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+            "new_identity": {
+              "bytes": 67,
+              "sha256": "005ceec6dcdd35fae226d7676b8a9629f7600bc2edaf048b57a38d15cf60c8af"
+            },
+            "old": "            local stem=decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+            "old_identity": {
+              "bytes": 78,
+              "sha256": "ad301815df6f33232f82232786058e7cebd289f8152cd6f699a508fd5ca7be27"
+            },
+            "start": 573,
+            "stop": 574
+          },
+          {
+            "new": "            decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+            "new_identity": {
+              "bytes": 65,
+              "sha256": "8fd56b655abee905ff78e1c48e7893efea7303e56551ef1cc00b49b91a471631"
+            },
+            "old": "            stem.CFrame=stem.CFrame*CFrame.Angles(0,0,math.rad(-side*12))\n            local fork=decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+            "old_identity": {
+              "bytes": 150,
+              "sha256": "24120a84e2ad180700d2d37e23513005c814fea2abb7c70b13f49f2feaa2a1d3"
+            },
+            "start": 575,
+            "stop": 577
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "            fork.CFrame=fork.CFrame*CFrame.Angles(0,0,math.rad(side*30))\n",
+            "old_identity": {
+              "bytes": 73,
+              "sha256": "eda608e3fefafe1173b48a6afbfe20bba57a71de5b2c36c3abdcb173398db623"
+            },
+            "start": 578,
+            "stop": 579
+          },
+          {
+            "new": "            decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+            "new_identity": {
+              "bytes": 66,
+              "sha256": "32ab9b75819e48c78d4c86425d15f2e4465f2a1a8ab77492cc13e9cf4c1e50f4"
+            },
+            "old": "            local horn=decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+            "old_identity": {
+              "bytes": 77,
+              "sha256": "c988121fbc6001a86f4de2dbabed3f3c3df9578bc06a3fe255def3402f47b6c9"
+            },
+            "start": 583,
+            "stop": 584
+          },
+          {
+            "new": "            decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+            "new_identity": {
+              "bytes": 68,
+              "sha256": "6774eb5a0ba811432bc9a78be76bdeccdf0b09e918e629e5f7040d6573ddad9a"
+            },
+            "old": "            horn.CFrame=horn.CFrame*CFrame.Angles(0,0,math.rad(side*17))\n            local flash=decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+            "old_identity": {
+              "bytes": 153,
+              "sha256": "3849599dfcc461c21eab021a43334a96e5666896f3c2a66cecd70002e3e2ec3f"
+            },
+            "start": 585,
+            "stop": 587
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "            flash.CFrame=flash.CFrame*CFrame.Angles(0,0,math.rad(-side*24))\n",
+            "old_identity": {
+              "bytes": 76,
+              "sha256": "ca6b4950cb4e19fcfa6c5bb246df34e857e761479a925658e132e352cc0a7aa8"
+            },
+            "start": 588,
+            "stop": 589
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 31784,
+            "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+          },
+          "before": {
+            "bytes": 31308,
+            "sha256": "c8a78277b74669caebfb7ac6e1dc18f065c537f2da00cf22d8fd7fbca0bf5a00"
+          },
+          "class": "Script",
+          "forward": [
+            {
+              "new": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "new_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 9,
+              "stop": 9
+            },
+            {
+              "new": "local function activeMatch():boolean\n    -- Read the existing Host's round, including its retained result world.\n    return world.Parent==arena and arena.Parent==lobby and lobby.Parent==Workspace\n        and type(Rules.isRuntimeWorldActive)==\"function\"\n        and Rules.isRuntimeWorldActive(arena,mode)==true\nend\n",
+              "new_identity": {
+                "bytes": 314,
+                "sha256": "6a88e066b32e3fa698ebdca3297e7178c29b6f34e995901561c9e81d0975ad3f"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 184,
+              "stop": 184
+            },
+            {
+              "new": "    local active=Bond.snapshot(player,now)\n    if active then\n        player:SetAttribute(\"EGGRUMBLE_TwinBondServerGranted\",true)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondWorldKey\",world:GetAttribute(\"WorldKey\"))\n        player:SetAttribute(\"EGGRUMBLE_TwinBondEndsAt\",active.endsAt)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondLevel\",active.level)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondMode\",mode)\n    end\n",
+              "new_identity": {
+                "bytes": 424,
+                "sha256": "c8ef1eec46d918dc80d7ebced267c28d3ea043e81e2462e24c8280b5d3f24367"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 477,
+              "stop": 477
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    local active=Bond.snapshot(player,now)\n    if active then\n        player:SetAttribute(\"EGGRUMBLE_TwinBondServerGranted\",true)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondWorldKey\",world:GetAttribute(\"WorldKey\"))\n        player:SetAttribute(\"EGGRUMBLE_TwinBondEndsAt\",active.endsAt)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondLevel\",active.level)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondMode\",mode)\n    end\n",
+              "old_identity": {
+                "bytes": 424,
+                "sha256": "c8ef1eec46d918dc80d7ebced267c28d3ea043e81e2462e24c8280b5d3f24367"
+              },
+              "start": 500,
+              "stop": 508
+            },
+            {
+              "new": "        if not activeMatch() then return end\n",
+              "new_identity": {
+                "bytes": 45,
+                "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 592,
+              "stop": 592
+            },
+            {
+              "new": "        if not activeMatch() then return end\n",
+              "new_identity": {
+                "bytes": 45,
+                "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 610,
+              "stop": 610
+            },
+            {
+              "new": "        local bondEnabled=RunService:IsStudio() and activeMatch()\n",
+              "new_identity": {
+                "bytes": 66,
+                "sha256": "a4466ef8683be6b08f30a8ae0159f052932b01a9e3a61f6bed354533eec71cb7"
+              },
+              "old": "        local bondEnabled=RunService:IsStudio() and arena.Parent==lobby\n",
+              "old_identity": {
+                "bytes": 72,
+                "sha256": "50f9b890a67732755fe9e570d8543b69da5cb50afe6b6988613c8cdc6198c539"
+              },
+              "start": 646,
+              "stop": 647
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local Rules=require(script.Parent:WaitForChild(\"EGGRUMBLE_CastleMatchRules\"))\n",
+              "old_identity": {
+                "bytes": 78,
+                "sha256": "2a353254fb069e5c0c0f82f392b3a2dc6fd918d98da63f4d5652edbef6c785e3"
+              },
+              "start": 9,
+              "stop": 10
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "local function activeMatch():boolean\n    -- Read the existing Host's round, including its retained result world.\n    return world.Parent==arena and arena.Parent==lobby and lobby.Parent==Workspace\n        and type(Rules.isRuntimeWorldActive)==\"function\"\n        and Rules.isRuntimeWorldActive(arena,mode)==true\nend\n",
+              "old_identity": {
+                "bytes": 314,
+                "sha256": "6a88e066b32e3fa698ebdca3297e7178c29b6f34e995901561c9e81d0975ad3f"
+              },
+              "start": 185,
+              "stop": 191
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "    local active=Bond.snapshot(player,now)\n    if active then\n        player:SetAttribute(\"EGGRUMBLE_TwinBondServerGranted\",true)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondWorldKey\",world:GetAttribute(\"WorldKey\"))\n        player:SetAttribute(\"EGGRUMBLE_TwinBondEndsAt\",active.endsAt)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondLevel\",active.level)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondMode\",mode)\n    end\n",
+              "old_identity": {
+                "bytes": 424,
+                "sha256": "c8ef1eec46d918dc80d7ebced267c28d3ea043e81e2462e24c8280b5d3f24367"
+              },
+              "start": 484,
+              "stop": 492
+            },
+            {
+              "new": "    local active=Bond.snapshot(player,now)\n    if active then\n        player:SetAttribute(\"EGGRUMBLE_TwinBondServerGranted\",true)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondWorldKey\",world:GetAttribute(\"WorldKey\"))\n        player:SetAttribute(\"EGGRUMBLE_TwinBondEndsAt\",active.endsAt)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondLevel\",active.level)\n        player:SetAttribute(\"EGGRUMBLE_TwinBondMode\",mode)\n    end\n",
+              "new_identity": {
+                "bytes": 424,
+                "sha256": "c8ef1eec46d918dc80d7ebced267c28d3ea043e81e2462e24c8280b5d3f24367"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 515,
+              "stop": 515
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "        if not activeMatch() then return end\n",
+              "old_identity": {
+                "bytes": 45,
+                "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
+              },
+              "start": 599,
+              "stop": 600
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "        if not activeMatch() then return end\n",
+              "old_identity": {
+                "bytes": 45,
+                "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
+              },
+              "start": 618,
+              "stop": 619
+            },
+            {
+              "new": "        local bondEnabled=RunService:IsStudio() and arena.Parent==lobby\n",
+              "new_identity": {
+                "bytes": 72,
+                "sha256": "50f9b890a67732755fe9e570d8543b69da5cb50afe6b6988613c8cdc6198c539"
+              },
+              "old": "        local bondEnabled=RunService:IsStudio() and activeMatch()\n",
+              "old_identity": {
+                "bytes": 66,
+                "sha256": "a4466ef8683be6b08f30a8ae0159f052932b01a9e3a61f6bed354533eec71cb7"
+              },
+              "start": 655,
+              "stop": 656
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
+        "forward": [
+          {
+            "new": " frame.BackgroundColor3=Color3.fromRGB(255,255,255)\n",
+            "new_identity": {
+              "bytes": 52,
+              "sha256": "0d7d5426e6c879765e14f64673f04c5d8aa41127e631542e1f052da9e528581a"
+            },
+            "old": " frame.BackgroundColor3=Color3.fromRGB(23,34,48)\n",
+            "old_identity": {
+              "bytes": 49,
+              "sha256": "5cf8c403daf0da951dbe4e965889f8414f231aff3d67c77bcb0f919faa4c322b"
+            },
+            "start": 122,
+            "stop": 123
+          },
+          {
+            "new": "\n -- GQ470_FB015_MATTE_RESULT_CARD_REAL69_20261121\n -- Fixed 94px compact card: matte depth, one fine border and one thin result-tinted rail.\n -- Tint is derived ONLY from the actual server-computed result text/win flag.\n local accent=if won then Color3.fromRGB(245,199,100)\n  elseif title:find(\"引き分け\",1,true) then Color3.fromRGB(158,185,204)\n  else Color3.fromRGB(130,169,199)\n local matte=Instance.new(\"UIGradient\")\n matte.Name=\"MatteDepth\"\n matte.Color=ColorSequence.new({\n  ColorSequenceKeypoint.new(0,Color3.fromRGB(22,38,53)),\n  ColorSequenceKeypoint.new(1,Color3.fromRGB(35,49,67)),\n })\n matte.Rotation=90\n matte.Parent=frame\n local outline=Instance.new(\"UIStroke\")\n outline.Name=\"ResultOutline\"\n outline.ApplyStrokeMode=Enum.ApplyStrokeMode.Border\n outline.Color=accent\n outline.Thickness=1\n outline.Transparency=.52\n outline.Parent=frame\n local rail=Instance.new(\"Frame\")\n rail.Name=\"TruthAccent\"\n rail.BorderSizePixel=0\n rail.BackgroundColor3=accent\n rail.BackgroundTransparency=.07\n rail.Position=UDim2.fromOffset(7,20)\n rail.Size=UDim2.fromOffset(3,54)\n rail.Parent=frame\n",
+            "new_identity": {
+              "bytes": 1092,
+              "sha256": "940a7ae3de6d6e063b77d1cc8612336c01dcabba9db256207be42b688198e431"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 133,
+            "stop": 133
+          }
+        ],
+        "inverse": [
+          {
+            "new": " frame.BackgroundColor3=Color3.fromRGB(23,34,48)\n",
+            "new_identity": {
+              "bytes": 49,
+              "sha256": "5cf8c403daf0da951dbe4e965889f8414f231aff3d67c77bcb0f919faa4c322b"
+            },
+            "old": " frame.BackgroundColor3=Color3.fromRGB(255,255,255)\n",
+            "old_identity": {
+              "bytes": 52,
+              "sha256": "0d7d5426e6c879765e14f64673f04c5d8aa41127e631542e1f052da9e528581a"
+            },
+            "start": 122,
+            "stop": 123
+          },
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": "\n -- GQ470_FB015_MATTE_RESULT_CARD_REAL69_20261121\n -- Fixed 94px compact card: matte depth, one fine border and one thin result-tinted rail.\n -- Tint is derived ONLY from the actual server-computed result text/win flag.\n local accent=if won then Color3.fromRGB(245,199,100)\n  elseif title:find(\"引き分け\",1,true) then Color3.fromRGB(158,185,204)\n  else Color3.fromRGB(130,169,199)\n local matte=Instance.new(\"UIGradient\")\n matte.Name=\"MatteDepth\"\n matte.Color=ColorSequence.new({\n  ColorSequenceKeypoint.new(0,Color3.fromRGB(22,38,53)),\n  ColorSequenceKeypoint.new(1,Color3.fromRGB(35,49,67)),\n })\n matte.Rotation=90\n matte.Parent=frame\n local outline=Instance.new(\"UIStroke\")\n outline.Name=\"ResultOutline\"\n outline.ApplyStrokeMode=Enum.ApplyStrokeMode.Border\n outline.Color=accent\n outline.Thickness=1\n outline.Transparency=.52\n outline.Parent=frame\n local rail=Instance.new(\"Frame\")\n rail.Name=\"TruthAccent\"\n rail.BorderSizePixel=0\n rail.BackgroundColor3=accent\n rail.BackgroundTransparency=.07\n rail.Position=UDim2.fromOffset(7,20)\n rail.Size=UDim2.fromOffset(3,54)\n rail.Parent=frame\n",
+            "old_identity": {
+              "bytes": 1092,
+              "sha256": "940a7ae3de6d6e063b77d1cc8612336c01dcabba9db256207be42b688198e431"
+            },
+            "start": 133,
+            "stop": 163
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 8006,
+            "sha256": "c974c99e949fe50efc9eab986dc489a84cfc21ca77245e7de4b18a2e3b6ebcff"
+          },
+          "before": {
+            "bytes": 7410,
+            "sha256": "5fbb6a5017363bb8ef2a9793e279a1cb8a76480f6b2e74758ec35188508ce1a4"
+          },
+          "class": "ModuleScript",
+          "forward": [
+            {
+              "new": " -- GQ470_P0D033_S1A_RESULT_GROWTH: final view of the original neutral ledger.\n -- Public live attributes are cleared at finish; the original session snapshot\n -- remains readable before/after lifecycle dispatch and during the GUI retry.\n local growthSuffix=\"\"\n local growthReader=session.swarm and session.swarm.getBattleGrowthSnapshot\n if type(growthReader)==\"function\" then\n  local snapshot=growthReader(id)\n  local stage=if type(snapshot)==\"table\" then snapshot.stage else nil\n  if stage==1 or stage==2 or stage==3 then growthSuffix=\" B\"..tostring(stage) end\n end\n",
+              "new_identity": {
+                "bytes": 568,
+                "sha256": "7d042cb8446f2f3e30a73b7b1f953a29b07f06a707aae5fcfea2cbed274f409d"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 86,
+              "stop": 86
+            },
+            {
+              "new": "   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix..growthSuffix\n",
+              "new_identity": {
+                "bytes": 84,
+                "sha256": "bd3e7e6ac65a72f3ba7d15c34f86cea46866df62ad8022ee44f3ad8df84920ab"
+              },
+              "old": "   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix\n",
+              "old_identity": {
+                "bytes": 70,
+                "sha256": "1c504ec564e9d90a6f5c7a47cb0a73914a5c1606ef34adec6e346d4080033a70"
+              },
+              "start": 88,
+              "stop": 89
+            },
+            {
+              "new": "  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix..growthSuffix\n",
+              "new_identity": {
+                "bytes": 73,
+                "sha256": "f02811022f06f9a76cf0c49dbef1b451b88a8d0b35ab3354680bf90f04eb34c4"
+              },
+              "old": "  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix\n",
+              "old_identity": {
+                "bytes": 59,
+                "sha256": "6539b4b1e41c5416884905f052e5195824168dd374e9b95f4e5d919575154ee0"
+              },
+              "start": 91,
+              "stop": 92
+            },
+            {
+              "new": " frame.Position=UDim2.new(.5,0,1,-96)\n",
+              "new_identity": {
+                "bytes": 38,
+                "sha256": "de7262d0e5a70416ce35742bf34c89d355e182fe4e3b34fc5f33a8468184845c"
+              },
+              "old": " frame.Position=UDim2.new(.5,0,1,-22)\n",
+              "old_identity": {
+                "bytes": 38,
+                "sha256": "7d0704988c9904aa115a36f17fb9b00036830dac37e950bbd49098c44de8ba65"
+              },
+              "start": 110,
+              "stop": 111
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- GQ470_P0D033_S1A_RESULT_GROWTH: final view of the original neutral ledger.\n -- Public live attributes are cleared at finish; the original session snapshot\n -- remains readable before/after lifecycle dispatch and during the GUI retry.\n local growthSuffix=\"\"\n local growthReader=session.swarm and session.swarm.getBattleGrowthSnapshot\n if type(growthReader)==\"function\" then\n  local snapshot=growthReader(id)\n  local stage=if type(snapshot)==\"table\" then snapshot.stage else nil\n  if stage==1 or stage==2 or stage==3 then growthSuffix=\" B\"..tostring(stage) end\n end\n",
+              "old_identity": {
+                "bytes": 568,
+                "sha256": "7d042cb8446f2f3e30a73b7b1f953a29b07f06a707aae5fcfea2cbed274f409d"
+              },
+              "start": 86,
+              "stop": 96
+            },
+            {
+              "new": "   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix\n",
+              "new_identity": {
+                "bytes": 70,
+                "sha256": "1c504ec564e9d90a6f5c7a47cb0a73914a5c1606ef34adec6e346d4080033a70"
+              },
+              "old": "   place,points,kos,stolen,secured,eggs,fallen,teamSiege)..bossSuffix..growthSuffix\n",
+              "old_identity": {
+                "bytes": 84,
+                "sha256": "bd3e7e6ac65a72f3ba7d15c34f86cea46866df62ad8022ee44f3ad8df84920ab"
+              },
+              "start": 98,
+              "stop": 99
+            },
+            {
+              "new": "  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix\n",
+              "new_identity": {
+                "bytes": 59,
+                "sha256": "6539b4b1e41c5416884905f052e5195824168dd374e9b95f4e5d919575154ee0"
+              },
+              "old": "  place,points,kos,stolen,secured,eggs,fallen)..bossSuffix..growthSuffix\n",
+              "old_identity": {
+                "bytes": 73,
+                "sha256": "f02811022f06f9a76cf0c49dbef1b451b88a8d0b35ab3354680bf90f04eb34c4"
+              },
+              "start": 101,
+              "stop": 102
+            },
+            {
+              "new": " frame.Position=UDim2.new(.5,0,1,-22)\n",
+              "new_identity": {
+                "bytes": 38,
+                "sha256": "7d0704988c9904aa115a36f17fb9b00036830dac37e950bbd49098c44de8ba65"
+              },
+              "old": " frame.Position=UDim2.new(.5,0,1,-96)\n",
+              "old_identity": {
+                "bytes": 38,
+                "sha256": "de7262d0e5a70416ce35742bf34c89d355e182fe4e3b34fc5f33a8468184845c"
+              },
+              "start": 120,
+              "stop": 121
+            }
+          ],
+          "route": "ServerScriptService/EGGRUMBLE_MatchResultService"
+        }
+      },
+      "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
+        "forward": [
+          {
+            "new": " -- GQ470_FB015_SKILLFX_SHARD_FLASH_REAL69_20261121\n -- Low-glare sculpted slash, not a large opaque spherical curtain.\n -- One original Part, same lifetime/lease/quota and same hit particles.\n",
+            "new_identity": {
+              "bytes": 193,
+              "sha256": "a271ee91ab908e90bf4af30f76d9c521b42e8bda1b591ccdd0ed574521647236"
+            },
+            "old": "",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "start": 115,
+            "stop": 115
+          },
+          {
+            "new": "  local visualWidth=math.clamp(radius,2,12)\n  head.Shape=Enum.PartType.Block\n  head.Material=Enum.Material.SmoothPlastic\n  head.Transparency=.55\n  head.CFrame=CFrame.lookAt(center+Vector3.new(0,1.75,0),center+f*3)\n   *CFrame.Angles(0,0,math.rad(24))\n  animate(head,Vector3.new(.24,2.8,visualWidth*.85*scale),life,\n   CFrame.lookAt(center+f*2+Vector3.new(0,1.75,0),center+f*8)\n   *CFrame.Angles(0,0,math.rad(24)))\n",
+            "new_identity": {
+              "bytes": 413,
+              "sha256": "6b928566f5cb989c381efb9194c2600854b817bf7ff6584e1f041fb4afa12e6e"
+            },
+            "old": "  head.Shape=Enum.PartType.Ball\n  animate(head,Vector3.new(radius*1.45*scale,2.4,radius*1.45*scale),life)\n",
+            "old_identity": {
+              "bytes": 106,
+              "sha256": "4917507dccda222faa00b83b3a34519d922d544d8a9534598fed1c0717d625fa"
+            },
+            "start": 117,
+            "stop": 119
+          }
+        ],
+        "inverse": [
+          {
+            "new": "",
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "old": " -- GQ470_FB015_SKILLFX_SHARD_FLASH_REAL69_20261121\n -- Low-glare sculpted slash, not a large opaque spherical curtain.\n -- One original Part, same lifetime/lease/quota and same hit particles.\n",
+            "old_identity": {
+              "bytes": 193,
+              "sha256": "a271ee91ab908e90bf4af30f76d9c521b42e8bda1b591ccdd0ed574521647236"
+            },
+            "start": 115,
+            "stop": 118
+          },
+          {
+            "new": "  head.Shape=Enum.PartType.Ball\n  animate(head,Vector3.new(radius*1.45*scale,2.4,radius*1.45*scale),life)\n",
+            "new_identity": {
+              "bytes": 106,
+              "sha256": "4917507dccda222faa00b83b3a34519d922d544d8a9534598fed1c0717d625fa"
+            },
+            "old": "  local visualWidth=math.clamp(radius,2,12)\n  head.Shape=Enum.PartType.Block\n  head.Material=Enum.Material.SmoothPlastic\n  head.Transparency=.55\n  head.CFrame=CFrame.lookAt(center+Vector3.new(0,1.75,0),center+f*3)\n   *CFrame.Angles(0,0,math.rad(24))\n  animate(head,Vector3.new(.24,2.8,visualWidth*.85*scale),life,\n   CFrame.lookAt(center+f*2+Vector3.new(0,1.75,0),center+f*8)\n   *CFrame.Angles(0,0,math.rad(24)))\n",
+            "old_identity": {
+              "bytes": 413,
+              "sha256": "6b928566f5cb989c381efb9194c2600854b817bf7ff6584e1f041fb4afa12e6e"
+            },
+            "start": 120,
+            "stop": 129
+          }
+        ],
+        "parent": {
+          "after": {
+            "bytes": 10369,
+            "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+          },
+          "before": {
+            "bytes": 10369,
+            "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+          },
+          "class": "ModuleScript",
+          "forward": [],
+          "inverse": [],
+          "route": "ServerScriptService/EGGRUMBLE_SkillFX"
+        }
+      }
+    },
+    "skillfx_fixture": {
+      "bytes": 5412,
+      "sha256": "27d2a3fb09d22be988b7baf39ca795f63f182025ffa9ea3768a81b01c3495668"
+    }
+  },
   "author_origins": {
     "local_union_accounting": {
       "bytes": 23457,
@@ -4803,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 877289,
-    "sha256": "b62cc94ed5d6b51dd3afca811b87df45104bc7931b8636fd69cba94667c78fb7"
+    "bytes": 887813,
+    "sha256": "7143dd44abd692ffb632438c3966a2d806868175bda642aaa1541d1725dff242"
   },
   "followup_repair": {
     "author_contexts": [
@@ -10909,8 +12697,8 @@
     },
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau": {
       "after": {
-        "bytes": 15746,
-        "sha256": "073c88a02e84d27c4f2cddd8ebd701c36e389f7050876b0551b4aa872301746c"
+        "bytes": 17995,
+        "sha256": "6f88af7b024481a712f74430d63a7dc5985a17f32e430cfae36eb6ad2c63467a"
       },
       "before": {
         "bytes": 13076,
@@ -10931,6 +12719,62 @@
           },
           "start": 8,
           "stop": 8
+        },
+        {
+          "new": "-- GQ470_CASTLE_GUARDIAN_SEVEN_SILHOUETTES_REAL69_20261121\n-- Live castle guardians; lobby GQ805 shop silhouettes are a separate owner.\nlocal GUARDIAN_STYLE={\n WARRIOR={torso=Vector3.new(2.9,2.5,1.9),head=Vector3.new(1.75,1.5,1.55),\n  shoulder=Vector3.new(1.05,.9,1.4),gear=Vector3.new(.62,2.9,.6),\n  trim=Color3.fromRGB(183,169,140),helm=Color3.fromRGB(187,194,199),\n  boots=Color3.fromRGB(71,77,85),material=Enum.Material.Metal,lean=0},\n MAGE={torso=Vector3.new(1.8,2.45,1.25),head=Vector3.new(1.3,1.9,1.25),\n  shoulder=Vector3.new(.55,.55,1.0),gear=Vector3.new(.3,3.5,.3),\n  trim=Color3.fromRGB(155,189,210),helm=Color3.fromRGB(199,226,230),\n  boots=Color3.fromRGB(52,74,92),material=Enum.Material.SmoothPlastic,lean=0},\n NINJA={torso=Vector3.new(1.95,1.9,1.3),head=Vector3.new(1.45,1.2,1.3),\n  shoulder=Vector3.new(.65,.55,.9),gear=Vector3.new(.3,2.6,.3),\n  trim=Color3.fromRGB(85,72,125),helm=Color3.fromRGB(74,71,105),\n  boots=Color3.fromRGB(43,46,65),material=Enum.Material.SmoothPlastic,lean=6},\n TRAPPER={torso=Vector3.new(2.05,2.25,1.45),head=Vector3.new(1.35,1.5,1.5),\n  shoulder=Vector3.new(.78,.55,1.25),gear=Vector3.new(.33,2.8,.33),\n  trim=Color3.fromRGB(155,115,186),helm=Color3.fromRGB(171,148,195),\n  boots=Color3.fromRGB(72,55,99),material=Enum.Material.SmoothPlastic,lean=0},\n BUILDER={torso=Vector3.new(2.8,1.95,1.85),head=Vector3.new(1.65,1.2,1.55),\n  shoulder=Vector3.new(.95,.77,1.3),gear=Vector3.new(.82,2.9,.82),\n  trim=Color3.fromRGB(173,140,91),helm=Color3.fromRGB(184,166,124),\n  boots=Color3.fromRGB(79,73,62),material=Enum.Material.Metal,lean=0},\n BEAST={torso=Vector3.new(2.4,1.85,1.7),head=Vector3.new(1.7,1.3,1.65),\n  shoulder=Vector3.new(.85,.57,1.3),gear=Vector3.new(.4,2.8,.4),\n  trim=Color3.fromRGB(116,142,105),helm=Color3.fromRGB(132,156,114),\n  boots=Color3.fromRGB(55,74,61),material=Enum.Material.SmoothPlastic,lean=12},\n ZOMBIE={torso=Vector3.new(1.85,2.55,1.25),head=Vector3.new(1.35,1.72,1.33),\n  shoulder=Vector3.new(.68,.65,1.08),gear=Vector3.new(.38,3.4,.38),\n  trim=Color3.fromRGB(133,105,145),helm=Color3.fromRGB(155,138,160),\n  boots=Color3.fromRGB(68,60,72),material=Enum.Material.Slate,lean=-5},\n}\n",
+          "new_identity": {
+            "bytes": 2152,
+            "sha256": "2028c946c4934ce1ffe5b9909414aa12384fec9b5663253ce585bf259fb6a275"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 35,
+          "stop": 35
+        },
+        {
+          "new": " local v=assert(GUARDIAN_STYLE[role],\"unknown guardian silhouette\")\n -- Reuse existing 8 common Parts, preserve role extra parts and server combat.\n local torso=part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0)\n   *CFrame.Angles(math.rad(v.lean),0,0),v.torso,c.color)\n torso.Material=v.material\n part(model,\"Helm\",at*CFrame.new(0,4,0),v.head,v.helm,Enum.PartType.Ball)\n part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.25,.24,.17),\n   Color3.fromRGB(44,54,72))\n for _,side in ipairs({-1,1}) do\n  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),v.shoulder,v.trim,\n",
+          "new_identity": {
+            "bytes": 576,
+            "sha256": "9a2ee71dbd935787d8464cf3612d7b44148af17747f25bff2650ea68f97051a5"
+          },
+          "old": " part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0),Vector3.new(2.4,2.2,1.5),c.color)\n part(model,\"Helm\",at*CFrame.new(0,4,0),Vector3.new(1.6,1.5,1.45),Color3.fromRGB(232,218,176),\n",
+          "old_identity": {
+            "bytes": 179,
+            "sha256": "dc828e519b72233b411869e4c07b47971c359f06cd5e58110ec1d96a9b3b95d6"
+          },
+          "start": 38,
+          "stop": 40
+        },
+        {
+          "new": "  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),v.boots)\n",
+          "new_identity": {
+            "bytes": 83,
+            "sha256": "6387402ac0820d4192f23e98684771041c2d8590a4d65911bfc86aa59a5434f1"
+          },
+          "old": " part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.3,.25,.15),Color3.fromRGB(53,65,88))\n for _,side in ipairs({-1,1}) do\n  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),Vector3.new(.85,.7,1.25),\n   Color3.fromRGB(214,189,129),Enum.PartType.Ball)\n  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),\n   Color3.fromRGB(58,66,76))\n",
+          "old_identity": {
+            "bytes": 365,
+            "sha256": "e18cb75566b154b90ef92c633b08455bcbca541519a97758db44bcbf35bbb903"
+          },
+          "start": 41,
+          "stop": 47
+        },
+        {
+          "new": "    v.gear,Color3.fromRGB(211,189,142))\n",
+          "new_identity": {
+            "bytes": 40,
+            "sha256": "8631ff94d23c10caf9616ce03ca562b380724f535c8495a58e1917fb2fc2d981"
+          },
+          "old": "    Vector3.new(.45,3.1,.45),Color3.fromRGB(223,198,131))\n",
+          "old_identity": {
+            "bytes": 58,
+            "sha256": "8cfcdd639c9ab8f3b03dc8053e0a69636f409e92b15f3af8d2696c365d5a6d35"
+          },
+          "start": 50,
+          "stop": 51
         },
         {
           "new": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model,role:string):any\n",
@@ -11145,6 +12989,62 @@
           "stop": 9
         },
         {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- GQ470_CASTLE_GUARDIAN_SEVEN_SILHOUETTES_REAL69_20261121\n-- Live castle guardians; lobby GQ805 shop silhouettes are a separate owner.\nlocal GUARDIAN_STYLE={\n WARRIOR={torso=Vector3.new(2.9,2.5,1.9),head=Vector3.new(1.75,1.5,1.55),\n  shoulder=Vector3.new(1.05,.9,1.4),gear=Vector3.new(.62,2.9,.6),\n  trim=Color3.fromRGB(183,169,140),helm=Color3.fromRGB(187,194,199),\n  boots=Color3.fromRGB(71,77,85),material=Enum.Material.Metal,lean=0},\n MAGE={torso=Vector3.new(1.8,2.45,1.25),head=Vector3.new(1.3,1.9,1.25),\n  shoulder=Vector3.new(.55,.55,1.0),gear=Vector3.new(.3,3.5,.3),\n  trim=Color3.fromRGB(155,189,210),helm=Color3.fromRGB(199,226,230),\n  boots=Color3.fromRGB(52,74,92),material=Enum.Material.SmoothPlastic,lean=0},\n NINJA={torso=Vector3.new(1.95,1.9,1.3),head=Vector3.new(1.45,1.2,1.3),\n  shoulder=Vector3.new(.65,.55,.9),gear=Vector3.new(.3,2.6,.3),\n  trim=Color3.fromRGB(85,72,125),helm=Color3.fromRGB(74,71,105),\n  boots=Color3.fromRGB(43,46,65),material=Enum.Material.SmoothPlastic,lean=6},\n TRAPPER={torso=Vector3.new(2.05,2.25,1.45),head=Vector3.new(1.35,1.5,1.5),\n  shoulder=Vector3.new(.78,.55,1.25),gear=Vector3.new(.33,2.8,.33),\n  trim=Color3.fromRGB(155,115,186),helm=Color3.fromRGB(171,148,195),\n  boots=Color3.fromRGB(72,55,99),material=Enum.Material.SmoothPlastic,lean=0},\n BUILDER={torso=Vector3.new(2.8,1.95,1.85),head=Vector3.new(1.65,1.2,1.55),\n  shoulder=Vector3.new(.95,.77,1.3),gear=Vector3.new(.82,2.9,.82),\n  trim=Color3.fromRGB(173,140,91),helm=Color3.fromRGB(184,166,124),\n  boots=Color3.fromRGB(79,73,62),material=Enum.Material.Metal,lean=0},\n BEAST={torso=Vector3.new(2.4,1.85,1.7),head=Vector3.new(1.7,1.3,1.65),\n  shoulder=Vector3.new(.85,.57,1.3),gear=Vector3.new(.4,2.8,.4),\n  trim=Color3.fromRGB(116,142,105),helm=Color3.fromRGB(132,156,114),\n  boots=Color3.fromRGB(55,74,61),material=Enum.Material.SmoothPlastic,lean=12},\n ZOMBIE={torso=Vector3.new(1.85,2.55,1.25),head=Vector3.new(1.35,1.72,1.33),\n  shoulder=Vector3.new(.68,.65,1.08),gear=Vector3.new(.38,3.4,.38),\n  trim=Color3.fromRGB(133,105,145),helm=Color3.fromRGB(155,138,160),\n  boots=Color3.fromRGB(68,60,72),material=Enum.Material.Slate,lean=-5},\n}\n",
+          "old_identity": {
+            "bytes": 2152,
+            "sha256": "2028c946c4934ce1ffe5b9909414aa12384fec9b5663253ce585bf259fb6a275"
+          },
+          "start": 36,
+          "stop": 68
+        },
+        {
+          "new": " part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0),Vector3.new(2.4,2.2,1.5),c.color)\n part(model,\"Helm\",at*CFrame.new(0,4,0),Vector3.new(1.6,1.5,1.45),Color3.fromRGB(232,218,176),\n   Enum.PartType.Ball)\n part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.3,.25,.15),Color3.fromRGB(53,65,88))\n",
+          "new_identity": {
+            "bytes": 297,
+            "sha256": "56f246cae4616fb690ce6d21e837ef6d28420c00d3d8b25853230c558553e489"
+          },
+          "old": " local v=assert(GUARDIAN_STYLE[role],\"unknown guardian silhouette\")\n -- Reuse existing 8 common Parts, preserve role extra parts and server combat.\n local torso=part(model,\"ArmoredTorso\",at*CFrame.new(0,2.2,0)\n   *CFrame.Angles(math.rad(v.lean),0,0),v.torso,c.color)\n torso.Material=v.material\n part(model,\"Helm\",at*CFrame.new(0,4,0),v.head,v.helm,Enum.PartType.Ball)\n part(model,\"Visor\",at*CFrame.new(0,4,-.78),Vector3.new(1.25,.24,.17),\n   Color3.fromRGB(44,54,72))\n",
+          "old_identity": {
+            "bytes": 468,
+            "sha256": "92b81406f7c03db645716f8f2893f11f34dfcd6d7c497910e21b3d75e8d3aca0"
+          },
+          "start": 71,
+          "stop": 79
+        },
+        {
+          "new": "  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),Vector3.new(.85,.7,1.25),\n   Color3.fromRGB(214,189,129),Enum.PartType.Ball)\n  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),\n   Color3.fromRGB(58,66,76))\n",
+          "new_identity": {
+            "bytes": 237,
+            "sha256": "10bacf303819d34053d583f03e1a10d5ad8402090b7876baee3bc1ed43cf4fef"
+          },
+          "old": "  part(model,\"Pauldron\",at*CFrame.new(side*1.45,2.65,0),v.shoulder,v.trim,\n   Enum.PartType.Ball)\n  part(model,\"Boot\",at*CFrame.new(side*.62,.65,0),Vector3.new(.85,1.15,1),v.boots)\n",
+          "old_identity": {
+            "bytes": 181,
+            "sha256": "cc522a34066dce7abe263a3e37533a8cf707c1a4c86c66ccda49b5ce014cf943"
+          },
+          "start": 80,
+          "stop": 83
+        },
+        {
+          "new": "    Vector3.new(.45,3.1,.45),Color3.fromRGB(223,198,131))\n",
+          "new_identity": {
+            "bytes": 58,
+            "sha256": "8cfcdd639c9ab8f3b03dc8053e0a69636f409e92b15f3af8d2696c365d5a6d35"
+          },
+          "old": "    v.gear,Color3.fromRGB(211,189,142))\n",
+          "old_identity": {
+            "bytes": 40,
+            "sha256": "8631ff94d23c10caf9616ce03ca562b380724f535c8495a58e1917fb2fc2d981"
+          },
+          "start": 86,
+          "stop": 87
+        },
+        {
           "new": "local function targetOf(session:any,owner:string,at:Vector3,range:number,exclude:Model):any\n",
           "new_identity": {
             "bytes": 92,
@@ -11155,8 +13055,8 @@
             "bytes": 104,
             "sha256": "2b595c63ea0c9867325014a4034f926abe3655d4b3c3e5feff09227aee5cee45"
           },
-          "start": 121,
-          "stop": 122
+          "start": 156,
+          "stop": 157
         },
         {
           "new": "   and enemy(session,owner,id) then\n",
@@ -11169,8 +13069,8 @@
             "bytes": 311,
             "sha256": "a1420031032748be80b6076c5b77ce9222a0180f143563c986849ca57d44588e"
           },
-          "start": 132,
-          "stop": 137
+          "start": 167,
+          "stop": 172
         },
         {
           "new": "",
@@ -11183,8 +13083,8 @@
             "bytes": 30,
             "sha256": "05cf7095745ef03f531d64fa7ebefacffd486ffcf7596ff6b0696d873b77b5d9"
           },
-          "start": 155,
-          "stop": 156
+          "start": 190,
+          "stop": 191
         },
         {
           "new": "",
@@ -11197,8 +13097,8 @@
             "bytes": 1008,
             "sha256": "92ef19417a44b4944bf17c46f58820d34c951d4a44af880476fe9d37b2e071e2"
           },
-          "start": 162,
-          "stop": 183
+          "start": 197,
+          "stop": 218
         },
         {
           "new": "",
@@ -11211,8 +13111,8 @@
             "bytes": 331,
             "sha256": "3a5f2928a09c61d5b713d26e5a2b1e8e07fd91adca16da7cf27f8b6057266520"
           },
-          "start": 191,
-          "stop": 198
+          "start": 226,
+          "stop": 233
         },
         {
           "new": "  local foe,dist=targetOf(session,d.owner,at,c.range,model)\n",
@@ -11225,8 +13125,8 @@
             "bytes": 67,
             "sha256": "e194662f730c7e6b5bc441c9bc8c6721adcc03e44e01eb7cb1b4b76f0b8d07bc"
           },
-          "start": 226,
-          "stop": 227
+          "start": 261,
+          "stop": 262
         },
         {
           "new": "   local nextPos=at+delta.Unit*step\n   model:PivotTo(CFrame.new(nextPos)*CFrame.Angles(0,now*.8,0))\n",
@@ -11239,8 +13139,8 @@
             "bytes": 168,
             "sha256": "6f54842c94b429bbd9e50eed5665a038aaa50d3301a78fc49b3234f9f6b93392"
           },
-          "start": 244,
-          "stop": 246
+          "start": 279,
+          "stop": 281
         },
         {
           "new": "",
@@ -11253,8 +13153,8 @@
             "bytes": 409,
             "sha256": "0782ca458a73befcf722874ed19730bc66e3aa12c66c0c89ecf349a718a68477"
           },
-          "start": 261,
-          "stop": 270
+          "start": 296,
+          "stop": 305
         },
         {
           "new": "",
@@ -11267,8 +13167,8 @@
             "bytes": 60,
             "sha256": "28ee9b1d85d21838744a498c5c7ad80804a0cc5c348482f8098e26b185ebd448"
           },
-          "start": 271,
-          "stop": 272
+          "start": 306,
+          "stop": 307
         },
         {
           "new": "    local role=\"WARRIOR\"\n    local humanId=tonumber(owner)\n    if humanId and type(chosenRole)==\"table\" then\n     local selection=chosenRole[humanId]\n     if CONFIG[selection] then role=selection end\n    end\n",
@@ -11281,8 +13181,8 @@
             "bytes": 47,
             "sha256": "dd7dbfb8b3ec88f0723a63e59b53266dfefb9b06b64a664ccefaf6cd01f5932c"
           },
-          "start": 292,
-          "stop": 293
+          "start": 327,
+          "stop": 328
         },
         {
           "new": " local function damageFromPlayer(p:Player,at:Vector3,radius:number,damage:number,_shape:string):number\n",
@@ -11295,8 +13195,8 @@
             "bytes": 147,
             "sha256": "0efdb4b28eb79dbe47c01b9ae41b57ff8af499ce68726d1c8c3321cfc00eb135"
           },
-          "start": 304,
-          "stop": 306
+          "start": 339,
+          "stop": 341
         },
         {
           "new": "",
@@ -11309,8 +13209,8 @@
             "bytes": 364,
             "sha256": "61db18dc639d4be1b6abbebfe3963994b9d9607cf254f9dd95ddfd3509bf620f"
           },
-          "start": 311,
-          "stop": 316
+          "start": 346,
+          "stop": 351
         },
         {
           "new": "    and (root.Position-at).Magnitude<=radius then\n",
@@ -11323,8 +13223,8 @@
             "bytes": 87,
             "sha256": "3e39ee3d4ab8a9e1293e776c0779ee11aa4e865a8b7df10814699048c958441f"
           },
-          "start": 322,
-          "stop": 323
+          "start": 357,
+          "stop": 358
         },
         {
           "new": "    ray.FilterDescendantsInstances={p.Character,d.model}\n    if workspace:Raycast(at,root.Position-at,ray)==nil then\n",
@@ -11337,8 +13237,8 @@
             "bytes": 218,
             "sha256": "48cd4400693eef127a767a37ee75d4145885bb232d9b0b65f268cd5e7e198d1c"
           },
-          "start": 325,
-          "stop": 329
+          "start": 360,
+          "stop": 364
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime"
@@ -12195,16 +14095,298 @@
     },
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau": {
       "after": {
-        "bytes": 13624,
-        "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
+        "bytes": 19297,
+        "sha256": "fe27abeb71ffbba025ec4625532c5d711b874f9cb91848ac64369229e2d337ce"
       },
       "before": {
         "bytes": 13624,
         "sha256": "d77fdaf390506f87dfea3064611898320288690f4ef14b97f4e8416eaef40395"
       },
       "class": "Script",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": "local ridgeVisuals:{[Instance]:{BasePart}}={}\nlocal function reclaimRidgeForCastle(arena:Instance):boolean\n local bucket=ridgeVisuals[arena]\n if not bucket then return false end\n while #bucket>0 do\n  local p=table.remove(bucket)\n  if p and p.Parent then\n   p:Destroy()\n   budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n   return true\n  end\n end\n return false\nend\n-- GQ470_FORTRESS_VISUAL_FAIR_BUDGET_REAL69_20261121\n-- Reserve ten existing identity parts per castle, without increasing the\n-- existing per-arena 320-Part limit or 19-Part optional castle detail limit.\nlocal MIN_CASTLE_ESSENTIAL_PARTS = 10\n-- Keep only this art author's instances; do not count gameplay geometry.\n-- Old castles/other art can be removed during a match: prune stale references\n-- before every new castle, so the counter never prevents later roofs/crests.\nlocal trackedArt:{[Instance]:{BasePart}}={}\nlocal function recountArenaArt(arena:Instance):{BasePart}\n local active:{BasePart}={}\n for _,p in ipairs(trackedArt[arena] or {}) do\n  if p.Parent and p:IsDescendantOf(arena) then table.insert(active,p) end\n end\n trackedArt[arena]=active\n budgets[arena]=#active\n return active\nend\nlocal function reserveCastleIdentity(arena:Instance):boolean\n local active=recountArenaArt(arena)\n while #active+MIN_CASTLE_ESSENTIAL_PARTS>MAX_VISUAL_PARTS_PER_ARENA do\n  -- Reclaim only expendable decorations, NEVER a roof/keystone/crest.\n  local optionalIndex:number?=nil\n  for index=#active,1,-1 do\n   if active[index]:GetAttribute(\"GQ470CastleOptional\")==true then\n    optionalIndex=index\n    break\n   end\n  end\n  if not optionalIndex then return false end\n  local old=table.remove(active,optionalIndex)\n  if old then old:Destroy() end\n  budgets[arena]=#active\n end\n return true\nend\n",
+          "new_identity": {
+            "bytes": 1754,
+            "sha256": "62a871c22551ced297c6ee3767a2b8a744b11a2a05d595cde52f620bc5049fac"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 13,
+          "stop": 13
+        },
+        {
+          "new": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then\n  if parent.Name~=\"EGGRUMBLE_CastleArt_VisualOnly\" or not reclaimRidgeForCastle(arena) then return nil end\n end\n",
+          "new_identity": {
+            "bytes": 171,
+            "sha256": "90854ea27d6b3ae1f345855879c20132b67a22f694392933914ff8a511d7a011"
+          },
+          "old": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then return nil end\n",
+          "old_identity": {
+            "bytes": 74,
+            "sha256": "2e2dee07884fa975aeb596f7e91136923b09db6b52f28e552f241cda3de0d737"
+          },
+          "start": 35,
+          "stop": 36
+        },
+        {
+          "new": " local tracked=trackedArt[arena]\n if not tracked then tracked={} trackedArt[arena]=tracked end\n table.insert(tracked,p)\n",
+          "new_identity": {
+            "bytes": 120,
+            "sha256": "eb8c318752ebd119a4dd7f08617b1a17d8b677822a2349ddf878dde63bbff0a7"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 55,
+          "stop": 55
+        },
+        {
+          "new": " -- Even when the StandardCore arrives before TacticalBattlefield, paint the\n -- existing 140 scenery parts first. paintArena retries all existing castles.\n if not builtArenas[arena] then return end\n",
+          "new_identity": {
+            "bytes": 199,
+            "sha256": "bc79a0094812be8db5a16797d0b10d5b18294b77d20353b4f7633ab47d41de10"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 60,
+          "stop": 60
+        },
+        {
+          "new": " -- Recount live owned decorations and reclaim optional trim, never base art.\n if not reserveCastleIdentity(arena) then return end\n",
+          "new_identity": {
+            "bytes": 131,
+            "sha256": "5092b8e7f496a7e7c065f34cf00c892f0835ee86d3c7d6db23d0a875bfade426"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 63,
+          "stop": 63
+        },
+        {
+          "new": " castle.Destroying:Connect(function() builtCastles[castle]=nil end)\n",
+          "new_identity": {
+            "bytes": 68,
+            "sha256": "51f514ca1ecf28bf755040b8b93fd6baac0dd2833b55d6e980fd9d1f679be51c"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 64,
+          "stop": 64
+        },
+        {
+          "new": "  if p then\n   used+=1\n   if used>MIN_CASTLE_ESSENTIAL_PARTS then\n    p:SetAttribute(\"GQ470CastleOptional\",true)\n   end\n  end\n",
+          "new_identity": {
+            "bytes": 126,
+            "sha256": "2bda84a5cebf0f37198c2f20d3839fb589b27f74e78862017b38dfa8ab4c5245"
+          },
+          "old": "  if p then used+=1 end\n",
+          "old_identity": {
+            "bytes": 24,
+            "sha256": "7962c262fc1947e6e0a5380400097c391a5192b2081d4ff4e5dbeddaf9f125c4"
+          },
+          "start": 75,
+          "stop": 76
+        },
+        {
+          "new": "-- GQ470_FB015_RIDGE_HORIZON_P0_20261120\n-- Visual-only horizon cliffs are strictly lower priority than all baseline\n-- terrain/ruin visuals and every current or future castle ornament.\n-- At most twelve noncolliding wedges; castles may reclaim them on budget hit.\nlocal function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)\n local bucket=ridgeVisuals[arena]\n -- A scene may be repainted; keep one bounded ridge set per arena, never 12 more.\n if bucket then return end\n bucket={}\n ridgeVisuals[arena]=bucket\n -- The arena teardown releases both its reference and decorative-Part list.\n arena.Destroying:Once(function()\n  ridgeVisuals[arena]=nil\n end)\n -- Three unequal stepped profiles, mirrored by shore without repeating\n -- identical silhouettes. Each side has six matte, nonphysical Wedges.\n local ridgeContours = {\n  {height=14,yaw=-19,drift=-16,depth=27,lean=-7,notch=3},\n  {height=23,yaw=13,drift=8,depth=35,lean=6,notch=1},\n  {height=17,yaw=27,drift=19,depth=25,lean=-4,notch=4},\n }\n for _,side in ipairs({-1,1}) do\n  for index=1,3 do\n   local contour=ridgeContours[index]\n   local x=side*410\n   local z=(index-2)*270+side*contour.drift\n   local at=ground(x,z)\n   local h=contour.height+(if side>0 then 3 else 0)\n   local turn=side*contour.yaw\n   local lean=side*contour.lean\n   -- Use existing matte stone palette for subtle depth and directional\n   -- contrast. These Color3 blends run once when an arena is built, not\n   -- during combat frames; zero new instances or texture fetches.\n   local baseTint=darkStone:Lerp(limestone,.07*(index-1))\n   local crownTint=limestone:Lerp(darkStone,.08*(3-index))\n   -- Reserve both pieces before sculpting a complete profile. If the 320\n   -- scene cap is almost full, skip this pair rather than leave a bare wedge.\n   if (budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA then\n    local basePart=createVisual(arena,art,\"HorizonCliffBase_\"..side..\"_\"..index,\"Wedge\",\n     Vector3.new(18,h,contour.depth),\n     CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))\n      *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),\n     baseTint,Enum.Material.Slate)\n    if basePart then\n     -- Matched limestone cap penetrates the base: no detached floating crown.\n     local crownPart=createVisual(arena,art,\"HorizonCliffCrown_\"..side..\"_\"..index,\"Wedge\",\n      Vector3.new(11,4,contour.depth-6),\n      CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))\n       *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),\n      crownTint,Enum.Material.Limestone)\n     if crownPart then\n      table.insert(bucket,basePart)\n      table.insert(bucket,crownPart)\n     else\n      -- Defensive rollback for a failed crown allocation; no half cliff.\n      basePart:Destroy()\n      budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n     end\n    end\n   end\n  end\n end\nend\n\n",
+          "new_identity": {
+            "bytes": 2888,
+            "sha256": "a5399036200137b42473d5f2c5adb47baab003cb9fb18933cac7672bbb8c707f"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 223,
+          "stop": 223
+        },
+        {
+          "new": " -- Match world replacement must release per-arena accounting references.\n arena.Destroying:Connect(function()\n  builtArenas[arena]=nil\n  budgets[arena]=nil\n  trackedArt[arena]=nil\n end)\n",
+          "new_identity": {
+            "bytes": 187,
+            "sha256": "67b02e6ac6391eb71a21f4bbe732e98aa911b2815d51ebfccad0a1b073db9935"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 229,
+          "stop": 229
+        },
+        {
+          "new": " -- GQ470_FB015_RIDGE_HORIZON_P0_20261120: add only after baseline and present castles.\n drawHorizonRidges(arena,art,onGround)\n",
+          "new_identity": {
+            "bytes": 127,
+            "sha256": "70d4e653041e8ee65440f3cef6ea881c96f0a8b9da4f750bc0e791e101a96d26"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 283,
+          "stop": 283
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "local ridgeVisuals:{[Instance]:{BasePart}}={}\nlocal function reclaimRidgeForCastle(arena:Instance):boolean\n local bucket=ridgeVisuals[arena]\n if not bucket then return false end\n while #bucket>0 do\n  local p=table.remove(bucket)\n  if p and p.Parent then\n   p:Destroy()\n   budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n   return true\n  end\n end\n return false\nend\n-- GQ470_FORTRESS_VISUAL_FAIR_BUDGET_REAL69_20261121\n-- Reserve ten existing identity parts per castle, without increasing the\n-- existing per-arena 320-Part limit or 19-Part optional castle detail limit.\nlocal MIN_CASTLE_ESSENTIAL_PARTS = 10\n-- Keep only this art author's instances; do not count gameplay geometry.\n-- Old castles/other art can be removed during a match: prune stale references\n-- before every new castle, so the counter never prevents later roofs/crests.\nlocal trackedArt:{[Instance]:{BasePart}}={}\nlocal function recountArenaArt(arena:Instance):{BasePart}\n local active:{BasePart}={}\n for _,p in ipairs(trackedArt[arena] or {}) do\n  if p.Parent and p:IsDescendantOf(arena) then table.insert(active,p) end\n end\n trackedArt[arena]=active\n budgets[arena]=#active\n return active\nend\nlocal function reserveCastleIdentity(arena:Instance):boolean\n local active=recountArenaArt(arena)\n while #active+MIN_CASTLE_ESSENTIAL_PARTS>MAX_VISUAL_PARTS_PER_ARENA do\n  -- Reclaim only expendable decorations, NEVER a roof/keystone/crest.\n  local optionalIndex:number?=nil\n  for index=#active,1,-1 do\n   if active[index]:GetAttribute(\"GQ470CastleOptional\")==true then\n    optionalIndex=index\n    break\n   end\n  end\n  if not optionalIndex then return false end\n  local old=table.remove(active,optionalIndex)\n  if old then old:Destroy() end\n  budgets[arena]=#active\n end\n return true\nend\n",
+          "old_identity": {
+            "bytes": 1754,
+            "sha256": "62a871c22551ced297c6ee3767a2b8a744b11a2a05d595cde52f620bc5049fac"
+          },
+          "start": 13,
+          "stop": 62
+        },
+        {
+          "new": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then return nil end\n",
+          "new_identity": {
+            "bytes": 74,
+            "sha256": "2e2dee07884fa975aeb596f7e91136923b09db6b52f28e552f241cda3de0d737"
+          },
+          "old": " if (budgets[arena] or 0)>=MAX_VISUAL_PARTS_PER_ARENA then\n  if parent.Name~=\"EGGRUMBLE_CastleArt_VisualOnly\" or not reclaimRidgeForCastle(arena) then return nil end\n end\n",
+          "old_identity": {
+            "bytes": 171,
+            "sha256": "90854ea27d6b3ae1f345855879c20132b67a22f694392933914ff8a511d7a011"
+          },
+          "start": 84,
+          "stop": 87
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " local tracked=trackedArt[arena]\n if not tracked then tracked={} trackedArt[arena]=tracked end\n table.insert(tracked,p)\n",
+          "old_identity": {
+            "bytes": 120,
+            "sha256": "eb8c318752ebd119a4dd7f08617b1a17d8b677822a2349ddf878dde63bbff0a7"
+          },
+          "start": 106,
+          "stop": 109
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- Even when the StandardCore arrives before TacticalBattlefield, paint the\n -- existing 140 scenery parts first. paintArena retries all existing castles.\n if not builtArenas[arena] then return end\n",
+          "old_identity": {
+            "bytes": 199,
+            "sha256": "bc79a0094812be8db5a16797d0b10d5b18294b77d20353b4f7633ab47d41de10"
+          },
+          "start": 114,
+          "stop": 117
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- Recount live owned decorations and reclaim optional trim, never base art.\n if not reserveCastleIdentity(arena) then return end\n",
+          "old_identity": {
+            "bytes": 131,
+            "sha256": "5092b8e7f496a7e7c065f34cf00c892f0835ee86d3c7d6db23d0a875bfade426"
+          },
+          "start": 120,
+          "stop": 122
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " castle.Destroying:Connect(function() builtCastles[castle]=nil end)\n",
+          "old_identity": {
+            "bytes": 68,
+            "sha256": "51f514ca1ecf28bf755040b8b93fd6baac0dd2833b55d6e980fd9d1f679be51c"
+          },
+          "start": 123,
+          "stop": 124
+        },
+        {
+          "new": "  if p then used+=1 end\n",
+          "new_identity": {
+            "bytes": 24,
+            "sha256": "7962c262fc1947e6e0a5380400097c391a5192b2081d4ff4e5dbeddaf9f125c4"
+          },
+          "old": "  if p then\n   used+=1\n   if used>MIN_CASTLE_ESSENTIAL_PARTS then\n    p:SetAttribute(\"GQ470CastleOptional\",true)\n   end\n  end\n",
+          "old_identity": {
+            "bytes": 126,
+            "sha256": "2bda84a5cebf0f37198c2f20d3839fb589b27f74e78862017b38dfa8ab4c5245"
+          },
+          "start": 135,
+          "stop": 141
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "-- GQ470_FB015_RIDGE_HORIZON_P0_20261120\n-- Visual-only horizon cliffs are strictly lower priority than all baseline\n-- terrain/ruin visuals and every current or future castle ornament.\n-- At most twelve noncolliding wedges; castles may reclaim them on budget hit.\nlocal function drawHorizonRidges(arena:Instance,art:Instance,ground:(number,number)->Vector3)\n local bucket=ridgeVisuals[arena]\n -- A scene may be repainted; keep one bounded ridge set per arena, never 12 more.\n if bucket then return end\n bucket={}\n ridgeVisuals[arena]=bucket\n -- The arena teardown releases both its reference and decorative-Part list.\n arena.Destroying:Once(function()\n  ridgeVisuals[arena]=nil\n end)\n -- Three unequal stepped profiles, mirrored by shore without repeating\n -- identical silhouettes. Each side has six matte, nonphysical Wedges.\n local ridgeContours = {\n  {height=14,yaw=-19,drift=-16,depth=27,lean=-7,notch=3},\n  {height=23,yaw=13,drift=8,depth=35,lean=6,notch=1},\n  {height=17,yaw=27,drift=19,depth=25,lean=-4,notch=4},\n }\n for _,side in ipairs({-1,1}) do\n  for index=1,3 do\n   local contour=ridgeContours[index]\n   local x=side*410\n   local z=(index-2)*270+side*contour.drift\n   local at=ground(x,z)\n   local h=contour.height+(if side>0 then 3 else 0)\n   local turn=side*contour.yaw\n   local lean=side*contour.lean\n   -- Use existing matte stone palette for subtle depth and directional\n   -- contrast. These Color3 blends run once when an arena is built, not\n   -- during combat frames; zero new instances or texture fetches.\n   local baseTint=darkStone:Lerp(limestone,.07*(index-1))\n   local crownTint=limestone:Lerp(darkStone,.08*(3-index))\n   -- Reserve both pieces before sculpting a complete profile. If the 320\n   -- scene cap is almost full, skip this pair rather than leave a bare wedge.\n   if (budgets[arena] or 0)+2<=MAX_VISUAL_PARTS_PER_ARENA then\n    local basePart=createVisual(arena,art,\"HorizonCliffBase_\"..side..\"_\"..index,\"Wedge\",\n     Vector3.new(18,h,contour.depth),\n     CFrame.new(at+Vector3.new(side*contour.notch,h/2,0))\n      *CFrame.Angles(math.rad((index-2)*3),math.rad(turn),math.rad(lean)),\n     baseTint,Enum.Material.Slate)\n    if basePart then\n     -- Matched limestone cap penetrates the base: no detached floating crown.\n     local crownPart=createVisual(arena,art,\"HorizonCliffCrown_\"..side..\"_\"..index,\"Wedge\",\n      Vector3.new(11,4,contour.depth-6),\n      CFrame.new(at+Vector3.new(-side*(2+contour.notch*.25),h+.75,side*2))\n       *CFrame.Angles(math.rad(-lean),math.rad(-turn*.7),math.rad(-lean*1.4)),\n      crownTint,Enum.Material.Limestone)\n     if crownPart then\n      table.insert(bucket,basePart)\n      table.insert(bucket,crownPart)\n     else\n      -- Defensive rollback for a failed crown allocation; no half cliff.\n      basePart:Destroy()\n      budgets[arena]=math.max(0,(budgets[arena] or 0)-1)\n     end\n    end\n   end\n  end\n end\nend\n\n",
+          "old_identity": {
+            "bytes": 2888,
+            "sha256": "a5399036200137b42473d5f2c5adb47baab003cb9fb18933cac7672bbb8c707f"
+          },
+          "start": 288,
+          "stop": 352
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- Match world replacement must release per-arena accounting references.\n arena.Destroying:Connect(function()\n  builtArenas[arena]=nil\n  budgets[arena]=nil\n  trackedArt[arena]=nil\n end)\n",
+          "old_identity": {
+            "bytes": 187,
+            "sha256": "67b02e6ac6391eb71a21f4bbe732e98aa911b2815d51ebfccad0a1b073db9935"
+          },
+          "start": 358,
+          "stop": 364
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- GQ470_FB015_RIDGE_HORIZON_P0_20261120: add only after baseline and present castles.\n drawHorizonRidges(arena,art,onGround)\n",
+          "old_identity": {
+            "bytes": 127,
+            "sha256": "70d4e653041e8ee65440f3cef6ea881c96f0a8b9da4f750bc0e791e101a96d26"
+          },
+          "start": 418,
+          "stop": 420
+        }
+      ],
       "route": "ServerScriptService/EGGRUMBLE_FlagshipFieldArt"
     },
     "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau": {
@@ -13523,8 +15705,8 @@
     },
     "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes.server.luau": {
       "after": {
-        "bytes": 31784,
-        "sha256": "806f32a455b6883a5415d4e9b1cd54fc98514365c62885c134cc5b045de1824b"
+        "bytes": 32791,
+        "sha256": "d2774a82b42a77f23d1c209ad01ca3df45b08799ced49d866d4361ac75326546"
       },
       "before": {
         "bytes": 31308,
@@ -13587,6 +15769,174 @@
           },
           "start": 500,
           "stop": 508
+        },
+        {
+          "new": "    -- GQ470_FB015_TWIN_CREATURE_SILHOUETTES_REAL69_20261121\n    -- Distinct species massing, not four recolored luminous spheres.\n    -- Same one noncolliding Body per NPC, no extra object/physics budget.\n    local bodySize = if info.id==\"AWARIN\" then Vector3.new(3.25,3.0,3.25)\n        elseif info.id==\"SANGORU\" then Vector3.new(2.9,4.15,2.9)\n        elseif info.id==\"RAIKO\" then Vector3.new(3.0,3.8,2.75)\n        else Vector3.new(4.2,2.8,3.4)\n    local body = part(\"Body\", bodySize, x, info.y,\n",
+          "new_identity": {
+            "bytes": 497,
+            "sha256": "4169692b5e64663e0088dd206d502bfc74c96ff1aebdb20df1bc21dd8f85a715"
+          },
+          "old": "    local body = part(\"Body\", Vector3.new(3.5, 3.5, 3.5), x, info.y,\n",
+          "old_identity": {
+            "bytes": 69,
+            "sha256": "170c0af0ceba064e099b62f51281275845a0a26c6e54ebbd7cf82141232b7a51"
+          },
+          "start": 521,
+          "stop": 522
+        },
+        {
+          "new": "    body.Reflectance = 0\n    body:SetAttribute(\"ArtSilhouette\",info.id)\n",
+          "new_identity": {
+            "bytes": 72,
+            "sha256": "96f1a0ca80f15e1f2a27a79ac8e145bd40ebba641c625ea82d87ce0e60fc0e55"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 524,
+          "stop": 524
+        },
+        {
+          "new": "            Enum.Material.SmoothPlastic, false, npc)\n",
+          "new_identity": {
+            "bytes": 53,
+            "sha256": "741c0ed0e8af84f391d59ba37f44a2851531fb1c16604c850bb8c241d920d57f"
+          },
+          "old": "            Enum.Material.Neon, false, npc)\n",
+          "old_identity": {
+            "bytes": 44,
+            "sha256": "65ac5f6f33d49324d51246b741d4d936d7e669b85f26d199b0675faa294fefb2"
+          },
+          "start": 527,
+          "stop": 528
+        },
+        {
+          "new": "        info.y + 2, info.localZ, info.tint, Enum.Material.SmoothPlastic, false, npc)\n",
+          "new_identity": {
+            "bytes": 85,
+            "sha256": "ab1f4ea1a13799f47a3bce47047e6800ea909bda0e13652da1450dbb99d6c1f1"
+          },
+          "old": "        info.y + 2, info.localZ, info.tint, Enum.Material.Neon, false, npc)\n",
+          "old_identity": {
+            "bytes": 76,
+            "sha256": "866207c34b0b559857ce3149be1030d7defd8d4c70212cc344d59762d6628ffc"
+          },
+          "start": 531,
+          "stop": 532
+        },
+        {
+          "new": "        -- Matte ornamentation retains the authored 8-NPC silhouette count.\n        -- No persistent glow overdraw or extra mobile lights.\n",
+          "new_identity": {
+            "bytes": 139,
+            "sha256": "1ececf6dc4da85a359c3b669ab6dd79c7f98401b00b5704ef4b499397ba7ded3"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 538,
+          "stop": 538
+        },
+        {
+          "new": "            tint,Enum.Material.SmoothPlastic,false,npc)\n",
+          "new_identity": {
+            "bytes": 56,
+            "sha256": "af338836b4fb1fce20aab1a744c439e2ed767832a52673b5493da71bb8ca3ad1"
+          },
+          "old": "            tint,Enum.Material.Neon,false,npc)\n",
+          "old_identity": {
+            "bytes": 47,
+            "sha256": "84945fd7127d4036ce2f84c019328386b2e1ae22fa034b18c7680fbcdee8c62f"
+          },
+          "start": 539,
+          "stop": 540
+        },
+        {
+          "new": "            local stem=decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+          "new_identity": {
+            "bytes": 78,
+            "sha256": "ad301815df6f33232f82232786058e7cebd289f8152cd6f699a508fd5ca7be27"
+          },
+          "old": "            decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+          "old_identity": {
+            "bytes": 67,
+            "sha256": "005ceec6dcdd35fae226d7676b8a9629f7600bc2edaf048b57a38d15cf60c8af"
+          },
+          "start": 555,
+          "stop": 556
+        },
+        {
+          "new": "            stem.CFrame=stem.CFrame*CFrame.Angles(0,0,math.rad(-side*12))\n            local fork=decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+          "new_identity": {
+            "bytes": 150,
+            "sha256": "24120a84e2ad180700d2d37e23513005c814fea2abb7c70b13f49f2feaa2a1d3"
+          },
+          "old": "            decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+          "old_identity": {
+            "bytes": 65,
+            "sha256": "8fd56b655abee905ff78e1c48e7893efea7303e56551ef1cc00b49b91a471631"
+          },
+          "start": 557,
+          "stop": 558
+        },
+        {
+          "new": "            fork.CFrame=fork.CFrame*CFrame.Angles(0,0,math.rad(side*30))\n",
+          "new_identity": {
+            "bytes": 73,
+            "sha256": "eda608e3fefafe1173b48a6afbfe20bba57a71de5b2c36c3abdcb173398db623"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 559,
+          "stop": 559
+        },
+        {
+          "new": "            local horn=decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+          "new_identity": {
+            "bytes": 77,
+            "sha256": "c988121fbc6001a86f4de2dbabed3f3c3df9578bc06a3fe255def3402f47b6c9"
+          },
+          "old": "            decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+          "old_identity": {
+            "bytes": 66,
+            "sha256": "32ab9b75819e48c78d4c86425d15f2e4465f2a1a8ab77492cc13e9cf4c1e50f4"
+          },
+          "start": 563,
+          "stop": 564
+        },
+        {
+          "new": "            horn.CFrame=horn.CFrame*CFrame.Angles(0,0,math.rad(side*17))\n            local flash=decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+          "new_identity": {
+            "bytes": 153,
+            "sha256": "3849599dfcc461c21eab021a43334a96e5666896f3c2a66cecd70002e3e2ec3f"
+          },
+          "old": "            decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+          "old_identity": {
+            "bytes": 68,
+            "sha256": "6774eb5a0ba811432bc9a78be76bdeccdf0b09e918e629e5f7040d6573ddad9a"
+          },
+          "start": 565,
+          "stop": 566
+        },
+        {
+          "new": "            flash.CFrame=flash.CFrame*CFrame.Angles(0,0,math.rad(-side*24))\n",
+          "new_identity": {
+            "bytes": 76,
+            "sha256": "ca6b4950cb4e19fcfa6c5bb246df34e857e761479a925658e132e352cc0a7aa8"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 567,
+          "stop": 567
         },
         {
           "new": "        if not activeMatch() then return end\n",
@@ -13689,18 +16039,172 @@
           "stop": 515
         },
         {
+          "new": "    local body = part(\"Body\", Vector3.new(3.5, 3.5, 3.5), x, info.y,\n",
+          "new_identity": {
+            "bytes": 69,
+            "sha256": "170c0af0ceba064e099b62f51281275845a0a26c6e54ebbd7cf82141232b7a51"
+          },
+          "old": "    -- GQ470_FB015_TWIN_CREATURE_SILHOUETTES_REAL69_20261121\n    -- Distinct species massing, not four recolored luminous spheres.\n    -- Same one noncolliding Body per NPC, no extra object/physics budget.\n    local bodySize = if info.id==\"AWARIN\" then Vector3.new(3.25,3.0,3.25)\n        elseif info.id==\"SANGORU\" then Vector3.new(2.9,4.15,2.9)\n        elseif info.id==\"RAIKO\" then Vector3.new(3.0,3.8,2.75)\n        else Vector3.new(4.2,2.8,3.4)\n    local body = part(\"Body\", bodySize, x, info.y,\n",
+          "old_identity": {
+            "bytes": 497,
+            "sha256": "4169692b5e64663e0088dd206d502bfc74c96ff1aebdb20df1bc21dd8f85a715"
+          },
+          "start": 528,
+          "stop": 536
+        },
+        {
           "new": "",
           "new_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "old": "        if not activeMatch() then return end\n",
+          "old": "    body.Reflectance = 0\n    body:SetAttribute(\"ArtSilhouette\",info.id)\n",
           "old_identity": {
-            "bytes": 45,
-            "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
+            "bytes": 72,
+            "sha256": "96f1a0ca80f15e1f2a27a79ac8e145bd40ebba641c625ea82d87ce0e60fc0e55"
           },
-          "start": 599,
-          "stop": 600
+          "start": 538,
+          "stop": 540
+        },
+        {
+          "new": "            Enum.Material.Neon, false, npc)\n",
+          "new_identity": {
+            "bytes": 44,
+            "sha256": "65ac5f6f33d49324d51246b741d4d936d7e669b85f26d199b0675faa294fefb2"
+          },
+          "old": "            Enum.Material.SmoothPlastic, false, npc)\n",
+          "old_identity": {
+            "bytes": 53,
+            "sha256": "741c0ed0e8af84f391d59ba37f44a2851531fb1c16604c850bb8c241d920d57f"
+          },
+          "start": 543,
+          "stop": 544
+        },
+        {
+          "new": "        info.y + 2, info.localZ, info.tint, Enum.Material.Neon, false, npc)\n",
+          "new_identity": {
+            "bytes": 76,
+            "sha256": "866207c34b0b559857ce3149be1030d7defd8d4c70212cc344d59762d6628ffc"
+          },
+          "old": "        info.y + 2, info.localZ, info.tint, Enum.Material.SmoothPlastic, false, npc)\n",
+          "old_identity": {
+            "bytes": 85,
+            "sha256": "ab1f4ea1a13799f47a3bce47047e6800ea909bda0e13652da1450dbb99d6c1f1"
+          },
+          "start": 547,
+          "stop": 548
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "        -- Matte ornamentation retains the authored 8-NPC silhouette count.\n        -- No persistent glow overdraw or extra mobile lights.\n",
+          "old_identity": {
+            "bytes": 139,
+            "sha256": "1ececf6dc4da85a359c3b669ab6dd79c7f98401b00b5704ef4b499397ba7ded3"
+          },
+          "start": 554,
+          "stop": 556
+        },
+        {
+          "new": "            tint,Enum.Material.Neon,false,npc)\n",
+          "new_identity": {
+            "bytes": 47,
+            "sha256": "84945fd7127d4036ce2f84c019328386b2e1ae22fa034b18c7680fbcdee8c62f"
+          },
+          "old": "            tint,Enum.Material.SmoothPlastic,false,npc)\n",
+          "old_identity": {
+            "bytes": 56,
+            "sha256": "af338836b4fb1fce20aab1a744c439e2ed767832a52673b5493da71bb8ca3ad1"
+          },
+          "start": 557,
+          "stop": 558
+        },
+        {
+          "new": "            decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+          "new_identity": {
+            "bytes": 67,
+            "sha256": "005ceec6dcdd35fae226d7676b8a9629f7600bc2edaf048b57a38d15cf60c8af"
+          },
+          "old": "            local stem=decor(\"CoralAntler_\"..side,Vector3.new(0.85,3.3,0.85),\n",
+          "old_identity": {
+            "bytes": 78,
+            "sha256": "ad301815df6f33232f82232786058e7cebd289f8152cd6f699a508fd5ca7be27"
+          },
+          "start": 573,
+          "stop": 574
+        },
+        {
+          "new": "            decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+          "new_identity": {
+            "bytes": 65,
+            "sha256": "8fd56b655abee905ff78e1c48e7893efea7303e56551ef1cc00b49b91a471631"
+          },
+          "old": "            stem.CFrame=stem.CFrame*CFrame.Angles(0,0,math.rad(-side*12))\n            local fork=decor(\"CoralFork_\"..side,Vector3.new(1.7,0.75,0.85),\n",
+          "old_identity": {
+            "bytes": 150,
+            "sha256": "24120a84e2ad180700d2d37e23513005c814fea2abb7c70b13f49f2feaa2a1d3"
+          },
+          "start": 575,
+          "stop": 577
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "            fork.CFrame=fork.CFrame*CFrame.Angles(0,0,math.rad(side*30))\n",
+          "old_identity": {
+            "bytes": 73,
+            "sha256": "eda608e3fefafe1173b48a6afbfe20bba57a71de5b2c36c3abdcb173398db623"
+          },
+          "start": 578,
+          "stop": 579
+        },
+        {
+          "new": "            decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+          "new_identity": {
+            "bytes": 66,
+            "sha256": "32ab9b75819e48c78d4c86425d15f2e4465f2a1a8ab77492cc13e9cf4c1e50f4"
+          },
+          "old": "            local horn=decor(\"ThunderHorn_\"..side,Vector3.new(0.8,3.1,0.75),\n",
+          "old_identity": {
+            "bytes": 77,
+            "sha256": "c988121fbc6001a86f4de2dbabed3f3c3df9578bc06a3fe255def3402f47b6c9"
+          },
+          "start": 583,
+          "stop": 584
+        },
+        {
+          "new": "            decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+          "new_identity": {
+            "bytes": 68,
+            "sha256": "6774eb5a0ba811432bc9a78be76bdeccdf0b09e918e629e5f7040d6573ddad9a"
+          },
+          "old": "            horn.CFrame=horn.CFrame*CFrame.Angles(0,0,math.rad(side*17))\n            local flash=decor(\"ThunderBolt_\"..side,Vector3.new(1.85,0.65,0.75),\n",
+          "old_identity": {
+            "bytes": 153,
+            "sha256": "3849599dfcc461c21eab021a43334a96e5666896f3c2a66cecd70002e3e2ec3f"
+          },
+          "start": 585,
+          "stop": 587
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "            flash.CFrame=flash.CFrame*CFrame.Angles(0,0,math.rad(-side*24))\n",
+          "old_identity": {
+            "bytes": 76,
+            "sha256": "ca6b4950cb4e19fcfa6c5bb246df34e857e761479a925658e132e352cc0a7aa8"
+          },
+          "start": 588,
+          "stop": 589
         },
         {
           "new": "",
@@ -13713,8 +16217,22 @@
             "bytes": 45,
             "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
           },
-          "start": 618,
-          "stop": 619
+          "start": 614,
+          "stop": 615
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "        if not activeMatch() then return end\n",
+          "old_identity": {
+            "bytes": 45,
+            "sha256": "2d969af816e03f0567cebb29fb328bcadd94140dc5b26abec8b06bad43c97fe8"
+          },
+          "start": 633,
+          "stop": 634
         },
         {
           "new": "        local bondEnabled=RunService:IsStudio() and arena.Parent==lobby\n",
@@ -13727,8 +16245,8 @@
             "bytes": 66,
             "sha256": "a4466ef8683be6b08f30a8ae0159f052932b01a9e3a61f6bed354533eec71cb7"
           },
-          "start": 655,
-          "stop": 656
+          "start": 670,
+          "stop": 671
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_LegacyTwinBiomes"
@@ -15825,8 +18343,8 @@
     },
     "ServerScriptService/EGGRUMBLE_MatchResultService.luau": {
       "after": {
-        "bytes": 8006,
-        "sha256": "c974c99e949fe50efc9eab986dc489a84cfc21ca77245e7de4b18a2e3b6ebcff"
+        "bytes": 9101,
+        "sha256": "30a29cb538d4e8fa64255f5ea80bd7c6412f2c84e9eb54b3b6dc02563f0e353f"
       },
       "before": {
         "bytes": 7410,
@@ -15889,6 +18407,34 @@
           },
           "start": 110,
           "stop": 111
+        },
+        {
+          "new": " frame.BackgroundColor3=Color3.fromRGB(255,255,255)\n",
+          "new_identity": {
+            "bytes": 52,
+            "sha256": "0d7d5426e6c879765e14f64673f04c5d8aa41127e631542e1f052da9e528581a"
+          },
+          "old": " frame.BackgroundColor3=Color3.fromRGB(23,34,48)\n",
+          "old_identity": {
+            "bytes": 49,
+            "sha256": "5cf8c403daf0da951dbe4e965889f8414f231aff3d67c77bcb0f919faa4c322b"
+          },
+          "start": 112,
+          "stop": 113
+        },
+        {
+          "new": "\n -- GQ470_FB015_MATTE_RESULT_CARD_REAL69_20261121\n -- Fixed 94px compact card: matte depth, one fine border and one thin result-tinted rail.\n -- Tint is derived ONLY from the actual server-computed result text/win flag.\n local accent=if won then Color3.fromRGB(245,199,100)\n  elseif title:find(\"引き分け\",1,true) then Color3.fromRGB(158,185,204)\n  else Color3.fromRGB(130,169,199)\n local matte=Instance.new(\"UIGradient\")\n matte.Name=\"MatteDepth\"\n matte.Color=ColorSequence.new({\n  ColorSequenceKeypoint.new(0,Color3.fromRGB(22,38,53)),\n  ColorSequenceKeypoint.new(1,Color3.fromRGB(35,49,67)),\n })\n matte.Rotation=90\n matte.Parent=frame\n local outline=Instance.new(\"UIStroke\")\n outline.Name=\"ResultOutline\"\n outline.ApplyStrokeMode=Enum.ApplyStrokeMode.Border\n outline.Color=accent\n outline.Thickness=1\n outline.Transparency=.52\n outline.Parent=frame\n local rail=Instance.new(\"Frame\")\n rail.Name=\"TruthAccent\"\n rail.BorderSizePixel=0\n rail.BackgroundColor3=accent\n rail.BackgroundTransparency=.07\n rail.Position=UDim2.fromOffset(7,20)\n rail.Size=UDim2.fromOffset(3,54)\n rail.Parent=frame\n",
+          "new_identity": {
+            "bytes": 1092,
+            "sha256": "940a7ae3de6d6e063b77d1cc8612336c01dcabba9db256207be42b688198e431"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 123,
+          "stop": 123
         }
       ],
       "inverse": [
@@ -15947,6 +18493,34 @@
           },
           "start": 120,
           "stop": 121
+        },
+        {
+          "new": " frame.BackgroundColor3=Color3.fromRGB(23,34,48)\n",
+          "new_identity": {
+            "bytes": 49,
+            "sha256": "5cf8c403daf0da951dbe4e965889f8414f231aff3d67c77bcb0f919faa4c322b"
+          },
+          "old": " frame.BackgroundColor3=Color3.fromRGB(255,255,255)\n",
+          "old_identity": {
+            "bytes": 52,
+            "sha256": "0d7d5426e6c879765e14f64673f04c5d8aa41127e631542e1f052da9e528581a"
+          },
+          "start": 122,
+          "stop": 123
+        },
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": "\n -- GQ470_FB015_MATTE_RESULT_CARD_REAL69_20261121\n -- Fixed 94px compact card: matte depth, one fine border and one thin result-tinted rail.\n -- Tint is derived ONLY from the actual server-computed result text/win flag.\n local accent=if won then Color3.fromRGB(245,199,100)\n  elseif title:find(\"引き分け\",1,true) then Color3.fromRGB(158,185,204)\n  else Color3.fromRGB(130,169,199)\n local matte=Instance.new(\"UIGradient\")\n matte.Name=\"MatteDepth\"\n matte.Color=ColorSequence.new({\n  ColorSequenceKeypoint.new(0,Color3.fromRGB(22,38,53)),\n  ColorSequenceKeypoint.new(1,Color3.fromRGB(35,49,67)),\n })\n matte.Rotation=90\n matte.Parent=frame\n local outline=Instance.new(\"UIStroke\")\n outline.Name=\"ResultOutline\"\n outline.ApplyStrokeMode=Enum.ApplyStrokeMode.Border\n outline.Color=accent\n outline.Thickness=1\n outline.Transparency=.52\n outline.Parent=frame\n local rail=Instance.new(\"Frame\")\n rail.Name=\"TruthAccent\"\n rail.BorderSizePixel=0\n rail.BackgroundColor3=accent\n rail.BackgroundTransparency=.07\n rail.Position=UDim2.fromOffset(7,20)\n rail.Size=UDim2.fromOffset(3,54)\n rail.Parent=frame\n",
+          "old_identity": {
+            "bytes": 1092,
+            "sha256": "940a7ae3de6d6e063b77d1cc8612336c01dcabba9db256207be42b688198e431"
+          },
+          "start": 133,
+          "stop": 163
         }
       ],
       "route": "ServerScriptService/EGGRUMBLE_MatchResultService"
@@ -17041,16 +19615,74 @@
     },
     "ServerScriptService/EGGRUMBLE_SkillFX.luau": {
       "after": {
-        "bytes": 10369,
-        "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
+        "bytes": 10869,
+        "sha256": "a1b3bcb9a3a37354c6e46e8c38caf8b306fb0a4764ef6f8918f2cf5f8e37c533"
       },
       "before": {
         "bytes": 10369,
         "sha256": "d1656b4e0becc944b2ad15b3b6e8b053d3ec2f0bdd24bcfcf22fef4704c6bcb3"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "new": " -- GQ470_FB015_SKILLFX_SHARD_FLASH_REAL69_20261121\n -- Low-glare sculpted slash, not a large opaque spherical curtain.\n -- One original Part, same lifetime/lease/quota and same hit particles.\n",
+          "new_identity": {
+            "bytes": 193,
+            "sha256": "a271ee91ab908e90bf4af30f76d9c521b42e8bda1b591ccdd0ed574521647236"
+          },
+          "old": "",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "start": 115,
+          "stop": 115
+        },
+        {
+          "new": "  local visualWidth=math.clamp(radius,2,12)\n  head.Shape=Enum.PartType.Block\n  head.Material=Enum.Material.SmoothPlastic\n  head.Transparency=.55\n  head.CFrame=CFrame.lookAt(center+Vector3.new(0,1.75,0),center+f*3)\n   *CFrame.Angles(0,0,math.rad(24))\n  animate(head,Vector3.new(.24,2.8,visualWidth*.85*scale),life,\n   CFrame.lookAt(center+f*2+Vector3.new(0,1.75,0),center+f*8)\n   *CFrame.Angles(0,0,math.rad(24)))\n",
+          "new_identity": {
+            "bytes": 413,
+            "sha256": "6b928566f5cb989c381efb9194c2600854b817bf7ff6584e1f041fb4afa12e6e"
+          },
+          "old": "  head.Shape=Enum.PartType.Ball\n  animate(head,Vector3.new(radius*1.45*scale,2.4,radius*1.45*scale),life)\n",
+          "old_identity": {
+            "bytes": 106,
+            "sha256": "4917507dccda222faa00b83b3a34519d922d544d8a9534598fed1c0717d625fa"
+          },
+          "start": 117,
+          "stop": 119
+        }
+      ],
+      "inverse": [
+        {
+          "new": "",
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "old": " -- GQ470_FB015_SKILLFX_SHARD_FLASH_REAL69_20261121\n -- Low-glare sculpted slash, not a large opaque spherical curtain.\n -- One original Part, same lifetime/lease/quota and same hit particles.\n",
+          "old_identity": {
+            "bytes": 193,
+            "sha256": "a271ee91ab908e90bf4af30f76d9c521b42e8bda1b591ccdd0ed574521647236"
+          },
+          "start": 115,
+          "stop": 118
+        },
+        {
+          "new": "  head.Shape=Enum.PartType.Ball\n  animate(head,Vector3.new(radius*1.45*scale,2.4,radius*1.45*scale),life)\n",
+          "new_identity": {
+            "bytes": 106,
+            "sha256": "4917507dccda222faa00b83b3a34519d922d544d8a9534598fed1c0717d625fa"
+          },
+          "old": "  local visualWidth=math.clamp(radius,2,12)\n  head.Shape=Enum.PartType.Block\n  head.Material=Enum.Material.SmoothPlastic\n  head.Transparency=.55\n  head.CFrame=CFrame.lookAt(center+Vector3.new(0,1.75,0),center+f*3)\n   *CFrame.Angles(0,0,math.rad(24))\n  animate(head,Vector3.new(.24,2.8,visualWidth*.85*scale),life,\n   CFrame.lookAt(center+f*2+Vector3.new(0,1.75,0),center+f*8)\n   *CFrame.Angles(0,0,math.rad(24)))\n",
+          "old_identity": {
+            "bytes": 413,
+            "sha256": "6b928566f5cb989c381efb9194c2600854b817bf7ff6584e1f041fb4afa12e6e"
+          },
+          "start": 120,
+          "stop": 129
+        }
+      ],
       "route": "ServerScriptService/EGGRUMBLE_SkillFX"
     },
     "ServerScriptService/EGGRUMBLE_StatusTickFence.luau": {

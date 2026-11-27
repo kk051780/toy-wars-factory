@@ -20,8 +20,10 @@ def assemble(root, lock, compose):
     record = lock["guardian_wall_followup"]
     candidate = compose.read_file(root / route)
     original = compose.read_file(root.parent / compose.GUARDIAN_WALL_OFF / "sources" / route)
+    before_art = compose.read_file(root.parent / compose.ART_POLISH_OFF / "sources" / route)
     compose.need(compose.identity(original) == record["rows"][route]["parent"]["after"] == OFF
-                 and compose.identity(candidate) == lock["sources"][route]["after"] == ON,
+                 and compose.identity(before_art) == lock["art_polish_followup"]["rows"][route]["parent"]["after"] == ON
+                 and compose.identity(candidate) == lock["sources"][route]["after"],
                  "WALL_NATIVE_EXACT_PAIR")
     program = compose.read_file(FIXTURE)
     compose.need(compose.identity(program) == record["native_case"] == TEMPLATE, "WALL_NATIVE_ORIGINAL_FIXTURE")
@@ -45,7 +47,8 @@ def observed(root, folder, native, context, lock, compose):
     compose.need(compose.read_file(folder / "generated.luau") == program
                  and stdout in (expected, expected.replace(b"\n", b"\r\n"))
                  and compose.read_file(folder / "stderr.log") == b"", "WALL_NATIVE_EXACT_VECTOR")
-    return {"status": "PASS", "native": native, "context": context, "source": ON, "control_source": OFF,
+    return {"status": "PASS", "native": native, "context": context,
+            "source": compose.identity(compose.read_file(root / compose.GUARDIAN_SOURCE)), "control_source": OFF,
             "fixture": TEMPLATE, "program": PROGRAM, "stdout": compose.identity(stdout), "exit": 0,
             "cases": rows, "scope": "Guardian movement and query settings with deterministic spatial mocks"}
 

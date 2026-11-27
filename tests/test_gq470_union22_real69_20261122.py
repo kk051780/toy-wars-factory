@@ -38,7 +38,7 @@ INTEGRATION_COUNTS = {"core": 69, "final": 21}
 
 
 def restore_combat(on, lock):
-    return compose.combat_visual_parent(*compose.growth_musou_parent(on, lock))
+    return compose.combat_visual_parent(*compose.growth_musou_parent(*compose.art_polish_parent(on, lock)))
 
 
 def restore_canyon(on, lock):
@@ -51,6 +51,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["art_polish_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["growth_musou_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["combat_visual_followup"]["rows"].items()
@@ -328,12 +330,20 @@ class UnionBoundary(unittest.TestCase):
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        growth_off, growth_lock = compose.growth_musou_parent(final, self.lock)
+        polish_off, polish_lock = compose.art_polish_parent(final, self.lock)
+        self.assertEqual({name for name in polish_off if polish_off[name] != final[name]},
+                         set(compose.ART_POLISH_SOURCES))
+        self.assertEqual(polish_lock["final_place"], self.lock["growth_musou_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.GROWTH_MUSOU_OFF_ARCHIVE, root / compose.ART_POLISH_OFF_ARCHIVE)
+        self.reject_core(root)
+        final = polish_off
+        growth_off, growth_lock = compose.growth_musou_parent(final, polish_lock)
         self.assertEqual({name for name in growth_off if growth_off[name] != final[name]},
                          set(compose.GROWTH_MUSOU_SOURCES))
         self.assertEqual(growth_lock["final_place"], self.lock["combat_visual_followup"]["repaired_place"])
         with self.assertRaisesRegex(ValueError, "HUNK|GROWTH_MUSOU_TWO_WAY"):
-            compose.growth_musou_parent(growth_off, self.lock)
+            compose.growth_musou_parent(growth_off, polish_lock)
         root = self.current_copy()
         shutil.copyfile(root / compose.COMBAT_VISUAL_OFF_ARCHIVE, root / compose.GROWTH_MUSOU_OFF_ARCHIVE)
         self.reject_core(root)
@@ -1462,7 +1472,9 @@ class UnionOfflineContract(unittest.TestCase):
         wall = self.lock["guardian_wall_followup"]
         combat = self.lock["combat_visual_followup"]
         growth = self.lock["growth_musou_followup"]
-        combat_sources = self.lock["sources"] | {name: row["parent"] for name, row in growth["rows"].items()}
+        polish = self.lock["art_polish_followup"]
+        growth_sources = self.lock["sources"] | {name: row["parent"] for name, row in polish["rows"].items()}
+        combat_sources = growth_sources | {name: row["parent"] for name, row in growth["rows"].items()}
         wall_sources = combat_sources | {name: row["parent"] for name, row in combat["rows"].items()}
         visual_sources = wall_sources | {compose.GUARDIAN_SOURCE: wall["rows"][compose.GUARDIAN_SOURCE]["parent"]}
         field_sources = visual_sources | {name: row["parent"] for name, row in neutral_names["rows"].items()}
@@ -1498,7 +1510,9 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(neutral_names["repaired_place"], wall["parent_place"])
         self.assertEqual(wall["repaired_place"], combat["parent_place"])
         self.assertEqual(combat["repaired_place"], growth["parent_place"])
-        self.assertEqual(growth["repaired_place"], self.lock["final_place"])
+        self.assertEqual(growth["repaired_place"], polish["parent_place"])
+        self.assertEqual(polish["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(polish["rows"]), set(compose.ART_POLISH_SOURCES))
         self.assertEqual(set(growth["rows"]), set(compose.GROWTH_MUSOU_SOURCES))
         self.assertEqual(set(combat["rows"]), set(compose.COMBAT_VISUAL_SOURCES))
         self.assertEqual(set(wall["rows"]), {compose.GUARDIAN_SOURCE})

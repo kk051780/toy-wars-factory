@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "02b5791d506982dcce5dca14c602b56dcbd21f3fd60a1a0a85a52e5ee4f453fd"
+INPUT_LOCK_SHA256 = "0d03f2870d1a91c57d72ff6c482ef691e7341c46f9ba4d99bbac8dc04c7e56fa"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -744,6 +744,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         run_combat_visual(root, output / "combat_visual", binary, pin, context, compose.load_lock(), compose)
         from growth_musou import run as run_growth_musou
         run_growth_musou(root.parent, output / "growth_musou", binary, pin, context, compose.load_lock(), compose)
+        from art_polish_skillfx import run as run_art_polish_skillfx
+        run_art_polish_skillfx(root, output / "art_polish_skillfx", binary, pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -764,7 +766,9 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         write_json(output / "build_receipt.json", built)
         evidence = evidence_snapshot(output)
         growth_files = sum(name.startswith("growth_musou/") for name in evidence)
-        require(len(evidence) == 208 and growth_files == 103, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        art_files = sum(name.startswith("art_polish_skillfx/") for name in evidence)
+        require(len(evidence) == 212 and growth_files == 103 and art_files == 4,
+                "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -787,6 +791,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "guardian_wall": identity(read(output / "guardian_wall/receipt.json")),
                    "combat_visual": identity(read(output / "combat_visual/receipt.json")),
                    "growth_musou": identity(read(output / "growth_musou/receipt.json")),
+                   "art_polish_skillfx": identity(read(output / "art_polish_skillfx/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -794,8 +799,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "hud_client_runtime_executed_in_original_suites": False,
                                           "growth_ui_full_bodies_each": 31,
                                           "hud_client_runtime_executed_in_growth": True},
-                   "native_process_count": 53,
-                   "native_evidence_file_count": 209,
+                   "native_process_count": 54,
+                   "native_evidence_file_count": 213,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile
