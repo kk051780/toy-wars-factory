@@ -39299,7 +39299,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "pr": 967,
         "branch": "quality/gq470-moguron-lowpart-matte-real69-20261121",
         "old_pr_head": "4b08b1b5860d5da94f4949ad62f24e1bcefdd55c",
@@ -39425,6 +39425,86 @@
         },
         "failed_job": 140608338932,
         "reason": "RED_UNION22_MAGE_CONTACT_ACTUAL_SOURCE_SNAPSHOT"
+      },
+      "source_head": "349d45f868b1594f3cb5f058e42c02b614278236",
+      "prepared_candidate_head": "349d45f868b1594f3cb5f058e42c02b614278236",
+      "prepared_candidate_tree": "2031bda70eac4db20202cbe2d4b4114ee027ed32",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "02243b48efc22bec6f50b461ce461c464a98968d",
+          "path": "quality_gameplay/gq470_moguron_visual_20261127/moguron.patch",
+          "bytes": 2124
+        },
+        {
+          "mode": "100644",
+          "blob": "36fa3bd4d7aac879e55cacbe6c99801778f1016f",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "bytes": 61883
+        },
+        {
+          "mode": "100644",
+          "blob": "1d7b95d687c353d78738616f1fe4767da5efc453",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "bytes": 35255
+        },
+        {
+          "mode": "100644",
+          "blob": "8efce7399e6c1dcf5981a5d62adaf94c283eb27c",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "bytes": 9895
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "11ce0625bce2b691bd42f7329a6ff42dc1553fc9",
+          "bytes": 7202
+        },
+        {
+          "mode": "100644",
+          "blob": "d3b59a91b89518fee53cad9c5fbd13b16e2f6339",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "bytes": 19854
+        },
+        {
+          "mode": "100644",
+          "blob": "91a730bddad14f390a008733e8dc263ac9228255",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "bytes": 51391
+        },
+        {
+          "mode": "100644",
+          "blob": "8a1a3a8ebcf8769c98a4989e38ee37ec1cf3508c",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "bytes": 1528254
+        },
+        {
+          "mode": "100644",
+          "blob": "80583c8ef58a9d5a694727056b015c7fc670df61",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "bytes": 151551
+        },
+        {
+          "mode": "100644",
+          "blob": "f99efeeecf11b0426d1043bc33f5accec79e181f",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 113427
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 967,
+        "exact_head": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "exact_tree": "2031bda70eac4db20202cbe2d4b4114ee027ed32",
+        "exact_parent": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "previous_red_parent": "4b08b1b5860d5da94f4949ad62f24e1bcefdd55c",
+        "preserved_author_parent": "89719973047c13dde5ba64732231814a4db32f42",
+        "source_lease": "0d0b8c9b56e831016e27fc2ea7f42e01649b0f69",
+        "source_lease_return": "45c993dc728eb35fa75d97f205314ef76c2882c1",
+        "prepared_at": "2026-11-27T16:07:54.776Z"
+      },
+      "actual_binding_lease": {
+        "commit": "96ef29800411f0689d97d23d7b739db23f0116f7",
+        "operation_id": "b37a8608-bb6e-4db4-8d7a-ddb0d1dc80ca"
       }
     }
   ],
