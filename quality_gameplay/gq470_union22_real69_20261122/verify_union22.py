@@ -13,6 +13,7 @@ from collections import Counter
 from datetime import datetime, timezone
 import hashlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -166,11 +167,20 @@ def independent_inverse(raw, hunks):
     return "".join(rebuilt).encode("utf-8")
 
 
+# Positive-only exact-byte cache, bounded to one verifier process.
+_archive_verified = set()
+
+
 def verify_archive(path, expected, prefix=compose.OFF):
-    # Manual regular-file extraction: no tar extraction APIs, links or traversal.
+    archive_raw = read(path)
+    pin = digest(archive_raw)
+    key = (pin['bytes'], pin['sha256'], prefix,
+           json.dumps(expected, sort_keys=True, separators=(',', ':'), ensure_ascii=True))
+    if key in _archive_verified:
+        return {name: dict(pin) for name, pin in expected.items()}
     observed = {}
     with tempfile.TemporaryDirectory(prefix="union22-inverse-verify-") as tmp:
-        with tarfile.open(path, "r:gz") as archive:
+        with tarfile.open(fileobj=io.BytesIO(archive_raw), mode="r:gz") as archive:
             members = archive.getmembers()
             require(len(members) == len(expected), "ARCHIVE_MEMBER_COUNT")
             for member in members:
@@ -191,6 +201,9 @@ def verify_archive(path, expected, prefix=compose.OFF):
                 destination.write_bytes(raw)
                 observed[relative] = digest(read(destination))
         require(observed == expected and files(Path(tmp)) == expected, "ARCHIVE_EXTRACTED_IDENTITY")
+    if len(_archive_verified) >= 64:
+        _archive_verified.clear()
+    _archive_verified.add(key)
     return observed
 
 
@@ -542,8 +555,18 @@ def verify_core(root, base, reports, context):
             and water_chain["combo_ids"] == ["COMBO-004"]
             and water_chain["original_combo_sha"] == "3b96ac3bc4284afa5d3907733f0d64b4c5470685",
             "MAGE_WATER_CHAIN_SCOPE")
+    ninja_s4 = lock["ninja_s4_followup"]
+    require(set(ninja_s4["rows"]) == set(compose.NINJA_S4_SOURCES)
+            and ninja_s4["ability_ids"] == ["NINJA-031", "NINJA-061"]
+            and ninja_s4["combo_ids"] == ["COMBO-008"]
+            and ninja_s4["s4_hero_roles"] == ["BEAST", "BUILDER", "MAGE", "NINJA",
+                                              "TRAPPER", "WARRIOR", "ZOMBIE"], "NINJA_S4_SCOPE")
+    expected_ninja_s4_off, ninja_s4_off_lock, ninja_s4_off = verify_source_rollback(
+        root, root, lock, current, ninja_s4, ninja_s4["rows"], water_chain["repaired_place"],
+        compose.NINJA_S4_OFF, compose.NINJA_S4_OFF_ARCHIVE, "NINJA_S4")
     expected_water_chain_off, water_chain_off_lock, water_chain_off = verify_source_rollback(
-        root, root, lock, current, water_chain, water_chain["rows"], projectiles["repaired_place"],
+        root, root / compose.NINJA_S4_OFF, ninja_s4_off_lock, ninja_s4_off,
+        water_chain, water_chain["rows"], projectiles["repaired_place"],
         compose.MAGE_WATER_CHAIN_OFF, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE, "MAGE_WATER_CHAIN")
     expected_projectile_off, projectile_off_lock, projectile_off = verify_source_rollback(
         root, root / compose.MAGE_WATER_CHAIN_OFF, water_chain_off_lock, water_chain_off,
@@ -772,6 +795,8 @@ def verify_core(root, base, reports, context):
         "mage_projectile_rollback_archive": digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE)),
         "mage_water_chain_followup": water_chain,
         "mage_water_chain_rollback_archive": digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE)),
+        "ninja_s4_followup": ninja_s4,
+        "ninja_s4_rollback_archive": digest(read(root / compose.NINJA_S4_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -779,10 +804,16 @@ def verify_core(root, base, reports, context):
     }
     require(receipt == expected, "FINAL_RECEIPT_FIELD_SET_OR_FACTS")
     core = data(root / "CORE_BUILD_REPORT.json")
+    expected_reuse = {name: row["before"] for name, row in lock["sources"].items()
+                      if row["before"] == row["after"]}
+    require(core.get("compile_reuse_prior_br") == expected_reuse,
+            "CORE_COMPILE_REUSE_PRIOR_BR_SET")
+    require(all(read(root / "sources" / name) == read(root / compose.OFF / "sources" / name)
+                for name in expected_reuse), "CORE_COMPILE_REUSE_PRIOR_BR_BYTES")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
-            and core.get("compile_count") == 189 and core.get("rojo_build_count") == 29
+            and type(core.get("compile_count")) is int and type(core.get("rojo_build_count")) is int
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -805,6 +836,7 @@ def verify_core(root, base, reports, context):
             and core.get("fractional_hp_parent_place") == hp_off_lock["final_place"]
             and core.get("mage_projectile_parent_place") == projectile_off_lock["final_place"]
             and core.get("mage_water_chain_parent_place") == water_chain_off_lock["final_place"]
+            and core.get("ninja_s4_parent_place") == ninja_s4_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -812,7 +844,8 @@ def verify_core(root, base, reports, context):
             and core.get("beast_only_compile_count") == 1 and core.get("beast_only_rojo_build_count") == 1
             and core.get("beast_only_h72_parent_place") == h72_lock["final_place"]
             and core.get("changed_sources_from_h72_parent") == 1 and core.get("unchanged_sources_from_h72_parent") == 68
-            and core.get("historical_on_br_compile_count") == 138 and core.get("historical_on_br_rojo_build_count") == 2
+            and core.get("historical_on_br_compile_count") == 2 * len(lock["sources"]) - len(expected_reuse)
+            and core.get("historical_on_br_rojo_build_count") == 2
             and core.get("hud_only_compile_count") == 1 and core.get("hud_only_rojo_build_count") == 1
             and core.get("hud_only_off_place") == lock["followup_repair"]["current_place"]
             and core.get("hud_stage_changed_sources_from_current_rc") == 1
@@ -884,6 +917,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.MAGE_WATER_CHAIN_OFF + "/" + name: pin
                            for name, pin in expected_water_chain_off.items()})
     expected_stage[compose.MAGE_WATER_CHAIN_OFF_ARCHIVE] = digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE))
+    expected_stage.update({compose.NINJA_S4_OFF + "/" + name: pin
+                           for name, pin in expected_ninja_s4_off.items()})
+    expected_stage[compose.NINJA_S4_OFF_ARCHIVE] = digest(read(root / compose.NINJA_S4_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -892,18 +928,21 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 218 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == core["compile_count"] + core["rojo_build_count"]
+            and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 189 and len(rojo_commands) == 29, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == core["compile_count"]
+            and len(rojo_commands) == core["rojo_build_count"], "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
             and core["build_command_namespace"].get("commands_are_actual_pre_rename_paths") is True,
             "CORE_COMMAND_NAMESPACE")
     expected_compile = {str(Path(stage) / prefix / "sources" / p)
-                        for prefix in ("", compose.OFF) for p in lock["sources"]}
+                        for prefix in ("", compose.OFF) for p in lock["sources"]
+                        if prefix != compose.OFF or p not in expected_reuse}
     expected_compile.add(str(Path(stage) / compose.HUD_OFF / "sources" / compose.HUD_SOURCE))
     expected_compile.add(str(Path(stage) / compose.BOT_OFF / "sources" / compose.BOT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.BEAST_OFF / "sources" / compose.BEAST_SOURCE))
@@ -929,6 +968,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.MAGE_PROJECTILES_SOURCES)
     expected_compile.update(str(Path(stage) / compose.MAGE_WATER_CHAIN_OFF / "sources" / name)
                             for name in compose.MAGE_WATER_CHAIN_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.NINJA_S4_OFF / "sources" / name)
+                            for name in compose.NINJA_S4_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -953,7 +994,7 @@ def verify_core(root, base, reports, context):
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
                                compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
-                               compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF)},
+                               compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -989,9 +1030,12 @@ def verify_core(root, base, reports, context):
                         compose.MAGE_PROJECTILES_OFF: [name for name in lock["sources"]
                                                       if name in compose.MAGE_PROJECTILES_SOURCES],
                         compose.MAGE_WATER_CHAIN_OFF: [name for name in lock["sources"]
-                                                      if name in compose.MAGE_WATER_CHAIN_SOURCES]}
+                                                      if name in compose.MAGE_WATER_CHAIN_SOURCES],
+                        compose.NINJA_S4_OFF: [name for name in lock["sources"]
+                                              if name in compose.NINJA_S4_SOURCES]}
     for prefix, selected in selected_sources.items():
-        expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
+        expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
+                              if prefix != compose.OFF or p not in expected_reuse)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
     require([(c["command"][1], c["command"][2]) for c in commands] == expected_order,
             "CORE_BUILD_STAGE_ORDER")
@@ -1618,6 +1662,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["mage_water_chain_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["mage_projectile_followup"]["rows"].items()
@@ -2048,6 +2094,10 @@ def verify_native(native, root, lock, context):
         "union22_mage_water_chain_verify", HERE / "native/mage_water_chain/__init__.py")
     water_chain = importlib.util.module_from_spec(water_chain_spec)
     water_chain_spec.loader.exec_module(water_chain)
+    ninja_s4_spec = importlib.util.spec_from_file_location(
+        "union22_ninja_s4_verify", HERE / "native/ninja_s4/__init__.py")
+    ninja_s4 = importlib.util.module_from_spec(ninja_s4_spec)
+    ninja_s4_spec.loader.exec_module(ninja_s4)
     require(digest(read(input_lock_path))["sha256"] == adapter.INPUT_LOCK_SHA256, "NATIVE_LOCK_IDENTITY")
     pins = data(input_lock_path)
     require(pins.get("schema") == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
@@ -2102,8 +2152,10 @@ def verify_native(native, root, lock, context):
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
-            and aggregate.get("native_process_count") == 99 + projectiles.PROCESS_COUNT + water_chain.PROCESS_COUNT
-            and aggregate.get("native_evidence_file_count") == 316 + len(projectiles.FILES) + len(water_chain.FILES),
+            and aggregate.get("native_process_count") == 99 + projectiles.PROCESS_COUNT
+            + water_chain.PROCESS_COUNT + ninja_s4.PROCESS_COUNT
+            and aggregate.get("native_evidence_file_count") == 316 + len(projectiles.FILES)
+            + len(water_chain.FILES) + len(ninja_s4.FILES),
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -2217,8 +2269,16 @@ def verify_native(native, root, lock, context):
             and data(water_chain_receipt) == water_chain_result
             and digest(read(water_chain_receipt)) == aggregate["mage_water_chain"], "MAGE_WATER_CHAIN_EXACT_RECEIPT")
     expected_files |= {"mage_water_chain/" + name for name in water_chain.FILES}
+    ninja_s4_folder = native / "ninja_s4"
+    ninja_s4_receipt = ninja_s4_folder / "receipt.json"
+    ninja_s4_result = ninja_s4.observe(root / "sources", ninja_s4_folder, Path(build["binary_path"]),
+                                        build["binary_before_suites"], context, lock, compose)
+    require(set(files(ninja_s4_folder)) == ninja_s4.FILES
+            and data(ninja_s4_receipt) == ninja_s4_result
+            and digest(read(ninja_s4_receipt)) == aggregate["ninja_s4"], "NINJA_S4_EXACT_RECEIPT")
+    expected_files |= {"ninja_s4/" + name for name in ninja_s4.FILES}
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 316 + len(projectiles.FILES) + len(water_chain.FILES)
+    require(len(expected_files) == 316 + len(projectiles.FILES) + len(water_chain.FILES) + len(ninja_s4.FILES)
             and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
@@ -2241,6 +2301,7 @@ def verify_native(native, root, lock, context):
             "fractional_hp": hp,
             "mage_projectiles": projectile_result,
             "mage_water_chain": water_chain_result,
+            "ninja_s4": ninja_s4_result,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -2289,6 +2350,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.PORTRAIT_OFF_ARCHIVE, compose.SHOREFOAM_OFF_ARCHIVE,
                             compose.TEAM_WIN_RULE_OFF_ARCHIVE, compose.FRACTIONAL_HP_OFF_ARCHIVE,
                             compose.MAGE_PROJECTILES_OFF_ARCHIVE, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE,
+                            compose.NINJA_S4_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2411,6 +2473,9 @@ def admit_delivery(root, base, reports, native, context):
             "mage_water_chain_followup": verified["lock"]["mage_water_chain_followup"],
             "mage_water_chain_inverse_place": verified["lock"]["mage_water_chain_followup"]["parent_place"],
             "mage_water_chain_inverse_archive": digest(read(root / compose.MAGE_WATER_CHAIN_OFF_ARCHIVE)),
+            "ninja_s4_followup": verified["lock"]["ninja_s4_followup"],
+            "ninja_s4_inverse_place": verified["lock"]["ninja_s4_followup"]["parent_place"],
+            "ninja_s4_inverse_archive": digest(read(root / compose.NINJA_S4_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2442,6 +2507,7 @@ def admit_delivery(root, base, reports, native, context):
             "fractional_hp": runtime["fractional_hp"],
             "mage_projectiles": runtime["mage_projectiles"],
             "mage_water_chain": runtime["mage_water_chain"],
+            "ninja_s4": runtime["ninja_s4"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

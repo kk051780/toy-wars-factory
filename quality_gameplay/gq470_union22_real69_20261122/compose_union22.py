@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "5aa5711d90e962b1d73f6d5ee80315a85c01524134623803e0f6545546e95dcf"
+LOCK_SHA256 = "78cc00778cc229ffe333e9803a952efb045417443a9ef85b4f0f0c0a3e81105f"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -113,6 +113,14 @@ MAGE_PROJECTILES_SOURCES = (*MAGE_CONTACT_SOURCES, VAULT_SOURCE, HUD_SOURCE,
 MAGE_WATER_CHAIN_OFF = "off69_mage_water_chain_projectile_parent"
 MAGE_WATER_CHAIN_OFF_ARCHIVE = "OFF69_MAGE_WATER_CHAIN_PROJECTILE_PARENT_ROLLBACK.tar.gz"
 MAGE_WATER_CHAIN_SOURCES = (*MAGE_CONTACT_SOURCES, VAULT_SOURCE, HUD_SOURCE)
+NINJA_S4_OFF = "off69_ninja_s4_water_chain_parent"
+NINJA_S4_OFF_ARCHIVE = "OFF69_NINJA_S4_WATER_CHAIN_PARENT_ROLLBACK.tar.gz"
+NINJA_S4_SOURCES = (
+    VAULT_SOURCE,
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "ServerScriptService/EGGRUMBLE_HeroSilhouetteArt.server.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
+)
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -552,6 +560,11 @@ def mage_water_chain_parent(on, lock):
                                 lock["mage_projectile_followup"]["repaired_place"], "MAGE_WATER_CHAIN")
 
 
+def ninja_s4_parent(on, lock):
+    return paired_source_parent(on, lock, lock["ninja_s4_followup"], NINJA_S4_SOURCES,
+                                lock["mage_water_chain_followup"]["repaired_place"], "NINJA_S4")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -719,7 +732,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    water_chain_off, water_chain_off_lock = mage_water_chain_parent(on, lock)
+    ninja_s4_off, ninja_s4_off_lock = ninja_s4_parent(on, lock)
+    water_chain_off, water_chain_off_lock = mage_water_chain_parent(ninja_s4_off, ninja_s4_off_lock)
     projectile_off, projectile_off_lock = mage_projectile_parent(water_chain_off, water_chain_off_lock)
     hp_off, hp_off_lock = fractional_hp_parent(projectile_off, projectile_off_lock)
     team_win_off, team_win_off_lock = team_win_rule_parent(hp_off, hp_off_lock)
@@ -754,6 +768,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
     output.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=output.name + ".building-", dir=output.parent))
     logs = []
+    compile_reuse_prior_br = {}
     try:
         builds = ((stage, on, lock["final_place"], None),
                   (stage / OFF, off, lock["prior_place"], None),
@@ -787,7 +802,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / MAGE_PROJECTILES_OFF, projectile_off, projectile_off_lock["final_place"],
                    MAGE_PROJECTILES_SOURCES),
                   (stage / MAGE_WATER_CHAIN_OFF, water_chain_off, water_chain_off_lock["final_place"],
-                   MAGE_WATER_CHAIN_SOURCES))
+                   MAGE_WATER_CHAIN_SOURCES),
+                  (stage / NINJA_S4_OFF, ninja_s4_off, ninja_s4_off_lock["final_place"], NINJA_S4_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -797,7 +813,13 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                 path.write_bytes(raw)
                 if (changed_source is None or name == changed_source
                         or isinstance(changed_source, tuple) and name in changed_source):
-                    run_checked([compiler, "--text", path], logs, quiet_stdout=True)
+                    # ON already compiled this exact route/body in this invocation.
+                    # Never reuse the immediate parent or a different source body.
+                    if folder == stage / OFF and raw == on[name]:
+                        need(read_file(stage / "sources" / name) == raw, "REUSE_ON_SOURCE_DRIFT:" + name)
+                        compile_reuse_prior_br[name] = identity(raw)
+                    else:
+                        run_checked([compiler, "--text", path], logs, quiet_stdout=True)
             run_checked([rojo, "build", folder / PROJECT, "-o", folder / PLACE], logs)
             place = read_file(folder / PLACE)
             need(identity(place) == wanted, "BUILT_PLACE_IDENTITY")
@@ -869,6 +891,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         projectile_archive_identity = identity(read_file(stage / MAGE_PROJECTILES_OFF_ARCHIVE))
         make_archive(stage / MAGE_WATER_CHAIN_OFF, stage / MAGE_WATER_CHAIN_OFF_ARCHIVE, MAGE_WATER_CHAIN_OFF)
         water_chain_archive_identity = identity(read_file(stage / MAGE_WATER_CHAIN_OFF_ARCHIVE))
+        make_archive(stage / NINJA_S4_OFF, stage / NINJA_S4_OFF_ARCHIVE, NINJA_S4_OFF)
+        ninja_s4_archive_identity = identity(read_file(stage / NINJA_S4_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -993,6 +1017,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({MAGE_WATER_CHAIN_OFF + "/" + PROJECT: lock["project"],
                                MAGE_WATER_CHAIN_OFF + "/" + PLACE: water_chain_off_lock["final_place"],
                                MAGE_WATER_CHAIN_OFF_ARCHIVE: water_chain_archive_identity})
+        expected_stage.update({NINJA_S4_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in ninja_s4_off.items()})
+        expected_stage.update({NINJA_S4_OFF + "/" + PROJECT: lock["project"],
+                               NINJA_S4_OFF + "/" + PLACE: ninja_s4_off_lock["final_place"],
+                               NINJA_S4_OFF_ARCHIVE: ninja_s4_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1064,6 +1093,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_projectile_rollback_archive": projectile_archive_identity,
             "mage_water_chain_followup": lock["mage_water_chain_followup"],
             "mage_water_chain_rollback_archive": water_chain_archive_identity,
+            "ninja_s4_followup": lock["ninja_s4_followup"],
+            "ninja_s4_rollback_archive": ninja_s4_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1101,13 +1132,16 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "fractional_hp_parent_place": hp_off_lock["final_place"],
             "mage_projectile_parent_place": projectile_off_lock["final_place"],
             "mage_water_chain_parent_place": water_chain_off_lock["final_place"],
+            "ninja_s4_parent_place": ninja_s4_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
             "beast_only_compile_count": 1, "beast_only_rojo_build_count": 1,
             "beast_only_h72_parent_place": parent_lock["final_place"],
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
-            "historical_on_br_compile_count": 138, "historical_on_br_rojo_build_count": 2,
+            "historical_on_br_compile_count": 2 * len(on) - len(compile_reuse_prior_br),
+            "historical_on_br_rojo_build_count": 2,
+            "compile_reuse_prior_br": compile_reuse_prior_br,
             "hud_only_compile_count": 1, "hud_only_rojo_build_count": 1,
             "hud_only_off_place": lock["followup_repair"]["current_place"],
             "hud_stage_changed_sources_from_current_rc": 1, "hud_stage_unchanged_sources_from_current_rc": 68,
