@@ -248,6 +248,16 @@ class UnionBoundary(unittest.TestCase):
         header = b"blob " + str(len(armament)).encode() + bytes([0])
         self.assertEqual(hashlib.sha1(header + armament).hexdigest(), mage["source_origin"]["blob"])
         self.assertTrue(private_blobs.isdisjoint(route["after"] for route in mage["routes"].values()))
+        water_dir = active / "features/active_mage_water"
+        water = verify.data(water_dir / "source_lock.json")
+        self.assertEqual(water["profile"], selection["active_profile"])
+        for relative in ("server/Game.server.luau", "server/MusouHorde.luau"):
+            self.assertEqual(water["routes"][relative]["before"], mage["routes"][relative]["after"])
+        for relative in ("server/MatchRoleGrowth.luau", "client/HUD.client.luau"):
+            self.assertEqual(water["routes"][relative]["before"], routes[relative]["after"])
+        catalog = (water_dir / "MageWaterCatalog.luau").read_bytes()
+        self.assertEqual(hashlib.sha256(catalog).hexdigest(), water["source_origin"]["selected_catalog_sha256"])
+        self.assertTrue(private_blobs.isdisjoint(route["after"] for route in water["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])

@@ -1,0 +1,45 @@
+{
+  "off_place": {
+    "bytes": 700116,
+    "sha256": "4bc6a0b61fcc784c52de5cc5c9a5ddbefac0e16564cdc33b89484d942d6c604d"
+  },
+  "enabled": true,
+  "profile": "rich51",
+  "feature": "GQ219_MAGE_041_ACTIVE_WATER_BOLT_V1",
+  "source_origin": {
+    "issue": 219,
+    "owner_design_comment": 7203941708,
+    "design_spec_comment": 7204247109,
+    "commit": "3b96ac3bc4284afa5d3907733f0d64b4c5470685",
+    "catalog_blob": "c587469d2b12dfd67d655022b5733f00d861542b",
+    "selected_catalog_sha256": "fd5efda7552a301836675be8713a5ccc26fef98bab9bdeee235c551478cddd4f",
+    "catalog_row": "MAGE-041",
+    "local_spread_tuning": {
+      "from_stage": 2,
+      "total_targets_including_primary": 3,
+      "radius_studs": 6
+    }
+  },
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "24c12436276b8e2a9bd483527e68899470050ef3",
+      "after": "f193b4b814a98a085effa976853e2a4eaab51a1b"
+    },
+    "server/MusouHorde.luau": {
+      "before": "8f72816ad8d291c2185039bf7c6b948bb46cc7a6",
+      "after": "e84ee6429a19562a10d497e1c165b21ec0533069"
+    },
+    "server/MatchRoleGrowth.luau": {
+      "before": "03eb350bf4bf6d08eec98ff93847dae4c76a88f3",
+      "after": "8ecd53d4e1240b5520577e0c2f9f83cb4a1e49fe"
+    },
+    "client/HUD.client.luau": {
+      "before": "cf39a901e190d062b93b8f408a0760a7a2fd65bf",
+      "after": "0fb0935ee927ad279111ef45a887feb97a226dde"
+    },
+    "server/MageWaterCatalog.luau": {
+      "before": null,
+      "after": "102605d25f7330adf739b5e6860b0f6012f838e6"
+    }
+  }
+}

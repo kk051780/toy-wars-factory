@@ -918,6 +918,28 @@ jobs:
                                       /tmp/p0d_new_luau/luau /tmp/p0d_active_role_growth_after_mage.luau | tee /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_AFTER_MAGE.log
                                       grep -Fx ROLE_GROWTH_REAL_GAME_SKILL_RANGE_CAP_SPECTATOR_LEGACY_PASS /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_AFTER_MAGE.log
                                       grep -Fx ROLE_GROWTH_SNAPSHOT_AVATAR_BOUNDS_AND_HUD_READINESS_PASS /tmp/p0d_rc_out/ACTIVE_ROLE_GROWTH_AFTER_MAGE.log
+                                      WATER_CONFIG=rc_fastlane/features/active_mage_water/source_lock.json
+                                      if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$WATER_CONFIG"; then
+                                        WATER_OFF=/tmp/p0d_rc_active_mage_water_off.rbxlx
+                                        /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$WATER_OFF"
+                                        python3 -B rc_fastlane/apply_active_mage_water.py --profile "$PROFILE" --dist "$DIST" \
+                                          --off-place "$WATER_OFF" | tee /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_OFF.log
+                                        grep -Fx ACTIVE_MAGE_WATER_IMMEDIATE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_OFF.log
+                                        for route in server/Game.server server/MusouHorde server/MatchRoleGrowth server/MageWaterCatalog client/HUD.client; do
+                                          /tmp/p0d_new_luau/luau-compile "$DIST/src/$route.luau" >/dev/null
+                                        done
+                                        python3 -B rc_fastlane/verify_active_mage_water_native.py --dist "$DIST" --out /tmp/p0d_active_mage_water.luau
+                                        /tmp/p0d_new_luau/luau /tmp/p0d_active_mage_water.luau | tee /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_NATIVE.log
+                                        grep -Fx ACTIVE_MAGE_041_REAL_Q_RANGE_12S_ENERGY_AND_WATER_EXPIRY_PASS /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_NATIVE.log
+                                        grep -Fx ACTIVE_MAGE_041_STAGE2_MARK_ONLY_SPREAD_AND_NEUTRAL_LIFE_PASS /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_NATIVE.log
+                                        grep -Fx ACTIVE_MAGE_041_STAGE4_WALL_RANGE_ROLE_AND_LEGACY_FALLBACK_PASS /tmp/p0d_rc_out/ACTIVE_MAGE_WATER_NATIVE.log
+                                        python3 -B rc_fastlane/verify_active_mage_armament_native.py --dist "$DIST" --out /tmp/p0d_mage_f_after_water.luau
+                                        /tmp/p0d_new_luau/luau /tmp/p0d_mage_f_after_water.luau | tee /tmp/p0d_rc_out/ACTIVE_MAGE_F_AFTER_WATER.log
+                                        grep -Fx ACTIVE_MAGE_ACTUAL_ROOT_WALL_RANGE_AND_CLOSE_CONTACT_PASS /tmp/p0d_rc_out/ACTIVE_MAGE_F_AFTER_WATER.log
+                                        python3 -B rc_fastlane/verify_active_role_growth_native.py --dist "$DIST" --out /tmp/p0d_warrior_after_water.luau
+                                        /tmp/p0d_new_luau/luau /tmp/p0d_warrior_after_water.luau | tee /tmp/p0d_rc_out/ACTIVE_WARRIOR_AFTER_WATER.log
+                                        grep -Fx ROLE_GROWTH_REAL_GAME_SKILL_RANGE_CAP_SPECTATOR_LEGACY_PASS /tmp/p0d_rc_out/ACTIVE_WARRIOR_AFTER_WATER.log
+                                      fi
                                     fi
                                   fi
                                 fi
@@ -976,12 +998,15 @@ jobs:
           role_growth_enabled=p=='rich51' and json.loads(role_growth_lock.read_bytes())['enabled']
           mage_lock=pathlib.Path('rc_fastlane/features/active_mage_armament/source_lock.json')
           mage_enabled=p=='rich51' and json.loads(mage_lock.read_bytes())['enabled']
+          water_lock=pathlib.Path('rc_fastlane/features/active_mage_water/source_lock.json')
+          water_enabled=p=='rich51' and json.loads(water_lock.read_bytes())['enabled']
           assert not undead_enabled or hit_enabled, 'UNDEAD_REQUIRES_EXACT_FB019_PARENT'
           assert not assassin_wind_enabled or undead_enabled, 'ASSASSIN_WIND_REQUIRES_EXACT_UNDEAD_PARENT'
           assert not touch_enabled or assassin_wind_enabled, 'TOUCH_REQUIRES_EXACT_ASSASSIN_WIND_PARENT'
           assert not role_growth_enabled or touch_enabled, 'GROWTH_REQUIRES_EXACT_TOUCH_PARENT'
           assert not mage_enabled or role_growth_enabled, 'MAGE_ARMAMENT_REQUIRES_EXACT_ROLE_GROWTH_PARENT'
-          expected={'rich51':51+int(mage_enabled)+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          assert not water_enabled or mage_enabled, 'WATER_BOLT_REQUIRES_EXACT_MAGE_ARMAMENT_PARENT'
+          expected={'rich51':51+int(water_enabled)+int(mage_enabled)+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           xml=ET.fromstring(target.read_bytes())
@@ -1020,6 +1045,7 @@ jobs:
           assert titles[('ModuleScript','MatchRoleGrowth')]==int(role_growth_enabled),('ROLE_GROWTH_MODULE_COUNT',titles)
           assert titles[('ModuleScript','TimePremiumRules')]==int(role_growth_enabled),('ROLE_GROWTH_TIME_MODULE_COUNT',titles)
           assert titles[('ModuleScript','SevenJobArmamentM1')]==int(mage_enabled),('MAGE_ARMAMENT_MODULE_COUNT',titles)
+          assert titles[('ModuleScript','MageWaterCatalog')]==int(water_enabled),('MAGE_WATER_MODULE_COUNT',titles)
           if p=='rich51':
               active_receipt=json.loads((base/'RC_FEATURE_LOCK.json').read_bytes())
               assert ('rc_active_solo_bots' in active_receipt)==bots_enabled
@@ -1032,6 +1058,7 @@ jobs:
               assert ('rc_active_touch_attack' in active_receipt)==touch_enabled
               assert ('rc_active_role_growth' in active_receipt)==role_growth_enabled
               assert ('rc_active_mage_armament' in active_receipt)==mage_enabled
+              assert ('rc_active_mage_water' in active_receipt)==water_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -1105,6 +1132,7 @@ jobs:
                       assert growth['routes']['client/HUD.client.luau']['before']==touch['after']
                       assert growth['routes']['server/MusouHorde.luau']['before']==hit['horde']
                       replaced={'server/Game.server.luau','server/MusouHorde.luau'} if mage_enabled else set()
+                      if water_enabled: replaced|={'server/MatchRoleGrowth.luau','client/HUD.client.luau'}
                       assert all(lock['blobs'][r]==i['after'] for r,i in growth['routes'].items() if r not in replaced)
                       final_game=growth['routes']['server/Game.server.luau']['after']
                   if mage_enabled:
@@ -1113,8 +1141,19 @@ jobs:
                       assert mage['studio_selected_role_only'] and mage['routes']['server/Game.server.luau']['before']==final_game
                       assert mage['routes']['server/MusouHorde.luau']['before']==growth['routes']['server/MusouHorde.luau']['after']
                       assert mage['routes']['server/SevenJobArmamentM1.luau']['before'] is None
-                      assert all(lock['blobs'][r]==i['after'] for r,i in mage['routes'].items())
+                      water_replaced={'server/Game.server.luau','server/MusouHorde.luau'} if water_enabled else set()
+                      assert all(lock['blobs'][r]==i['after'] for r,i in mage['routes'].items() if r not in water_replaced)
                       final_game=mage['routes']['server/Game.server.luau']['after']
+                  if water_enabled:
+                      water=active_receipt['rc_active_mage_water']
+                      assert lock['rc_active_mage_water']==water and water['feature']=='GQ219_MAGE_041_ACTIVE_WATER_BOLT_V1'
+                      assert water['studio_selected_role_only'] and water['routes']['server/Game.server.luau']['before']==final_game
+                      assert water['routes']['server/MusouHorde.luau']['before']==mage['routes']['server/MusouHorde.luau']['after']
+                      for route in ('server/MatchRoleGrowth.luau','client/HUD.client.luau'):
+                          assert water['routes'][route]['before']==growth['routes'][route]['after']
+                      assert water['routes']['server/MageWaterCatalog.luau']['before'] is None
+                      assert all(lock['blobs'][r]==i['after'] for r,i in water['routes'].items())
+                      final_game=water['routes']['server/Game.server.luau']['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
@@ -1336,6 +1375,7 @@ jobs:
           if touch_enabled: overlay_ids.append('ACTIVE_TOUCH_ATTACK_LAYOUT_V2')
           if role_growth_enabled: overlay_ids.append('GQ219_WARRIOR_001_ACTIVE_GROWTH_V1')
           if mage_enabled: overlay_ids.append('GQ470_FB020_ACTIVE_MAGE_ARMAMENT_V1')
+          if water_enabled: overlay_ids.append('GQ219_MAGE_041_ACTIVE_WATER_BOLT_V1')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
@@ -1424,7 +1464,8 @@ jobs:
           undead_enabled=json.load(open('rc_fastlane/features/active_undead_squad/source_lock.json'))['enabled']
           role_growth_enabled=json.load(open('rc_fastlane/features/active_role_growth/source_lock.json'))['enabled']
           mage_enabled=json.load(open('rc_fastlane/features/active_mage_armament/source_lock.json'))['enabled']
-          assert x['native_source_count']==64+int(mage_enabled)+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          water_enabled=json.load(open('rc_fastlane/features/active_mage_water/source_lock.json'))['enabled']
+          assert x['native_source_count']==64+int(water_enabled)+int(mage_enabled)+2*int(role_growth_enabled)+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
