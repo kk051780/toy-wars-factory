@@ -34329,7 +34329,8 @@
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
         "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
         "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
-        "tests/test_gq470_union22_real69_20261122.py"
+        "tests/test_gq470_union22_real69_20261122.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/growth_ancestry.luau"
       ],
       "source_donors": [
         {
@@ -34648,6 +34649,43 @@
       "actual_binding_lease": {
         "commit": "16f6773e1a33e018a42e07d67be987d04db03277",
         "operation_id": "0a62616a-483e-4953-afb1-cb528dfd1bf9"
+      },
+      "source_correction_grant": {
+        "status": "AUTHORIZED_ONE_EXACT_NONFORCE_QA_ONLY",
+        "pr": 1028,
+        "branch": "quality/gq470-match-growth-817bc984-20261123",
+        "old_candidate": "db8943c2218fdfdd5a763657cdd3d8086b493953",
+        "formal_parent": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "tree": "32ce6bcb70c081a0acccbafeb0d069472c5791ba",
+        "local_head": "8b417b1027e50775f312985b3c6e9ece589e351f",
+        "changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "bytes": 35255,
+            "blob": "6521a642bc88abd397c4e2d1f3279701869350ba"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/growth_ancestry.luau",
+            "mode": "100644",
+            "bytes": 713,
+            "blob": "60f8769be64a207e35c6689be040c6584fbb48d4"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "bytes": 49913,
+            "blob": "59b3d3e6473e2c7df9ceb3209a1a9d0a5296f44b"
+          }
+        ],
+        "reason": "Original fixture missing new Swarm AncestryChanged. Reuse exact existing donor instance/parent propagation without changing prior fixtures, gameplay or their case vectors. Actual local all 29 original cases passed and independent assembly bytes matched.",
+        "source_runtime_changed": false,
+        "prior_exact_failed_run": 45955117130,
+        "expires_at": "2026-11-27T07:34:15.911Z",
+        "metadata": {
+          "lease": "4ffdc797d81d20efe6176bc6e0b7d8b9226ca154",
+          "owner": "532aad69-6778-416c-876e-b0e4c35e9cf0"
+        }
       }
     }
   ],
