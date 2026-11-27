@@ -31630,7 +31630,7 @@
     {
       "claim_id": "P0D-GQ894-RELAY-PRESENTATION-V2-20261127",
       "feature_id": "GQ8_RC86_EGG_RELAY_PRESENTATION_V2",
-      "state": "PREP_READY",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP",
       "owner": "/root (Codex parent, prior #894 followup)",
       "parent_issue": 470,
@@ -31644,7 +31644,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "original_host_git_head": "467adbea0fe0a6095a9564602115b43fc2312dea",
@@ -31758,7 +31758,7 @@
         "artifact": 15166198897
       },
       "bounded_rc_integration": {
-        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "7ad4055bd28e6aaf0ba6183796912503812de416",
         "permitted_head": "36c14af432e7221301a9cec6dea75ab54d4daadf",
@@ -31766,7 +31766,7 @@
         "permitted_pr": 1036,
         "sole_executor": "/root (Codex parent, B coordinator for #1036)",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -31798,7 +31798,64 @@
           "registry_parent": "4d02c2b7060a253eca0df4f90a23e84fbdb18819",
           "registry_blob": "15cc079eb3e55ce132e4dd5336323bed296cb7e6",
           "authority_basis": "Authenticated delegated owner #1011 V2.1, #220 exclusive CAS, actual narrow #218 current #1036 binding, independent 6082582302 and trusted green fixed candidate."
-        }
+        },
+        "writer_acquire_ref": "2fc4622496b39bc49b6c93e11895a28c9cfcbec3",
+        "writer_return_ref": "1dc3d403acb1b5145c6084b9fa669be93eaaf7a0",
+        "exact_adoption_readback_at": "2026-11-27T02:12:28.151Z"
+      },
+      "actual_postpush": {
+        "rc": "36c14af432e7221301a9cec6dea75ab54d4daadf",
+        "place": {
+          "bytes": 842005,
+          "sha256": "fd9880d086aa3da6cff580b852880c2380f73b496a9fff1d8b6c9b0ea3b753e3"
+        },
+        "rollback_place_bytes": 832059,
+        "source_lock_sha256": "53d3207a17c0adc2f16b28d020bef68dd270a157b72a902bf15f9de83d1d9593",
+        "official_ci": {
+          "run": 45926960460,
+          "job": 140270410623,
+          "steps_success": 48,
+          "artifact": 15166652806,
+          "zip_bytes": 15991705,
+          "digest": "sha256:a18195e6025f63d20312603b0bcbcd343c0be55b7eef36365330657b73ee5c1f"
+        },
+        "studio": {
+          "runtime": "PRIVATE_COMPANION REAL69_UNION22",
+          "first_trial": "INCONCLUSIVE_INPUT_WINDOW_EXPIRED",
+          "first_proof": "c465e552fcb42f504f3b082b0f0f3388e2a2a9b0d708188cff99bf7b5096c5d0",
+          "second_trial": "PASS",
+          "second_proof": "070f7d9ddc04de236009d937b3e6bada4a1ee5d5c0e3baa1b4dc37f234cc735d",
+          "source_routes_exact": 69,
+          "normal_e_field_pickups": 4,
+          "carry_pairs": [
+            "3/1=>2/2",
+            "2/2=>2/2",
+            "2/2=>1/3",
+            "1/3=>1/3"
+          ],
+          "seconds_from_previous_success": [
+            null,
+            2.332,
+            13.967,
+            23.814
+          ],
+          "both_owned_groups_closed": true,
+          "owned_pids_per_group": 10,
+          "ownership": "Native session and periodic verified process census",
+          "independent_context": "/root/p0_offer_review26",
+          "prompt_while_full": "OBSERVED_STILL_VISIBLE",
+          "PC_PACKET": {
+            "members": 15,
+            "bytes": 1750174,
+            "sha256": "1ceba90a67594e226a2b94429be081c74bf785578ff09c5990ec204eb4c42450",
+            "upload": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE"
+          }
+        },
+        "accepted_by": "AUTHENTICATED_DELEGATED_INTEGRATION_ACTOR",
+        "owner_product_acceptance": "UNKNOWN",
+        "recorded_at": "2026-11-27T02:42:52.010Z",
+        "metadata_lease_sha": "934ff781ca90fadc42e9156757d3e522bab8394d",
+        "metadata_owner_id": "67af7031-491d-470c-a332-fda71c89c74d"
       }
     }
   ],
