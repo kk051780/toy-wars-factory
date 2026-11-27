@@ -33061,21 +33061,48 @@
         "older_rollbacks_verified": 12,
         "source_lock": "6f76962b33682de03d951ac72c3670f935505a914397f54f65b6062b082a5703",
         "studio": {
-          "state": "IN_PROGRESS_NOT_ACCEPTED",
-          "scope": "PC SOLO BR; natural finish and ordinary replay; exact same adopted SHA",
-          "owner": "/root",
-          "case": "rcfield27a",
-          "known_owned_pids": [
+          "state": "PASS_PC_SOLO_BR_FIELD_PROMPT_ONLY",
+          "reviewer_context": "/root/p0_offer_review26",
+          "runtime": "PRIVATE_COMPANION REAL69_UNION22",
+          "natural_draw_seconds": 899.902,
+          "surviving_field_eggs": 12,
+          "enabled_after": 0,
+          "terminal_e_triggered": 0,
+          "terminal_e_eggs": [
+            0,
+            0
+          ],
+          "actual_lobby_to_replay_active_seconds": 103.394,
+          "new_prompts": 24,
+          "replay_e_triggered": 1,
+          "replay_eggs": [
+            0,
+            1
+          ],
+          "saved_sources": 69,
+          "owned_pids": [
             37452,
             43436
-          ]
-        }
+          ],
+          "closure": "STUDIO_CLOSED_VERIFIED",
+          "verified_exit_at": "2026-11-27T05:33:54.779Z",
+          "proof_sha256": "725d620dbda4621ed3990b98ed7b91367e4847bd926ad12884b74ecd789e8f3b",
+          "native_log": "1600d7117cb58f353e2dfe8e0993f7e6c88d94759024b976b13893328d84f06b",
+          "note": "Terminal E is witnessed in raw log. Nearby before and replay images; boundary photo is after lobby return."
+        },
+        "local_sanitized_pack": {
+          "bytes": 4625589,
+          "sha256": "1c3d1ace444374a055e09885e927527bf1632a4abc18604f49c14d500c5758ee",
+          "members": 14,
+          "state": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE"
+        },
+        "canonical_record": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7210784639"
       }
     },
     {
       "claim_id": "P0D-GQ470-VISUAL-READABILITY-1003-925-926-20261127",
       "feature_id": "GQ470_FB001_FB008_FB015_FB016_VISUAL_READABILITY",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, existing #1003 reused)",
       "parent_issue": 470,
@@ -33091,7 +33118,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing neutral NPC subject label and damaged-bar policy from #1003; smaller lobby names and roof from #925; exact existing verified Wedge LocalScript for #926 FB016 in place of the older authored AABB. Preserve #1003 full original author ancestry and leave #925/#926 transport untouched. Only three runtime leaves and canonical locks/tests, no new authority. #929/#943 already adopted.",
@@ -33371,7 +33398,7 @@
         }
       },
       "bounded_rc_integration": {
-        "status": "ONE_EXACT_FAST_FORWARD_AUTHORIZED_PENDING_LIVE_LEASE",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "fb87f9f23d0a136da048804cef307a865483f133",
         "permitted_head": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
@@ -33384,7 +33411,7 @@
           "role": "FINITE_220_CODEx_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -33398,6 +33425,214 @@
           "decision": "Authenticated #1011 V2.2/#220, independent current source and trusted queue",
           "lease": "4926790282bb81adefffa4aa2c418adb3bc51328",
           "owner": "397b12a0-ee9d-404d-9515-1e956dce8182"
+        },
+        "writer_acquire_ref": "7716536b928df9eb954d114c7f6340b4c5ef377c",
+        "writer_return_ref": "bf56b7908d362ec863d9607e31677fae7e4ff7b3",
+        "exact_adoption_readback_at": "2026-11-27T05:37:39.297Z"
+      },
+      "actual_postpush": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "before_sha": "fb87f9f23d0a136da048804cef307a865483f133",
+        "head": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "tree": "748dbb66db9d4fd55fed3eb6fa74359aaf2adb17",
+        "merged_pr": 1003,
+        "donors": [
+          925,
+          926
+        ],
+        "metadata_lease": {
+          "commit": "60d4103d844afa585732b9bc069550bf3c12a546",
+          "owner": "e777773b-61a6-4b41-89c5-fd7957023fb6"
+        },
+        "official_ci": {
+          "run": 45946931833,
+          "job": 140333659099,
+          "steps": 48,
+          "conclusion": "success",
+          "native_foliage": 14,
+          "author_neutral_negative": 11,
+          "author_plaza_negative": 6,
+          "artifact": 15175640335,
+          "zip": {
+            "bytes": 18177820,
+            "sha256": "548b527bda913e76ad2db334f0c53ec1355a5244b2b475cd3905d9b033e88f3b"
+          }
+        },
+        "windows_rebuilt_place": {
+          "bytes": 852755,
+          "sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
+        },
+        "immediate_off": {
+          "bytes": 849249,
+          "sha256": "9b40c14a44294464d2c86727c5347b14c6ff92b06c15ba248b7492fc89ccdeb0"
+        },
+        "older_rollbacks_verified": 13,
+        "source_lock": "5f2dfebd163d37eea759f4a371332f08cbe620115f307ed314589f726cb8e1ad",
+        "studio": {
+          "state": "NOT_TESTED",
+          "deferred_by": "OWNER #1011 V3.0, 2026-11-27T05:37:30Z",
+          "pc_evidence_current": null,
+          "android": "NOT_TESTED",
+          "fun": "PENDING"
+        }
+      }
+    },
+    {
+      "claim_id": "P0D-GQ796-GUARDIAN-WALL-PATROL-20261127",
+      "feature_id": "GQ796_GUARDIAN_WALL_PATROL",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, original #796 and prepared wall fix reuse)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "pr": 796,
+      "base_rc_sha": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+      "base_rc_tree": "748dbb66db9d4fd55fed3eb6fa74359aaf2adb17",
+      "prep_branch": "quality/gq8-subsea-melee-los-20261118",
+      "expected_source_branch": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
+      "allowed_new_prs": 0,
+      "source_scope_granted": true,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "One existing guardian movement route, prepared exact f57d11b4 guard-body sweeps/tangent slide/end overlap, 1545 bytes, no new hostile target policy, castle rules, character HP, inventory, authority or art variant. Reuse existing open #796 and preserve original head. Preserve old 40 native exact historical context and run seven strict new cases. Shared canonical scope serialized; #957 excluded.",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "GQ796_GUARDIAN_WALL_PATROL"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/guardian_wall_geometry.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "origin_head": "f57d11b4b0715ac593285faebe9fe3dc39f10afc",
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/796#issuecomment-7188210015",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "e777773b-61a6-4b41-89c5-fd7957023fb6",
+      "issued_at": "2026-11-27T05:46:08.016Z",
+      "expires_at": "2026-11-27T07:46:08.016Z",
+      "actual_metadata_lease": {
+        "ref": "60d4103d844afa585732b9bc069550bf3c12a546",
+        "blob": "67046253e5a094b4a55d2c542b2c614bfa24944f",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "e777773b-61a6-4b41-89c5-fd7957023fb6",
+          "task_id": null,
+          "epoch": 840,
+          "acquired_at": "2026-11-27T05:45:49.208Z",
+          "expires_at": "2026-11-27T06:15:49.208Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated latest #1011 V3 and #220 scope; preserve all quality/source gates. This grant is preview only and author cannot self-review or write formal RC.",
+      "source_grant": {
+        "status": "ONE_EXACT_NONFORCE_UPDATE_EXISTING_PR",
+        "pr": 796,
+        "branch": "quality/gq8-subsea-melee-los-20261118",
+        "branch_expected_before": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
+        "formal_parent": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "author_parent": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
+        "tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+        "local_head": "78e3b99f61e0b476b6657a74778e19247ea3887a",
+        "permitted_reclassify_draft": true,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "blob": "9e9458c0038146b087a28d687d22739f30111f0d",
+            "bytes": 52747
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "7db4b7588f5f0a01efb64338a772ab5bbaa5d6a8",
+            "bytes": 35087
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/guardian_wall_geometry.luau",
+            "mode": "100644",
+            "blob": "05296f491c941ffdc3942f77987c27716a04a11e",
+            "bytes": 2516
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall.py",
+            "mode": "100644",
+            "blob": "251ff5a17d70fec0c7083c3c1a0ea119f8556327",
+            "bytes": 4339
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/guardian_wall_cases.luau",
+            "mode": "100644",
+            "blob": "dc272adab2e33c30d20464869375b7297cab19e6",
+            "bytes": 5321
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "blob": "7cd96c055a6d4870e90d809b662347c3c1118a0b",
+            "bytes": 17132
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "blob": "10b63d44abc66e110e9633dd1d71ccf899eeeb08",
+            "bytes": 49090
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "blob": "7c8c7e74b51c6da59184abfe6211a1a7cebd24d3",
+            "bytes": 910030
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "blob": "b35c5d2db49752f183257c285209f4d6961c4afc",
+            "bytes": 122889
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "cdab74d85bc64be0c818e3e784e34f2a00e9f7ee",
+            "bytes": 101621
+          }
+        ],
+        "local_qa": {
+          "compile": 157,
+          "rojo": 16,
+          "older_rollbacks": 14,
+          "immediate_off_exact": true,
+          "native_wall": 7,
+          "historical_guardian": 40,
+          "live_suites": [
+            12,
+            10,
+            7
+          ],
+          "preserved_foliage": 14,
+          "place_bytes": 854300,
+          "place_sha256": "cb6c7d472588912559489b5beeac66cc8f02b2e43b5060f004f443316a1a2fc6"
+        },
+        "expires_at": "2026-11-27T06:46:08.016Z",
+        "issued_from": {
+          "lease": "60d4103d844afa585732b9bc069550bf3c12a546",
+          "owner": "e777773b-61a6-4b41-89c5-fd7957023fb6"
         }
       }
     }
