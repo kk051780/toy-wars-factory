@@ -31600,6 +31600,78 @@
           "origin": "controller"
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ894-RELAY-PRESENTATION-V2-20261127",
+      "feature_id": "GQ8_RC86_EGG_RELAY_PRESENTATION_V2",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP",
+      "owner": "/root (Codex parent, prior #894 followup)",
+      "parent_issue": 470,
+      "integration_issue": 220,
+      "canonical_parent": 894,
+      "base_rc_sha": "7ad4055bd28e6aaf0ba6183796912503812de416",
+      "prep_branch": "feature/p0d-relay-presentation-v2-existing-20261127",
+      "expected_source_branch": "ABSENT",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": true,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "original_host_git_head": "467adbea0fe0a6095a9564602115b43fc2312dea",
+      "original_client_git_head": "1d37a925555a46f7db86280dc4ad200958c5e664",
+      "original_client_pin": {
+        "bytes": 8813,
+        "sha256": "ed40b6fa5618b4c63db38aeb39d8d6e79b63b7c3d6e113fc3b51c53a1f524a81"
+      },
+      "scope": "Exact existing relay presentation V2 Host attribute/availability hunks and unchanged client body started on existing HUD runtime, no new route, existing Triggered callback and scoring untouched. One additional paired OFF, strict Native, original #894 merged and other verified PRs have narrower or separate scopes. Acknowledge #1017 current same-head Studio continues separately; no overlapping mutation.",
+      "scope_request": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-7090466604",
+      "studio_repro": "https://github.com/kk051780/toy-wars-factory/issues/364#issuecomment-7147834825",
+      "studio_existing_comparison": "https://github.com/kk051780/toy-wars-factory/pull/1017#issuecomment-7185210945",
+      "source_parent_untouched": true,
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/relay_presentation_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW",
+        "REAL69_SOURCE_EGGRUMBLE_HUDINTELRUNTIME",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "REAL69_NATIVE_FULL28_PROFILE",
+        "EGG_RELAY_PRESENTATION"
+      ],
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "c2464997-76f2-40c5-be83-6465789d4eff",
+      "issued_at": "2026-11-27T01:51:19.192Z",
+      "expires_at": "2026-11-27T07:51:19.192Z",
+      "actual_metadata_lease": {
+        "ref": "c2127d8a37010d38b4b3a907f21f6c31e4ab2d7b",
+        "blob": "c1706a487f8397dd004e30a4bedbe5763eeff23a",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "c2464997-76f2-40c5-be83-6465789d4eff",
+          "task_id": null,
+          "epoch": 795,
+          "acquired_at": "2026-11-27T01:51:03.086Z",
+          "expires_at": "2026-11-27T02:21:03.086Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Current authenticated OWNER #1011 V2.1 and bounded delegated coordination. Original #894 and #218 evidence are reused; this records expanded local preparation scope, not prior grant or RC authority."
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
