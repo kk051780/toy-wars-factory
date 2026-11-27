@@ -43479,6 +43479,171 @@
           "trusted_queue_job": 140730546992
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FB003-PRIVATE-TEAM-WIN-GATE-20261128",
+      "feature_id": "GQ470_FB003_PRIVATE_TEAM_WIN_GATE_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 364,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+      "base_rc_tree": "c5f9be4f8929b780925fabcc3cc3da679af7bf7c",
+      "prep_branch": "quality/gq470-private-fb003-team-win-gate-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Correct the text of the existing TEAM deployment gate to explain the real all-enemy-castles win condition. Reuse the published Host refresh and CastleMatchRules. One selected PRIVATE Host line (+3 B), same 4 queue states and BR UI, unchanged rules/other68/ACTIVE and all prior 24 rollback archives. No test-only source mounted.",
+      "resources": [
+        "PRIVATE_REAL69_TEAM_GATE_WIN_COPY_FB003"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_scene.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/364",
+      "protected_overlap": {
+        "issues": [
+          385,
+          938,
+          942
+        ],
+        "partition": "TEAM queue board title text only, distinct from ACTIVE HUD, first90 in-match prompts and the shoreline. Existing Rules and prior accepted Host patches retained."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "d14e1462-e349-4172-9de4-005e99b9a2cb",
+      "issued_at": "2026-11-27T20:48:33.876Z",
+      "expires_at": "2026-11-27T22:48:33.876Z",
+      "actual_metadata_lease": {
+        "ref": "5372811174ff53af61af2cc7874c0f15e175bbf3",
+        "blob": "4662f78556b63fca10ed9646b7a257dc76d20556",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "d14e1462-e349-4172-9de4-005e99b9a2cb",
+          "task_id": null,
+          "epoch": 1045,
+          "acquired_at": "2026-11-27T20:48:18.610Z",
+          "expires_at": "2026-11-27T21:18:18.610Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V3.5, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq470-private-fb003-team-win-gate-20261128",
+        "formal_parent": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
+        "tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
+        "local_head": "5a0f61eb819bd27bce6ecb00f9145cb64717aa46",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "blob": "33844a658502e1243a10e3c991edfb438637d8b7",
+            "bytes": 67608
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "b2d3ad21cbcd540b53fb47735d6333abe28ba590",
+            "bytes": 35255
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "mode": "100644",
+            "blob": "7a725db920425f856e2cc6a26f4ddf8f814d8939",
+            "bytes": 10330
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "mode": "100644",
+            "blob": "b2ff1cf386a02630a2515f231d6dd101db1c8381",
+            "bytes": 7689
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "blob": "99cc053fa5bde3794346f404bd80e4d624ee2cff",
+            "bytes": 21749
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "blob": "15219ec90f874bfa30c62d04ca88114cfa2baf48",
+            "bytes": 53286
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py",
+            "mode": "100644",
+            "blob": "efd9785a39fdccdcc3eb7dd6eb0884da78f25de9",
+            "bytes": 3418
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_scene.luau",
+            "mode": "100644",
+            "blob": "6030abf25c20afb0986ed4cecb5aa1f24f410b30",
+            "bytes": 1585
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "blob": "5c75f81ad10a6a7eaf70b4a94050186f8685e392",
+            "bytes": 1700692
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "blob": "2bb79b25cea512768dc2df8e6d8db36ee4498b93",
+            "bytes": 162661
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "4321be320868b99336e9fa5808d8341071697936",
+            "bytes": 125890
+          }
+        ],
+        "expires_at": "2026-11-27T21:48:33.876Z",
+        "issued_from": {
+          "lease": "5372811174ff53af61af2cc7874c0f15e175bbf3",
+          "owner": "d14e1462-e349-4172-9de4-005e99b9a2cb"
+        },
+        "local_qa": {
+          "place_bytes": 895843,
+          "place_sha256": "9b5c8b90eb9f59702eaade05b9a23e209e4c792b27237d4c9255be6a6cd57db2",
+          "off_bytes": 895840,
+          "off_sha256": "805cea73d632b54629c3cd775efa2aff284e2d98601725de3662af7379d493ef",
+          "source_after_sha256": "71e801ecc0c9434ec4c47edc03d3e89a95cc6bbca22b6cba8a4bcee41044b367",
+          "windows_compile_count": 179,
+          "windows_rojo": 26,
+          "prior_archives_equal": 24,
+          "native_queue_cases": 8,
+          "source_bytes_delta": 3,
+          "real_rule_modes_16_castles": true,
+          "old_guard_boundary_negatives": 6,
+          "device": "NOT_TESTED_V3.5"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
