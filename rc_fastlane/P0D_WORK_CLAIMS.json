@@ -45128,7 +45128,7 @@
       },
       "authority_basis": "#1011 V4.2 (next game batch with exact #220 runtime QA repair), genuine #218/#220 and #219 fixed design. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "branch": "quality/gq219-private-ninja-combo008-s4-20261128",
         "formal_parent": "d69486222fd699a690c836efe820d392f88dff60",
         "tree": "c07af585318b463500c63e429df6bbcbb5534132",
@@ -45236,9 +45236,9 @@
           "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py"
         ]
       },
-      "source_head": null,
-      "prepared_candidate_head": null,
-      "prepared_candidate_tree": null,
+      "source_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+      "prepared_candidate_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+      "prepared_candidate_tree": "c07af585318b463500c63e429df6bbcbb5534132",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -45297,8 +45297,8 @@
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
-          "blob": "2230e816493277f136001ee2eaf974fd6f132e2f",
-          "bytes": 176054
+          "blob": "e83f6651673643fc4a322b0ffe487a0bc1698d82",
+          "bytes": 176073
         },
         {
           "path": "tests/test_gq470_union22_real69_20261122.py",
@@ -45306,10 +45306,20 @@
           "bytes": 131985
         }
       ],
-      "actual_candidate_readback": null,
+      "actual_candidate_readback": {
+        "pr": 1052,
+        "exact_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "exact_tree": "c07af585318b463500c63e429df6bbcbb5534132",
+        "exact_parent": "d69486222fd699a690c836efe820d392f88dff60",
+        "previous_candidate": "9a24febe3da1474bea7961a096595b727bf7a5fe",
+        "preserved_author_parent": "315bf9ef469515821271000b1ff31d73447598ec",
+        "source_lease": "64c7efe21b3891f5ccc65c888d6d8ee6d1d5c04a",
+        "source_lease_return": "330eda90e311acc3ee36e1ee291c5aeaca567b1b",
+        "prepared_at": "2026-11-27T23:28:31.203Z"
+      },
       "actual_binding_lease": {
-        "commit": "91eaf58186ff8ee202cc9871b83b900cdf2a8f2b",
-        "operation_id": "d72955ef-6e74-4e3b-b19e-5c2f550e3d7d"
+        "commit": "68dae170adc72edd3d106008392ce7b64401b77f",
+        "operation_id": "044cc18b-5fd7-48c9-ac0f-bc4abf66686a"
       },
       "superseded_binding": {
         "pr": 1052,
