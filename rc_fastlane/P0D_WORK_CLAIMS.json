@@ -44323,11 +44323,11 @@
       },
       "authority_basis": "#1011 V4.2 07:05 JST, #218/#220 and the fixed #219 catalog. Preserve the current writer's scoped work. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "branch": "quality/gq219-private-mage-projectile-batch-20261128",
         "formal_parent": "843180dc0daaf54da840f900282cbcaa77301372",
-        "tree": "ec2c684353cb5e10be50f283ef7c46cdc1e71e88",
-        "local_head": "95f137827cfa38c0a9ddf20e3d964478a77a7aa6",
+        "tree": "71727e384fa6b073152cb81efef37c3b2d41d337",
+        "local_head": "a1f7e1f00b38979742b91b20fa6bff8e6508cea8",
         "permitted_create_draft": 1,
         "allowed_changed_files": [
           {
@@ -44343,15 +44343,15 @@
             "mode": "100644"
           },
           {
-            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
-            "blob": "fea8a31b93225681986f2518cd925023abeeabd7",
+            "blob": "16b18f3aebb8b728f372a8cdf12f5eea98ee9a7a",
             "bytes": 70737,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
             "mode": "100644"
           },
           {
-            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
-            "blob": "0f11b391f042d0bf479376dc8abba4a76078d88d",
+            "blob": "d43c16cf590d3e243c46d16e67ee67f59779d1bb",
             "bytes": 35255,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
             "mode": "100644"
           },
           {
@@ -44403,15 +44403,15 @@
             "mode": "100644"
           },
           {
-            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
-            "blob": "d0ec45a14c664ddd41a87c1143f474c2450e9a3d",
+            "blob": "3caec8dbc8fb4893a1cd27a809dc757bc5c6f3f7",
             "bytes": 54704,
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
             "mode": "100644"
           },
           {
+            "blob": "eb42408e1b22468457a2f7a7a121bf55ed6e7cfd",
+            "bytes": 2089800,
             "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
-            "blob": "f5c077a9de98058145f4d07e4d514c22e313e5fa",
-            "bytes": 2089552,
             "mode": "100644"
           },
           {
@@ -44427,14 +44427,14 @@
             "mode": "100644"
           }
         ],
-        "expires_at": "2026-11-27T23:09:50.251Z",
+        "expires_at": "2026-11-27T23:21:09.304Z",
         "issued_from": {
-          "lease": "e1f80e9e50dc7a50d5ffb0ec284af5b263f2b1e1",
-          "owner": "c7ba1bce-5503-45f0-a246-156079e126f4"
+          "lease": "924aacf0bd78a3c326ebf1bb9decd4da63fb79c5",
+          "owner": "c65f9af0-e7d6-4741-b02b-14a69ddafcfe"
         },
         "local_qa": {
-          "place_bytes": 921149,
-          "place_sha256": "2faaab03021f930f98a4ecd1b02345923e85aa07c75505da214cc00f5abbec03",
+          "place_bytes": 921208,
+          "place_sha256": "4bbc7a88c52313fa0f67ee1e56ab1b94ef1bb3a43af0d6fd6bf92ea8be4ba305",
           "off_bytes": 895935,
           "off_sha256": "163a3045fb4a68f315a1c3d8fa467811be384983026ef0c06112f3aa3182b899",
           "unchanged_selected_sources": 64,
@@ -44457,12 +44457,23 @@
             "companion": "docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
             "companion_blob": "b7b855f8688e38ad9c5d8cb1df39c3a45ee88c16"
           },
-          "runtime_exact_local_commit": "9e389872e4f9fb0cb35b1e9fc4e8b0743e0c2989"
-        }
+          "runtime_exact_local_commit": "9e389872e4f9fb0cb35b1e9fc4e8b0743e0c2989",
+          "actual_legacy_bot_scenarios": 9,
+          "old_missing_api_red_fixed": true,
+          "selected_source_only_delta_59": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau",
+          "unchanged_other_candidate_sources": 68
+        },
+        "old_pr_head": "b727240abafc08eec5ef2799ae819552c284c417",
+        "repair_changed_paths_from_red": [
+          "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json"
+        ]
       },
-      "source_head": "b727240abafc08eec5ef2799ae819552c284c417",
-      "prepared_candidate_head": "b727240abafc08eec5ef2799ae819552c284c417",
-      "prepared_candidate_tree": "ec2c684353cb5e10be50f283ef7c46cdc1e71e88",
+      "source_head": null,
+      "prepared_candidate_head": null,
+      "prepared_candidate_tree": null,
       "source_blob_submissions": [
         {
           "path": "AGENTS.md",
@@ -44561,7 +44572,12 @@
           "mode": "100644"
         }
       ],
-      "actual_candidate_readback": {
+      "actual_candidate_readback": null,
+      "actual_binding_lease": {
+        "commit": "f4c8e16840c7f261b00e1036fb23a58337d27fb5",
+        "operation_id": "a1636cd2-6ef4-4369-bfeb-01e487c7fb92"
+      },
+      "superseded_binding": {
         "pr": 1050,
         "exact_head": "b727240abafc08eec5ef2799ae819552c284c417",
         "exact_tree": "ec2c684353cb5e10be50f283ef7c46cdc1e71e88",
@@ -44572,9 +44588,14 @@
         "source_lease_return": "9c54d202be91fea9b15db2e200112d0a8e56f840",
         "prepared_at": "2026-11-27T22:12:04.872Z"
       },
-      "actual_binding_lease": {
-        "commit": "f4c8e16840c7f261b00e1036fb23a58337d27fb5",
-        "operation_id": "a1636cd2-6ef4-4369-bfeb-01e487c7fb92"
+      "first_candidate": {
+        "head": "b727240abafc08eec5ef2799ae819552c284c417",
+        "tree": "ec2c684353cb5e10be50f283ef7c46cdc1e71e88",
+        "source_lease": "5fd9403739aa1fffe6c26f834590960d43770b4d",
+        "source_return": "9c54d202be91fea9b15db2e200112d0a8e56f840",
+        "author_parent": null,
+        "failed_job": 140760760753,
+        "reason": "Actual hosted BOT 16-body fixture injects the historical SevenRoleCombat baseline without the optional MAGE picker. Real local reproduction confirmed the first scenario aborts calling the missing method. Host now checks the optional function before creating the MAGE loadout control. Actual selected production function, three working spells and stage remain in scope. Native 9 original BOT scenarios pass with frozen corpus; only Host and its exact producer/inputs/SourceLock change."
       }
     }
   ],
