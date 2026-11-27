@@ -1,0 +1,32 @@
+{
+  "enabled": true,
+  "profile": "rich51",
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "337decd90f81ab59e9f04b39c2058dcc182a3694",
+      "after": "e31ab057e2a7dd8431f6fa14cededcdda42826a8"
+    },
+    "server/V4TrainingBridge.server.luau": {
+      "before": "dbb7171add2b29e337171e547bc40101c2b0dce4",
+      "after": "b52702b308448fda3bae4661334d4d4fb21f51d0"
+    },
+    "server/LobbyDojoIsland.luau": {
+      "before": null,
+      "after": "0ea8a0957841bcbd92def235726cc9a21be1231f"
+    }
+  },
+  "placement_sha256": "ae0d9d1906a91b63e24946e4c776fbc56e06f26c1460f67f9ce9eae3b081d180",
+  "source_origins": {
+    "physical_lobby_pr": 376,
+    "original_head": "8d7dcfc6d623549915526ea434b6e39bb50f1200",
+    "original_module_gitblob": "0ea8a0957841bcbd92def235726cc9a21be1231f",
+    "rebalance_pr": 396,
+    "existing_private78_workflow": 46014980312,
+    "existing_private78_artifact": 15206231626,
+    "spectator_relocation_packet": "2026-11-24 #364 local late-island-spawn Game.patch"
+  },
+  "off_place": {
+    "bytes": 646032,
+    "sha256": "6127dce8053431e31a5d3254bccb2f004bfbb3641f6d01dfcd26c8b278e5b7a2"
+  }
+}

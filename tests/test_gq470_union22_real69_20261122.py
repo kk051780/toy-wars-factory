@@ -183,6 +183,13 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(persistence["profile"], selection["active_profile"])
         self.assertEqual(persistence["routes"]["server/Game.server.luau"]["before"], h2_exit["after"])
         self.assertTrue(private_blobs.isdisjoint(row["after"] for row in persistence["routes"].values()))
+        lobby = verify.data(active / "features/active_safe_lobby/source_lock.json")
+        self.assertEqual(lobby["profile"], selection["active_profile"])
+        self.assertEqual(lobby["routes"]["server/Game.server.luau"]["before"],
+                         persistence["routes"]["server/Game.server.luau"]["after"])
+        island = (active / "features/fb007_lobby/LobbyDojoIsland.luau").read_bytes()
+        blob = b"blob " + str(len(island)).encode() + bytes([0]) + island
+        self.assertEqual(hashlib.sha1(blob).hexdigest(), lobby["routes"]["server/LobbyDojoIsland.luau"]["after"])
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
