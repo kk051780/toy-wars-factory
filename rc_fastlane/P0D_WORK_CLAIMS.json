@@ -40193,6 +40193,148 @@
           "trusted_queue_job": 140635071794
         }
       }
+    },
+    {
+      "claim_id": "P0D-ACTIVE-TOUCH-ATTACK-320-20261128",
+      "feature_id": "ACTIVE_TOUCH_ATTACK_LAYOUT_V2",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 420,
+      "source_issue": 320,
+      "integration_issue": 220,
+      "pr": 320,
+      "base_rc_sha": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+      "base_rc_tree": "15b8e3a1a0c096b35f2837fed6f99b76232b71f2",
+      "prep_branch": "feature/p0d-rc61-android-touch-layout-audit-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Continue existing #320 ACTIVE Android HUD work with the actual previously tested #220 local touch layout. One ACTIVE HUD only. Position and size move away from native Jump/Thumbstick and occupied Q/T/R/etc controls, keep #423 HIT/MISS across resizes/ticks and restore PC F. Roles/Game/Remote/score and PRIVATE vector unchanged; actual Android/Studio not tested this head.",
+      "resources": [
+        "ACTIVE_TOUCH_ATTACK_LAYOUT_V2",
+        "ACTIVE69_HUD_OCCUPIED_TOUCH_RECT_AND_Q",
+        "ACTIVE69_HUD_ATTACK_RESULT_PRESENTATION",
+        "ACTIVE69_ANDROID_320_F_JUMP_LAYOUT"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_touch_attack.py",
+        "rc_fastlane/features/active_touch_attack/native_cases.luau",
+        "rc_fastlane/features/active_touch_attack/source_lock.json",
+        "rc_fastlane/features/active_touch_attack/touch-layout.luau",
+        "rc_fastlane/features/active_touch_attack/touch-ui.luau",
+        "rc_fastlane/verify_active_touch_attack_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7162463056",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "12b6a3a6-3004-4d8c-b5a8-143073a59f53",
+      "issued_at": "2026-11-27T16:55:20.100Z",
+      "expires_at": "2026-11-27T18:55:20.100Z",
+      "actual_metadata_lease": {
+        "ref": "27d7c0474e25464f834f6645e5b0fb15891de3a5",
+        "blob": "aa8ca1d0964790854615d100cb88686061520e46",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "12b6a3a6-3004-4d8c-b5a8-143073a59f53",
+          "task_id": null,
+          "epoch": 980,
+          "acquired_at": "2026-11-27T16:55:04.368Z",
+          "expires_at": "2026-11-27T17:25:04.368Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 320,
+        "branch": "feature/p0d-rc61-android-touch-layout-audit-20261114",
+        "old_pr_head": "7dda75d6181e829ad7b709de8f656ad20fb5d69c",
+        "old_base_ref": "feature/p0d-wcs-jobs-egg-starry-path-rc61-20261114",
+        "formal_parent": "b3bbb45b6a29eb64dbc0b6fa97dcd13d205666f2",
+        "tree": "4fd30321e3f381648e74e5da581a8d4076af0238",
+        "local_head": "a8534c82052ed304ade9d6cfc0c7bcac4db375ff",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "5b58e8e2045c8dafd6256b73c7b21ca890f5211d",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 236964
+          },
+          {
+            "mode": "100644",
+            "blob": "035d283b9ecd302d199913301221b0671a47eeae",
+            "path": "rc_fastlane/apply_active_touch_attack.py",
+            "bytes": 6263
+          },
+          {
+            "mode": "100644",
+            "blob": "3b1a4f1a996fccd55999817428f26311bd3aabc7",
+            "path": "rc_fastlane/features/active_touch_attack/native_cases.luau",
+            "bytes": 5196
+          },
+          {
+            "mode": "100644",
+            "blob": "d2997dc561c3949017255af2dd6b0e559e64568c",
+            "path": "rc_fastlane/features/active_touch_attack/source_lock.json",
+            "bytes": 747
+          },
+          {
+            "mode": "100644",
+            "blob": "4a78c5e459d0e8ca64907f724e663c769a106dc5",
+            "path": "rc_fastlane/features/active_touch_attack/touch-layout.luau",
+            "bytes": 2401
+          },
+          {
+            "mode": "100644",
+            "blob": "156c1db2c180d278ec24598b230ae0829229cd00",
+            "path": "rc_fastlane/features/active_touch_attack/touch-ui.luau",
+            "bytes": 2676
+          },
+          {
+            "mode": "100644",
+            "blob": "a05d0dacc64a5c0db9ba95078a51c0d2c82f1e30",
+            "path": "rc_fastlane/verify_active_touch_attack_native.py",
+            "bytes": 987
+          },
+          {
+            "mode": "100644",
+            "blob": "160e1af7bfbcdd508f8df3ab7738d3fcdf0445cf",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 115390
+          }
+        ],
+        "expires_at": "2026-11-27T17:55:20.100Z",
+        "issued_from": {
+          "lease": "27d7c0474e25464f834f6645e5b0fb15891de3a5",
+          "owner": "12b6a3a6-3004-4d8c-b5a8-143073a59f53"
+        },
+        "local_qa": {
+          "on": 674623,
+          "off": 669180,
+          "on_sha256": "7f178413a5291c8f8cafe2cb9cdc728251f85b198483d0de588a78588230dc6d",
+          "off_sha256": "e989ca0c8ed56a47b2f269abaf18415f4517701a2afe6210e469f8bc2318100c",
+          "data_src": "HUD.client.luau",
+          "hud_delta": 5443,
+          "other_68_exact": true,
+          "native_compile": 69,
+          "native_groups": 2,
+          "ancient_active_author_head": "0c9d70dbd1a07dcd75b98102e61b2511784c4475",
+          "width320_source_overlap_before_px2": 4544,
+          "width320_source_overlap_after_px2": 0,
+          "studio": "NOT_TESTED"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
