@@ -1,0 +1,30 @@
+{
+  "off_place": {
+    "bytes": 687144,
+    "sha256": "4efab0dc6dffd4d5ca488ae5e78375b5a371c733ab334e8803c70d0a8818a7db"
+  },
+  "enabled": true,
+  "profile": "rich51",
+  "feature": "GQ470_FB020_ACTIVE_MAGE_ARMAMENT_V1",
+  "source_origin": {
+    "pr": 471,
+    "head": "886d8f243eced1ef949ee94ec6123831ce29ae75",
+    "author_commit": "b4efe7d943d22fd4e150324b0d748002e067919d",
+    "blob": "7468f143ef801ebc7bdeab75f13bb5b16f66b103",
+    "path": "product_quality/role7_armament_m1/SevenJobArmamentM1.luau"
+  },
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "c542462a642f4cfac8d04327986c71b982078305",
+      "after": "24c12436276b8e2a9bd483527e68899470050ef3"
+    },
+    "server/MusouHorde.luau": {
+      "before": "db96261d71c764cd666dde43e908704976d50afa",
+      "after": "8f72816ad8d291c2185039bf7c6b948bb46cc7a6"
+    },
+    "server/SevenJobArmamentM1.luau": {
+      "before": null,
+      "after": "f6aa0f7488f142d85ccc61d946ecdcc1aef19172"
+    }
+  }
+}

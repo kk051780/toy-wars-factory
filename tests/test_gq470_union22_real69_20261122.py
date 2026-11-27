@@ -239,6 +239,15 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(hashlib.sha1(b"blob " + str(len(author)).encode() + bytes([0]) + author).hexdigest(),
                          growth["source_origin"]["natural_growth_blob"])
         self.assertTrue(private_blobs.isdisjoint(route["after"] for route in routes.values()))
+        mage_dir = active / "features/active_mage_armament"
+        mage = verify.data(mage_dir / "source_lock.json")
+        self.assertEqual(mage["profile"], selection["active_profile"])
+        for relative in ("server/Game.server.luau", "server/MusouHorde.luau"):
+            self.assertEqual(mage["routes"][relative]["before"], routes[relative]["after"])
+        armament = (mage_dir / "SevenJobArmamentM1.luau").read_bytes()
+        header = b"blob " + str(len(armament)).encode() + bytes([0])
+        self.assertEqual(hashlib.sha1(header + armament).hexdigest(), mage["source_origin"]["blob"])
+        self.assertTrue(private_blobs.isdisjoint(route["after"] for route in mage["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
