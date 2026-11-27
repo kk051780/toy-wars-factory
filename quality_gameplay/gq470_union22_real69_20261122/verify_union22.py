@@ -1095,6 +1095,12 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
             "GUARDIAN_MATRIX_SCENARIO_SET")
     observed, counts = {}, Counter()
     guard_source = compose.GUARDIAN_SOURCE
+    # The Guardian matrix keeps its recorded historical parent context. The
+    # current Host is exercised separately by the full and Bot/Vault suites.
+    guardian_context_pins = input_pins["sources"] | {
+        compose.VAULT_SOURCE: profile["empty_vault_followup"]["parent_host_row"]["after"],
+        compose.ITEM_SOURCE: profile["item_cleanup_followup"]["parent_item_row"]["after"],
+    }
     source_names = {"ServerScriptService/EGGRUMBLE_" + name + ".luau" for name in contract["modules_in_load_order"]}
     for case, result in zip(matrix, summary["results"], strict=True):
         group, role, mode = (case[key] for key in ("group", "role", "mode"))
@@ -1130,7 +1136,7 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
         for span in sorted(spans, key=lambda row: row["byte_start"]):
             path, first, last = (span[key] for key in ("path", "byte_start", "byte_end_exclusive"))
             expected = (contract["guardian"]["variants"][variant]["input" if kind == "baseline" else "candidate"]
-                        if path == guard_source else input_pins["sources"][path])
+                        if path == guard_source else guardian_context_pins[path])
             body = program[first:last]
             require(end <= first < last <= len(program) and digest(body) == expected ==
                     {key: span[key] for key in ("bytes", "sha256")}
