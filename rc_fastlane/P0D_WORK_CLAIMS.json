@@ -2954,7 +2954,7 @@
         "Actual metadata issuer CODEX_ROOT_D5F15C074B2E, authenticated kk051780/233213370; CONTROLLER 49d9b63e-e10b-41e3-b34c-8ff5c93b6eaf, epoch 643, acquisition 65e4cd56d71f589f6164efa2a81efebdd521bd6a, expected registry parent 1a8490dcf5fffe4bddc26556af52220788bf557c, independent scope receipt 2b3e3fa665a9bedfb09a275d2fb485f2677086b1fdecadf760d8ded6bf317fa2. This scope grants no RC write, CI success or new source-HEAD approval."
       ],
       "base_rc_sha": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
-      "candidate_head": null,
+      "candidate_head": "aa85898a67287927d5c21ad3e88174c091414aba",
       "candidate_history": [
         {
           "actual_candidate_evidence": {
@@ -3184,7 +3184,7 @@
       ],
       "candidate_patch_sha256": "839a0d5154c9b3451c3fea79ce6f13f00e5fcabf33858e21fa2b354d89c0da88",
       "candidate_pr_status": "SCOPE_GRANTED_WAIT_SEPARATE_SOURCE_LEASE_ACTUAL_NEW_HEAD_CI_AND_REVIEW",
-      "candidate_tree": null,
+      "candidate_tree": "3f3953b95233f5dbbba7ccd5c6568ca7b2711356",
       "candidate_tree_proposal": "d55bd8d3556aa090bcef770495afa6a53ff79e30",
       "canonical_parent": 282,
       "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
@@ -12833,7 +12833,7 @@
       "base_rc_tree": "58f9559183125c5d9387b0ef0ad0f5f39f55d192",
       "owner_role": "CODEX_PARENT_ORDINARY_RC_PREP",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "pr": 1016,
         "branch": "feature/p0d-active66-persistence-20261122-d4d718",
         "old_pr_head": "84b39ba8dab77a5bda67969fe380484b619f1e00",
@@ -12952,6 +12952,77 @@
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
         }
+      },
+      "source_head": "aa85898a67287927d5c21ad3e88174c091414aba",
+      "prepared_candidate_head": "aa85898a67287927d5c21ad3e88174c091414aba",
+      "prepared_candidate_tree": "3f3953b95233f5dbbba7ccd5c6568ca7b2711356",
+      "source_blob_submissions": [
+        {
+          "mode": "100644",
+          "blob": "357e53ffed4d032c152109a135b9a2bfaae6faf4",
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "bytes": 219322
+        },
+        {
+          "mode": "100644",
+          "blob": "73ed495706cfde841b7f17ccf01a37ed12c2178e",
+          "path": "rc_fastlane/apply_active_persistence_lifecycle.py",
+          "bytes": 3998
+        },
+        {
+          "mode": "100644",
+          "blob": "217ce26e12f826e5a35d9c6c6d18c805aaee9ad5",
+          "path": "rc_fastlane/features/active_persistence_lifecycle/persistence.json",
+          "bytes": 28375
+        },
+        {
+          "mode": "100644",
+          "blob": "d5b280f0bbfb59985aea80ee79499893b682b225",
+          "path": "rc_fastlane/features/active_persistence_lifecycle/regression.luau",
+          "bytes": 4358
+        },
+        {
+          "mode": "100644",
+          "blob": "8b1d92cf9e2ccdbab54d5e3ed06505a4f2fce7aa",
+          "path": "rc_fastlane/features/active_persistence_lifecycle/source_lock.json",
+          "bytes": 1285
+        },
+        {
+          "mode": "100644",
+          "blob": "e6375974a943704ab004d9ebc590439435cfb37b",
+          "path": "rc_fastlane/verify_active_h2_exit_native.py",
+          "bytes": 9915
+        },
+        {
+          "mode": "100644",
+          "blob": "90ba69719cd4b4c219e8a9fc9a962602226a28ac",
+          "path": "rc_fastlane/verify_active_persistence_native.py",
+          "bytes": 7095
+        },
+        {
+          "mode": "100644",
+          "blob": "1130b6ae6f1a52e4454c12cb9dc49f537fbcbfa3",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 111352
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1016,
+        "exact_head": "aa85898a67287927d5c21ad3e88174c091414aba",
+        "exact_tree": "3f3953b95233f5dbbba7ccd5c6568ca7b2711356",
+        "exact_formal_parent": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
+        "preserved_author_first_parent": "84b39ba8dab77a5bda67969fe380484b619f1e00",
+        "ordered_parents": [
+          "84b39ba8dab77a5bda67969fe380484b619f1e00",
+          "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e"
+        ],
+        "source_lease": "f1ffb59ecca29329d1781d174ec0353e71dfce4e",
+        "source_lease_return": "89bd02e4010dacb6b78ed267b16728eabb9d2e9f",
+        "prepared_at": "2026-11-27T14:36:33.690Z"
+      },
+      "actual_binding_lease": {
+        "commit": "339f6c310f4dc44c3cfb7bff4ee2bd74976ea1e2",
+        "operation_id": "7b7fb16e-e34a-4c65-8a35-76b283175d2b"
       }
     },
     {
