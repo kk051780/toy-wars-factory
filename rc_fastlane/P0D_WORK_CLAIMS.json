@@ -38030,7 +38030,7 @@
         "operation_id": "b7fcd773-e7b5-4c09-9f34-7ed89a18b0d3"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
         "permitted_head": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
@@ -38043,7 +38043,7 @@
           "role": "FINITE_220_CODEX_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -38061,7 +38061,33 @@
           "review": 6089242927,
           "trusted_queue_run": 46011894791,
           "trusted_queue_job": 140549255258
-        }
+        },
+        "writer_acquire_ref": "03c75e51b4fa2688c6d21466d9c4ee55ee01c879",
+        "writer_return_ref": "9510e4fab89ccff57dd8fb2c52166bfd4c47eddf",
+        "exact_adoption_readback_at": "2026-11-27T14:02:54.653Z"
+      },
+      "actual_official_rc": {
+        "head": "9f3945a96aa09610d5dba26bd6c9e54de115cda7",
+        "tree": "c3445dba34d245ea807bd62c1a0024a307b94a05",
+        "previous": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "active_ci": 46012375249,
+        "active_job": 140550858017,
+        "active_success_steps": 107,
+        "active_conditional_skip": 14,
+        "active_artifact": 15204640229,
+        "active_zip_bytes": 186086,
+        "active_zip_digest": "sha256:899813bbcf0effb1f2ef984b93b68fbc183badca86ed769e204014f740aefa15",
+        "active_place_bytes": 638783,
+        "active_place_sha256": "f0bd729a813712bc959d57449fb9acf3375f8d1fef3d65c15fc7812dc5267225",
+        "active_off_place_bytes": 610958,
+        "private_ci": 46012375248,
+        "private_job": 140550856953,
+        "private_steps": 48,
+        "private_artifact": 15204546408,
+        "private_zip_bytes": 25129855,
+        "private_zip_digest": "sha256:d8e579c12eadb5b376de3e4ce32fc6ca74a01de6d3dfb1597a90f989d5a4a25e",
+        "device_evidence": "NOT_TESTED_V3.5",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7220485587"
       }
     },
     {
