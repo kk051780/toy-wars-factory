@@ -33091,8 +33091,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing neutral NPC subject label and damaged-bar policy from #1003; smaller lobby names and roof from #925; exact existing verified Wedge LocalScript for #926 FB016 in place of the older authored AABB. Preserve #1003 full original author ancestry and leave #925/#926 transport untouched. Only three runtime leaves and canonical locks/tests, no new authority. #929/#943 already adopted.",
       "resources": [
@@ -33348,6 +33348,25 @@
       "actual_binding_lease": {
         "commit": "f267552ff6180f34d4edcbe684b9012e42c3e0c0",
         "operation_id": "865e45ef-cf41-4eea-8d5a-0b12b561222f"
+      },
+      "independent_source_receipt": {
+        "kind": "ACTUAL_REGISTERED_DISTINCT_CONTEXT_REVIEW_COMMENT",
+        "id": 6083878510,
+        "git_head": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/1003#pullrequestreview-6083878510",
+        "context": "/root/p0_offer_review26",
+        "status": "PASS_EXACT_1003_NEUTRAL_VISIBILITY_HOSTED_QA_ONLY",
+        "canonical_ci": {
+          "run": 45945540995,
+          "job": 140329271117,
+          "green_steps": 48,
+          "artifact": 15174088716,
+          "zip_bytes": 18179045,
+          "digest": "sha256:dad61580039b458816fc8377ea31bd140297c8bcdc937e58ed5c5f1af98fbfd5"
+        },
+        "intake": {
+          "status": "AWAITING_PUBLISHED_READY_METADATA"
+        }
       }
     }
   ],
