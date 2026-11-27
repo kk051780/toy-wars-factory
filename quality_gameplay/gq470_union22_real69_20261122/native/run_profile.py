@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "409166eca5897f4c374de2694bbd4cb0e1393a16b7e60310378eb7ff506becb0"
+INPUT_LOCK_SHA256 = "89f483f2df871997f33a4cdd455cba1d59b79f49aec9ff0525fb1643d03dc5d3"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -709,7 +709,11 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         for suite in CASE_FILES:
             run_suite(root, output / suite, binary, lock, suite, before, pin, context,
                       identity(source_receipt_raw), identity(runner_before))
-        run_selected_hud_layout(root, output / "selected_hud_layout", binary, lock, pin, context,
+        profile = compose.load_lock()
+        layout_parent = profile["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
+        layout_pins = lock | {"sources": lock["sources"] | {compose.PORTRAIT_SOURCE: layout_parent}}
+        run_selected_hud_layout(root.parent / compose.PORTRAIT_OFF / "sources",
+                                output / "selected_hud_layout", binary, layout_pins, pin, context,
                                 identity(source_receipt_raw), identity(runner_before))
         original_outputs = {name: evidence_snapshot(output / name)
                             for name in (*CASE_FILES, "selected_hud_layout")}
@@ -755,6 +759,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from private_touch_native import run as run_private_touch
         run_private_touch(root, output / "private_touch", binary, pin, context, compose.load_lock(), compose,
                           clean_environment())
+        from portrait_native import run as run_portrait
+        run_portrait(root, output / "portrait", binary, pin, context, profile, compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -779,8 +785,9 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         mage_files = sum(name.startswith("mage_contact/") for name in evidence)
         eligibility_files = sum(name.startswith("relay_eligibility/") for name in evidence)
         touch_files = sum(name.startswith("private_touch/") for name in evidence)
-        require(len(evidence) == 303 and growth_files == 103 and art_files == 4 and mage_files == 77
-                and eligibility_files == 10 and touch_files == 4,
+        portrait_files = sum(name.startswith("portrait/") for name in evidence)
+        require(len(evidence) == 307 and growth_files == 103 and art_files == 4 and mage_files == 77
+                and eligibility_files == 10 and touch_files == 4 and portrait_files == 4,
                 "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
@@ -808,6 +815,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "mage_contact": identity(read(output / "mage_contact/receipt.json")),
                    "relay_eligibility": identity(read(output / "relay_eligibility/receipt.json")),
                    "private_touch": identity(read(output / "private_touch/receipt.json")),
+                   "portrait": identity(read(output / "portrait/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -815,8 +823,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "hud_client_runtime_executed_in_original_suites": False,
                                           "growth_ui_full_bodies_each": 31,
                                           "hud_client_runtime_executed_in_growth": True},
-                   "native_process_count": 96,
-                   "native_evidence_file_count": 304,
+                   "native_process_count": 97,
+                   "native_evidence_file_count": 308,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile
