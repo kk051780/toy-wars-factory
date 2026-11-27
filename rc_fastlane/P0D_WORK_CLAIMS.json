@@ -34842,7 +34842,7 @@
         "GQ470_FB015_CASTLE_GUARDIAN_7_SILHOUETTES_REAL69_20261121",
         "GQ470_FB015_FIELDART_916_934_COMPOSITE_20261121"
       ],
-      "state": "SOURCE_WIP",
+      "state": "RC_INTEGRATED",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, reusing existing #940)",
       "parent_issue": 470,
@@ -35267,7 +35267,7 @@
         "operation_id": "3fb36ab4-7b3a-4dc4-89b3-aa7e594346c2"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
         "permitted_head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
@@ -35280,7 +35280,7 @@
           "role": "FINITE_220_CODEX_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -35297,6 +35297,34 @@
           "review": 6086675925,
           "trusted_queue_run": 45981837697,
           "trusted_queue_job": 140447409755
+        },
+        "writer_acquire_ref": "870262f1f6f184e420357bbb756536ca31c2b99d",
+        "writer_return_ref": "8bd3ec1ee9391495d273c0f33129a0be798db86a",
+        "exact_adoption_readback_at": "2026-11-27T10:28:17.156Z"
+      },
+      "actual_postpush": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
+        "before_sha": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "merged_pr": 940,
+        "donors": [
+          944,
+          946,
+          957,
+          956
+        ],
+        "state": "POSTPUSH_OFFICIAL_CI_PENDING",
+        "official_run": 45982367423,
+        "metadata_lease": {
+          "commit": "3dc5b8ec2bf9075b3230732628140702f76a3557",
+          "owner": "73a859ea-1711-4bad-8d7f-565b1df75e81"
+        },
+        "studio": {
+          "state": "NOT_TESTED",
+          "android": "NOT_TESTED",
+          "fun": "NOT_TESTED",
+          "deferred_by": "#1011 V3.0 early December combined tests"
         }
       }
     }
