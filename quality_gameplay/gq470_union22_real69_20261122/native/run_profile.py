@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "279b921048b840d30622a922f5275797d0fe3461672d61c0b198b103fb52a376"
+INPUT_LOCK_SHA256 = "96074d3f1a09b0cc2a86f7768d6e23adfdd817a5f43394292b90f7fd3b797398"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -530,6 +530,38 @@ def run_suite(root, output, binary, lock, suite_name, source_before, binary_pin,
     return receipt
 
 
+def run_relay_presentation(root, output, binary, binary_pin, context, profile, compose):
+    lock = profile["relay_presentation_followup"]
+    client = read(root / compose.HUD_SOURCE)
+    require(identity(client) == profile["sources"][compose.HUD_SOURCE]["after"], "RELAY_PRESENTATION_SOURCE_PIN")
+    mounted = client[lock["client_start"]:lock["client_end"]]
+    require(identity(mounted) == lock["client_wrapper"], "RELAY_PRESENTATION_MOUNTED_PIN")
+    template_path = HERE / "relay_presentation_cases.luau"
+    template = read(template_path)
+    placeholder = b"-- @RELAY_PRESENTATION_MOUNTED@\n"
+    require(identity(template) == lock["native_case"] and template.count(placeholder) == 1,
+            "RELAY_PRESENTATION_CASE_PIN")
+    program = template.replace(placeholder, mounted, 1)
+    require(identity(program) == lock["native_program"], "RELAY_PRESENTATION_PROGRAM_PIN")
+    output.mkdir()
+    program_path = output / "generated.luau"
+    program_path.write_bytes(program)
+    result = subprocess.run([str(binary),str(program_path)], env=clean_environment(), capture_output=True, timeout=30)
+    (output / "stdout.log").write_bytes(result.stdout)
+    (output / "stderr.log").write_bytes(result.stderr)
+    require(result.returncode == 0 and not result.stderr
+            and identity(result.stdout.replace(b"\r\n",b"\n")) == {
+                "bytes": 1567, "sha256": "07337ca815254902b5b8e9b4359787ffe175bdae73cc59d1487c07aff4cd0473"},
+            "RELAY_PRESENTATION_EXACT_VECTOR")
+    require(identity(read(binary)) == binary_pin and read(program_path) == program
+            and read(template_path) == template and read(root / compose.HUD_SOURCE) == client,
+            "RELAY_PRESENTATION_INPUT_DRIFT")
+    write_json(output / "receipt.json", {"source": identity(client), "native": binary_pin,
+               "execution_context": context, "generated": identity(program), "stdout": identity(result.stdout),
+               "stderr": identity(result.stderr), "exit": result.returncode, "cases": 22})
+    print("relay_presentation: 22 Native cases PASS; physical Studio overlap remains separate", flush=True)
+
+
 def run_score_regressions(root, output, binary, binary_pin, context, profile, compose):
     source = read(root / compose.SCORE_SOURCE)
     require(identity(source) == profile["sources"][compose.SCORE_SOURCE]["after"],
@@ -620,6 +652,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                 and len(evidence_snapshot(output / "bot_vault")) == 37, "BOT_COMPLETE_SUPPLEMENT")
         print("bot_vault: 9 scenarios, 13 CASE, 43 CHECK PASS; same fresh F46; 30 distinct server bodies with dual28", flush=True)
         run_score_regressions(root, output / "score_relay", binary, pin, context, compose.load_lock(), compose)
+        run_relay_presentation(root, output / "relay_presentation", binary, pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -638,7 +671,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 73, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 77, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -653,13 +686,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "selected_hud_layout": identity(read(output / "selected_hud_layout/receipt.json")),
                    "bot_vault_supplement": identity(read(output / "bot_vault/receipt.json")),
                    "score_relay_regressions": identity(read(output / "score_relay/receipt.json")),
+                   "relay_presentation": identity(read(output / "relay_presentation/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 15,
-                   "native_evidence_file_count": 74,
+                   "native_process_count": 16,
+                   "native_evidence_file_count": 78,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

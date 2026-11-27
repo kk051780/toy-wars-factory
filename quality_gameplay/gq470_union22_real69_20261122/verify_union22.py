@@ -196,19 +196,29 @@ def verify_archive(path, expected, prefix=compose.OFF):
 
 def verify_single_source_rollback(root, input_folder, lock, current, name, repair, previous,
                                   expected_place, rollback_dir, archive, reason):
-    require(repair["source_path"] == name and repair["repaired_place"] == lock["final_place"]
-            and repair["parent_place"] == expected_place
-            and previous["before"] == lock["sources"][name]["before"], reason + "_ROLLBACK_CONTRACT")
-    parent_lock = lock | {"sources": lock["sources"] | {name: previous}, "final_place": repair["parent_place"]}
+    require(repair["source_path"] == name, reason + "_ROLLBACK_CONTRACT")
+    rows = {name: {"parent": previous, "inverse": repair["inverse"], "forward": repair["forward"]}}
+    return verify_source_rollback(root, input_folder, lock, current, repair, rows, expected_place,
+                                  rollback_dir, archive, reason)
+
+
+def verify_source_rollback(root, input_folder, lock, current, repair, rows, expected_place,
+                           rollback_dir, archive, reason):
+    require(repair["repaired_place"] == lock["final_place"] and repair["parent_place"] == expected_place
+            and all(row["parent"]["before"] == lock["sources"][name]["before"] for name,row in rows.items()),
+            reason + "_ROLLBACK_CONTRACT")
+    parent_lock = lock | {"sources": lock["sources"] | {name: row["parent"] for name,row in rows.items()},
+                          "final_place": repair["parent_place"]}
     folder = root / rollback_dir
     parent = independent_scan(folder, parent_lock, "after")
     require(parent["non_source"] == current["non_source"] and parent["instances"] == current["instances"],
             reason + "_ROLLBACK_NON_SOURCE_DRIFT")
     for path in parent_lock["sources"]:
         on, off = (read(location / "sources" / path) for location in (input_folder, folder))
-        if path == name:
-            require(on != off and independent_inverse(on, repair["inverse"]) == off
-                    and independent_inverse(off, repair["forward"]) == on, reason + "_EXACT_TWO_WAY")
+        if path in rows:
+            row = rows[path]
+            require(on != off and independent_inverse(on, row["inverse"]) == off
+                    and independent_inverse(off, row["forward"]) == on, reason + "_EXACT_TWO_WAY")
         else:
             require(on == off, reason + "_ROLLBACK_ADDITIONAL_SOURCE_CHANGE")
     expected = {"sources/" + source: item["after"] for source, item in parent_lock["sources"].items()}
@@ -388,8 +398,14 @@ def verify_core(root, base, reports, context):
     item = lock["item_cleanup_followup"]
     castle = lock["castle_release_stock_followup"]
     score = lock["score_relay_followup"]
+    relay = lock["relay_presentation_followup"]
+    require(set(relay["rows"]) == set(compose.RELAY_PRESENTATION_SOURCES), "RELAY_PRESENTATION_SOURCE_SET")
+    expected_relay_off, relay_off_lock, relay_off = verify_source_rollback(
+        root, root, lock, current, relay, relay["rows"], score["repaired_place"],
+        compose.RELAY_PRESENTATION_OFF, compose.RELAY_PRESENTATION_OFF_ARCHIVE, "RELAY_PRESENTATION")
     expected_score_off, score_off_lock, score_off = verify_single_source_rollback(
-        root, root, lock, current, compose.SCORE_SOURCE, score, score["parent_score_row"], castle["repaired_place"],
+        root, root / compose.RELAY_PRESENTATION_OFF, relay_off_lock, relay_off, compose.SCORE_SOURCE, score,
+        score["parent_score_row"], castle["repaired_place"],
         compose.SCORE_OFF, compose.SCORE_OFF_ARCHIVE, "SCORE_RELAY")
     expected_castle_off, castle_off_lock, castle_off = verify_single_source_rollback(
         root, root / compose.SCORE_OFF, score_off_lock, score_off, compose.VAULT_SOURCE, castle,
@@ -443,6 +459,8 @@ def verify_core(root, base, reports, context):
         "castle_release_stock_rollback_archive": digest(read(root / compose.CASTLE_OFF_ARCHIVE)),
         "score_relay_followup": score,
         "score_relay_rollback_archive": digest(read(root / compose.SCORE_OFF_ARCHIVE)),
+        "relay_presentation_followup": relay,
+        "relay_presentation_rollback_archive": digest(read(root / compose.RELAY_PRESENTATION_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -453,11 +471,12 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 24 and core.get("unchanged_sources") == 45
-            and core.get("compile_count") == 146 and core.get("rojo_build_count") == 10
+            and core.get("compile_count") == 148 and core.get("rojo_build_count") == 11
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
             and core.get("score_relay_parent_place") == score_off_lock["final_place"]
+            and core.get("relay_presentation_parent_place") == relay_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -497,6 +516,8 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.CASTLE_OFF_ARCHIVE] = digest(read(root / compose.CASTLE_OFF_ARCHIVE))
     expected_stage.update({compose.SCORE_OFF + "/" + name: pin for name, pin in expected_score_off.items()})
     expected_stage[compose.SCORE_OFF_ARCHIVE] = digest(read(root / compose.SCORE_OFF_ARCHIVE))
+    expected_stage.update({compose.RELAY_PRESENTATION_OFF + "/" + name: pin for name,pin in expected_relay_off.items()})
+    expected_stage[compose.RELAY_PRESENTATION_OFF_ARCHIVE] = digest(read(root / compose.RELAY_PRESENTATION_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -505,11 +526,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 156 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 159 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 146 and len(rojo_commands) == 10, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 148 and len(rojo_commands) == 11, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -525,19 +546,23 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.SCORE_OFF / "sources" / compose.SCORE_SOURCE))
+    expected_compile.update(str(Path(stage) / compose.RELAY_PRESENTATION_OFF / "sources" / name)
+                            for name in compose.RELAY_PRESENTATION_SOURCES)
     require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
     require({(c["command"][2], c["command"][4]) for c in rojo_commands}
             == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
                 for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF,
                                compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF, compose.CASTLE_OFF,
-                               compose.SCORE_OFF)},
+                               compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
                         compose.BOT_OFF: [compose.BOT_SOURCE], compose.HUD_OFF: [compose.HUD_SOURCE],
                         compose.BEAST_OFF: [compose.BEAST_SOURCE], compose.GUARDIAN_OFF: [compose.GUARDIAN_SOURCE],
                         compose.ITEM_OFF: [compose.ITEM_SOURCE], compose.VAULT_OFF: [compose.VAULT_SOURCE],
-                        compose.CASTLE_OFF: [compose.VAULT_SOURCE], compose.SCORE_OFF: [compose.SCORE_SOURCE]}
+                        compose.CASTLE_OFF: [compose.VAULT_SOURCE], compose.SCORE_OFF: [compose.SCORE_SOURCE],
+                        compose.RELAY_PRESENTATION_OFF: [name for name in lock["sources"]
+                                                        if name in compose.RELAY_PRESENTATION_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1122,6 +1147,7 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        compose.HUD_SOURCE: profile["relay_presentation_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"],
         compose.SCORE_SOURCE: profile["score_relay_followup"]["parent_score_row"]["after"],
         compose.VAULT_SOURCE: profile["empty_vault_followup"]["parent_host_row"]["after"],
         compose.ITEM_SOURCE: profile["item_cleanup_followup"]["parent_item_row"]["after"],
@@ -1177,6 +1203,40 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
             and set(files(folder)) == {*observed, summary_name, contract_name}, "GUARDIAN_MATRIX_COMPLETE")
     return {"native_executions": 40, "unique_scenarios": 13, "counts": dict(counts),
             "receipt": digest(read(summary_path))}, {"guardian_target/" + name for name in files(folder)}
+
+
+def verify_relay_presentation(native, root, profile, build, aggregate, context):
+    evidence = native / "relay_presentation"
+    repair = profile["relay_presentation_followup"]
+    client = read(root / "sources" / compose.HUD_SOURCE)
+    begin = b"task.spawn(function()\n"
+    end = b"\nend)\n"
+    offset = client.index(begin)
+    hud_start = client.index(b'local Players=game:GetService("Players")\n')
+    selected = client[offset:hud_start]
+    require(offset == repair["client_start"] and hud_start == repair["client_end"]
+            and selected.startswith(begin) and selected.endswith(end)
+            and digest(selected[len(begin):-len(end)]) == repair["client_original_body"]
+            and digest(selected) == repair["client_wrapper"]
+            and digest(client) == profile["sources"][compose.HUD_SOURCE]["after"],
+            "RELAY_PRESENTATION_VERIFIED_ORIGINAL_AND_STARTUP")
+    fixture = read(HERE / "native/relay_presentation_cases.luau")
+    first, separator, rest = fixture.partition(b"-- @RELAY_PRESENTATION_MOUNTED@\n")
+    require(separator and separator not in rest and digest(fixture) == repair["native_case"],
+            "RELAY_PRESENTATION_VERIFIED_FIXTURE")
+    actual, out, err = (read(evidence / name) for name in ("generated.luau","stdout.log","stderr.log"))
+    require(actual == first + selected + rest and digest(actual) == repair["native_program"]
+            and digest(out.replace(b"\r\n",b"\n")) == {
+                "bytes": 1567, "sha256": "07337ca815254902b5b8e9b4359787ffe175bdae73cc59d1487c07aff4cd0473"}
+            and err == b"", "RELAY_PRESENTATION_VERIFIED_PROGRAM_AND_RUN")
+    receipt_file = evidence / "receipt.json"
+    receipt = {"source": digest(client), "native": build["binary_after_suites"], "execution_context": context,
+               "generated": digest(actual), "stdout": digest(out), "stderr": digest(err), "exit": 0, "cases": 22}
+    pin = digest(read(receipt_file))
+    names = {"generated.luau","stdout.log","stderr.log","receipt.json"}
+    require(data(receipt_file) == receipt and aggregate["relay_presentation"] == pin and set(files(evidence)) == names,
+            "RELAY_PRESENTATION_VERIFIED_RECEIPT")
+    return {"receipt": pin, "client_region_only": True, "cases": 22}, {"relay_presentation/" + name for name in names}
 
 
 def verify_score_regressions(native, root, lock, build, aggregate, context):
@@ -1277,7 +1337,7 @@ def verify_native(native, root, lock, context):
                 "original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16, "distinct_server_union": 30,
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed": False}
-            and aggregate.get("native_process_count") == 15 and aggregate.get("native_evidence_file_count") == 74,
+            and aggregate.get("native_process_count") == 16 and aggregate.get("native_evidence_file_count") == 78,
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -1345,12 +1405,15 @@ def verify_native(native, root, lock, context):
     expected_files |= {"bot_vault/" + name for name in bot["files"]}
     score, score_files = verify_score_regressions(native, root, lock, build, aggregate, context)
     expected_files |= score_files
+    relay, relay_files = verify_relay_presentation(native, root, lock, build, aggregate, context)
+    expected_files |= relay_files
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 74 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 78 and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
             "score_relay_regressions": score,
+            "relay_presentation": relay,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -1386,7 +1449,8 @@ def admit_delivery(root, base, reports, native, context):
     retained_build_files = (compose.PROJECT, compose.PLACE, compose.RECEIPT, compose.OFF_ARCHIVE,
                             compose.HUD_OFF_ARCHIVE, compose.BOT_OFF_ARCHIVE, compose.BEAST_OFF_ARCHIVE,
                             compose.GUARDIAN_OFF_ARCHIVE, compose.ITEM_OFF_ARCHIVE, compose.VAULT_OFF_ARCHIVE,
-                            compose.CASTLE_OFF_ARCHIVE, compose.SCORE_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")
+                            compose.CASTLE_OFF_ARCHIVE, compose.SCORE_OFF_ARCHIVE,
+                            compose.RELAY_PRESENTATION_OFF_ARCHIVE, "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
                       or name in retained_build_files}
@@ -1441,6 +1505,10 @@ def admit_delivery(root, base, reports, native, context):
             "score_relay_inverse_place": verified["lock"]["score_relay_followup"]["parent_place"],
             "score_relay_inverse_archive": digest(read(root / compose.SCORE_OFF_ARCHIVE)),
             "score_relay_inverse_archive_members": 71,
+            "relay_presentation_followup": verified["lock"]["relay_presentation_followup"],
+            "relay_presentation_inverse_place": verified["lock"]["relay_presentation_followup"]["parent_place"],
+            "relay_presentation_inverse_archive": digest(read(root / compose.RELAY_PRESENTATION_OFF_ARCHIVE)),
+            "relay_presentation_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
             "bot_only_hud_parent_inverse_archive": digest(read(root / compose.BOT_OFF_ARCHIVE)),
@@ -1454,6 +1522,7 @@ def admit_delivery(root, base, reports, native, context):
             "bot_vault_supplement": runtime["bot_vault_supplement"],
             "guardian_target_diagnostic": runtime["guardian_target_diagnostic"],
             "score_relay_regressions": runtime["score_relay_regressions"],
+            "relay_presentation": runtime["relay_presentation"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

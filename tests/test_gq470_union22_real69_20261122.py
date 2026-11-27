@@ -34,7 +34,7 @@ spec.loader.exec_module(native)
 
 ARTIFACT_ENV = ("UNION22_TEST_PRIOR", "UNION22_TEST_REPORTS", "UNION22_TEST_ROOT",
                 "UNION22_TEST_NATIVE", "UNION22_TEST_STAGE")
-INTEGRATION_COUNTS = {"core": 65, "final": 20}
+INTEGRATION_COUNTS = {"core": 66, "final": 21}
 
 
 def before_guardian(lock):
@@ -43,6 +43,7 @@ def before_guardian(lock):
         "sources": lock["sources"] | {compose.GUARDIAN_SOURCE: repair["parent_guardian_row"],
                                       compose.ITEM_SOURCE: lock["item_cleanup_followup"]["parent_item_row"],
                                       compose.SCORE_SOURCE: lock["score_relay_followup"]["parent_score_row"],
+                                      compose.HUD_SOURCE: lock["relay_presentation_followup"]["rows"][compose.HUD_SOURCE]["parent"],
                                       compose.VAULT_SOURCE: lock["empty_vault_followup"]["parent_host_row"]},
         "final_place": repair["parent_place"],
     }
@@ -184,7 +185,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_beast_only_inverse_restores_actual_h72_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(on, self.lock))
+        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(*compose.relay_presentation_parent(on, self.lock)))
         item_on, item_lock = compose.vault_parent(vault_on, vault_lock)
         guardian_on, guardian_lock = compose.item_parent(item_on, item_lock)
         final, beast = compose.guardian_parent(guardian_on, guardian_lock)
@@ -202,7 +203,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_item_cleanup_only_inverse_restores_exact_guardian_parent(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(on, self.lock))
+        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(*compose.relay_presentation_parent(on, self.lock)))
         item_ready, item_lock = compose.vault_parent(vault_on, vault_lock)
         restored, parent_lock = compose.item_parent(item_ready, item_lock)
         self.assertEqual([p for p in item_ready if item_ready[p] != restored[p]], [compose.ITEM_SOURCE])
@@ -212,7 +213,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_empty_vault_inverse_keeps_item_and_rejects_wrong_archive(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(on, self.lock))
+        vault_on, vault_lock = compose.castle_parent(*compose.score_parent(*compose.relay_presentation_parent(on, self.lock)))
         restored, parent = compose.vault_parent(vault_on, vault_lock)
         self.assertEqual([p for p in vault_on if vault_on[p] != restored[p]], [compose.VAULT_SOURCE])
         self.assertEqual(parent["final_place"], self.lock["item_cleanup_followup"]["repaired_place"])
@@ -224,7 +225,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_castle_release_and_stock_inverse_keeps_empty_vault_fix(self):
         on = {p: (self.current / "sources" / p).read_bytes() for p in self.lock["sources"]}
-        parent_on, parent_lock = compose.score_parent(on, self.lock)
+        parent_on, parent_lock = compose.score_parent(*compose.relay_presentation_parent(on, self.lock))
         restored, parent = compose.castle_parent(parent_on, parent_lock)
         self.assertEqual([p for p in parent_on if parent_on[p] != restored[p]], [compose.VAULT_SOURCE])
         self.assertEqual(parent["final_place"], self.lock["empty_vault_followup"]["repaired_place"])
@@ -236,13 +237,25 @@ class UnionBoundary(unittest.TestCase):
 
     def test_score_rollback_restores_exact_castle_parent_and_rejects_wrong_archive(self):
         on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        actual, restored = compose.score_parent(on, self.lock)
-        self.assertEqual([name for name in on if on[name] != actual[name]], [compose.SCORE_SOURCE])
+        parent, lock = compose.relay_presentation_parent(on, self.lock)
+        actual, restored = compose.score_parent(parent, lock)
+        self.assertEqual([name for name in parent if parent[name] != actual[name]], [compose.SCORE_SOURCE])
         self.assertEqual(restored["final_place"], self.lock["castle_release_stock_followup"]["repaired_place"])
         self.assertEqual(compose.identity((self.current / compose.SCORE_OFF / compose.PLACE).read_bytes()),
                          restored["final_place"])
         root = self.current_copy()
         shutil.copyfile(root / compose.CASTLE_OFF_ARCHIVE, root / compose.SCORE_OFF_ARCHIVE)
+        self.reject_core(root)
+
+    def test_relay_presentation_off_restores_both_routes_and_rejects_previous_archive(self):
+        on = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
+        prior, lock = compose.relay_presentation_parent(on,self.lock)
+        self.assertEqual({name for name in on if on[name] != prior[name]},set(compose.RELAY_PRESENTATION_SOURCES))
+        self.assertEqual(lock["final_place"],self.lock["score_relay_followup"]["repaired_place"])
+        self.assertEqual(compose.identity((self.current / compose.RELAY_PRESENTATION_OFF / compose.PLACE).read_bytes()),
+                         lock["final_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.SCORE_OFF_ARCHIVE, root / compose.RELAY_PRESENTATION_OFF_ARCHIVE)
         self.reject_core(root)
 
     def test_item_cleanup_inverse_rejects_old_guardian_off_archive(self):
@@ -528,7 +541,7 @@ class UnionBoundary(unittest.TestCase):
             nonlocal calls
             result = real_run(command, logs, *args, **kwargs)
             calls += 1
-            if calls == 156:
+            if calls == 159:
                 stage = Path(command[-1]).parent.parent
                 path = ((stage / compose.BOT_OFF / "sources" / compose.BOT_SOURCE) if target == "bot_parent"
                         else (prior if target == "input" else stage) / "sources" / self.first)
@@ -537,7 +550,7 @@ class UnionBoundary(unittest.TestCase):
         expected = "PRIOR_SOURCE_IDENTITY" if target == "input" else "STAGED_OUTPUT_CHANGED_AFTER_BUILD"
         with patch.object(compose, "run_checked", mutate_after_last_real_build), self.assertRaisesRegex(ValueError, expected):
             compose.build_source_candidate(prior, prior, output, compiler, rojo, self.context)
-        self.assertEqual(calls, 156)
+        self.assertEqual(calls, 159)
         self.assertFalse(output.exists())
         stages = list(output.parent.glob(output.name + ".building-*"))
         self.assertEqual(len(stages), 1)
@@ -861,6 +874,24 @@ class FinalAdmissionBoundary(unittest.TestCase):
         compose.write_json(aggregate_path, aggregate)
         with self.assertRaisesRegex(ValueError, "SCORE_VERIFIED_EXACT_PROGRAM_AND_RUN"):
             verify.verify_native(copied, self.current, self.lock, self.context)
+
+    def test_relay_presentation_rejects_stale_client_with_rebound_receipts(self):
+        copied = self.bot_native_copy()
+        evidence = copied / "relay_presentation"
+        program_path = evidence / "generated.luau"
+        client = (self.current / "sources" / compose.HUD_SOURCE).read_bytes()
+        repair = self.lock["relay_presentation_followup"]
+        mounted = client[repair["client_start"]:repair["client_end"]]
+        self.assertEqual(program_path.read_bytes().count(mounted),1)
+        program_path.write_bytes(program_path.read_bytes().replace(mounted,b"",1))
+        receipt_path, aggregate_path = evidence / "receipt.json", copied / "receipt.json"
+        receipt, aggregate = verify.data(receipt_path), verify.data(aggregate_path)
+        receipt["generated"] = compose.identity(program_path.read_bytes())
+        compose.write_json(receipt_path,receipt)
+        aggregate["relay_presentation"] = compose.identity(receipt_path.read_bytes())
+        compose.write_json(aggregate_path,aggregate)
+        with self.assertRaisesRegex(ValueError,"RELAY_PRESENTATION_VERIFIED_PROGRAM_AND_RUN"):
+            verify.verify_native(copied,self.current,self.lock,self.context)
 
     def rebind_mutated_bot_evidence(self, copied, scenario=None):
         # Negative controls refresh enclosing hashes so semantic checks, not a
@@ -1245,7 +1276,8 @@ class UnionOfflineContract(unittest.TestCase):
         remaining = {p: r for p, r in parent_rows.items() if p != compose.HUD_SOURCE}
         encode = lambda value: (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode()
         self.assertEqual(compose.identity(encode(remaining)), {'bytes': 272752, 'sha256': 'e2a6bcfd7d060f0da78b4a5971a2e887f26681b0477b1e5f70d99abbf80b6066'})
-        phase = self.lock["sources"][compose.HUD_SOURCE]["forward"][0]
+        prior_hud = self.lock["relay_presentation_followup"]["rows"][compose.HUD_SOURCE]["parent"]
+        phase = prior_hud["forward"][0]
         self.assertEqual(compose.identity(encode(phase)), {'bytes': 997, 'sha256': '2ab2ddfd837f0ba1c78ebef579b54149c72c2c964730c3e1fcc36e4cc2cb17ec'})
         self.assertEqual(repair["current_hud"], {"bytes": 24779, "sha256": "3bf0d95802e1806d9167251417fd560673bd134c813d1cfb5407f163b322cf90"})
         self.assertEqual(repair["repaired_hud"], {"bytes": 25323, "sha256": "a5983ba5bfb8a3e743a767b59984ec7be6e48f46fa073c98a784b8afc0f674f4"})
@@ -1303,7 +1335,9 @@ class UnionOfflineContract(unittest.TestCase):
         vault = self.lock["empty_vault_followup"]
         castle = self.lock["castle_release_stock_followup"]
         score = self.lock["score_relay_followup"]
-        castle_sources = self.lock["sources"] | {compose.SCORE_SOURCE: score["parent_score_row"]}
+        relay = self.lock["relay_presentation_followup"]
+        score_sources = self.lock["sources"] | {name: row["parent"] for name,row in relay["rows"].items()}
+        castle_sources = score_sources | {compose.SCORE_SOURCE: score["parent_score_row"]}
         vault_sources = castle_sources | {compose.VAULT_SOURCE: castle["parent_host_row"]}
         item_sources = castle_sources | {compose.VAULT_SOURCE: vault["parent_host_row"]}
         guardian_sources = item_sources | {compose.ITEM_SOURCE: item["parent_item_row"]}
@@ -1323,10 +1357,11 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual([path for path in item_sources
                           if item_sources[path] != vault_sources[path]], [compose.VAULT_SOURCE])
         self.assertEqual(castle["repaired_place"], score["parent_place"])
-        self.assertEqual(score["repaired_place"], self.lock["final_place"])
+        self.assertEqual(score["repaired_place"], relay["parent_place"])
+        self.assertEqual(relay["repaired_place"], self.lock["final_place"])
         self.assertEqual(len(castle["forward"]), 5)
         self.assertEqual(sum(len(r["forward"]) for r in castle_sources.values()), 190)
-        self.assertEqual(sum(len(r["forward"]) for r in self.lock["sources"].values()), 191)
+        self.assertEqual(sum(len(r["forward"]) for r in score_sources.values()), 191)
         self.assertEqual([path for path in vault_sources
                           if vault_sources[path] != castle_sources[path]], [compose.VAULT_SOURCE])
 

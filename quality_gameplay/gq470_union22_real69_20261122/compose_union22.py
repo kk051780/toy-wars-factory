@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "ef326fc874dbb214e2d0d3411a86e6db265dedb3921189b3970f1e723c0332d9"
+LOCK_SHA256 = "53d3207a17c0adc2f16b28d020bef68dd270a157b72a902bf15f9de83d1d9593"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -58,6 +58,9 @@ SCORE_SOURCE = "ServerScriptService/EGGRUMBLE_ScoreBalance.luau"
 SCORE_OFF = "off69_score_relay_castle_parent"
 SCORE_OFF_ARCHIVE = "OFF69_SCORE_RELAY_CASTLE_PARENT_ROLLBACK.tar.gz"
 SCORE_REGRESSION_DONOR = "quality_gameplay/gq487_relay_score_real69_20261122"
+RELAY_PRESENTATION_OFF = "off69_relay_presentation_score_parent"
+RELAY_PRESENTATION_OFF_ARCHIVE = "OFF69_RELAY_PRESENTATION_SCORE_PARENT_ROLLBACK.tar.gz"
+RELAY_PRESENTATION_SOURCES = (VAULT_SOURCE, HUD_SOURCE)
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 CLASSES = {"ModuleScript": 47, "Script": 12, "LocalScript": 10}
 
@@ -365,6 +368,23 @@ def score_parent(on, lock):
                                 lock["castle_release_stock_followup"]["repaired_place"], "SCORE_RELAY")
 
 
+def relay_presentation_parent(on, lock):
+    repair = lock["relay_presentation_followup"]
+    need(set(repair["rows"]) == set(RELAY_PRESENTATION_SOURCES)
+         and repair["repaired_place"] == lock["final_place"]
+         and repair["parent_place"] == lock["score_relay_followup"]["repaired_place"], "RELAY_PRESENTATION_PARENT")
+    old = dict(on)
+    parent = {**lock, "sources": dict(lock["sources"]), "final_place": repair["parent_place"]}
+    for name, row in repair["rows"].items():
+        restored = apply_hunks(on[name], row["inverse"])
+        need(identity(restored) == row["parent"]["after"] and restored != on[name]
+             and row["parent"]["before"] == lock["sources"][name]["before"]
+             and apply_hunks(restored, row["forward"]) == on[name], "RELAY_PRESENTATION_TWO_WAY:" + name)
+        old[name] = restored
+        parent["sources"][name] = row["parent"]
+    return old, parent
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -532,7 +552,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    score_off, score_off_lock = score_parent(on, lock)
+    relay_off, relay_off_lock = relay_presentation_parent(on, lock)
+    score_off, score_off_lock = score_parent(relay_off, relay_off_lock)
     castle_off, castle_off_lock = castle_parent(score_off, score_off_lock)
     vault_off, vault_off_lock = vault_parent(castle_off, castle_off_lock)
     item_off, item_off_lock = item_parent(vault_off, vault_off_lock)
@@ -558,7 +579,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / ITEM_OFF, item_off, item_off_lock["final_place"], ITEM_SOURCE),
                   (stage / VAULT_OFF, vault_off, vault_off_lock["final_place"], VAULT_SOURCE),
                   (stage / CASTLE_OFF, castle_off, castle_off_lock["final_place"], VAULT_SOURCE),
-                  (stage / SCORE_OFF, score_off, score_off_lock["final_place"], SCORE_SOURCE))
+                  (stage / SCORE_OFF, score_off, score_off_lock["final_place"], SCORE_SOURCE),
+                  (stage / RELAY_PRESENTATION_OFF, relay_off, relay_off_lock["final_place"], RELAY_PRESENTATION_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -566,7 +588,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                 path = folder / "sources" / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(raw)
-                if changed_source is None or name == changed_source:
+                if (changed_source is None or name == changed_source
+                        or isinstance(changed_source, tuple) and name in changed_source):
                     run_checked([compiler, "--text", path], logs, quiet_stdout=True)
             run_checked([rojo, "build", folder / PROJECT, "-o", folder / PLACE], logs)
             place = read_file(folder / PLACE)
@@ -601,6 +624,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         castle_archive_identity = identity(read_file(stage / CASTLE_OFF_ARCHIVE))
         make_archive(stage / SCORE_OFF, stage / SCORE_OFF_ARCHIVE, SCORE_OFF)
         score_archive_identity = identity(read_file(stage / SCORE_OFF_ARCHIVE))
+        make_archive(stage / RELAY_PRESENTATION_OFF, stage / RELAY_PRESENTATION_OFF_ARCHIVE, RELAY_PRESENTATION_OFF)
+        relay_archive_identity = identity(read_file(stage / RELAY_PRESENTATION_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -640,6 +665,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({SCORE_OFF + "/" + PROJECT: lock["project"],
                                SCORE_OFF + "/" + PLACE: score_off_lock["final_place"],
                                SCORE_OFF_ARCHIVE: score_archive_identity})
+        expected_stage.update({RELAY_PRESENTATION_OFF + "/sources/" + name: identity(raw) for name, raw in relay_off.items()})
+        expected_stage.update({RELAY_PRESENTATION_OFF + "/" + PROJECT: lock["project"],
+                               RELAY_PRESENTATION_OFF + "/" + PLACE: relay_off_lock["final_place"],
+                               RELAY_PRESENTATION_OFF_ARCHIVE: relay_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -673,6 +702,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "castle_release_stock_rollback_archive": castle_archive_identity,
             "score_relay_followup": lock["score_relay_followup"],
             "score_relay_rollback_archive": score_archive_identity,
+            "relay_presentation_followup": lock["relay_presentation_followup"],
+            "relay_presentation_rollback_archive": relay_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -685,11 +716,12 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 24, "unchanged_sources": 45,
-            "compile_count": 146, "rojo_build_count": 10, "instances": 75,
+            "compile_count": 148, "rojo_build_count": 11, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
             "score_relay_parent_place": score_off_lock["final_place"],
+            "relay_presentation_parent_place": relay_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
