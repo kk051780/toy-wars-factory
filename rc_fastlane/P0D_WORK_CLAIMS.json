@@ -33480,7 +33480,7 @@
     {
       "claim_id": "P0D-GQ796-GUARDIAN-WALL-PATROL-20261127",
       "feature_id": "GQ796_GUARDIAN_WALL_PATROL",
-      "state": "RC_ADMISSION_AUTHORIZED",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, original #796 and prepared wall fix reuse)",
       "parent_issue": 470,
@@ -33491,13 +33491,13 @@
       "prep_branch": "quality/gq8-subsea-melee-los-20261118",
       "expected_source_branch": "ab284dfd5ecfb45fe3af0537260946a5ed2b26ee",
       "allowed_new_prs": 0,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
       "PREP_READY": true,
       "registered_source_approval": true,
-      "rc_write_authorized_by_this_claim": true,
+      "rc_write_authorized_by_this_claim": false,
       "scope": "One existing guardian movement route, prepared exact f57d11b4 guard-body sweeps/tangent slide/end overlap, 1545 bytes, no new hostile target policy, castle rules, character HP, inventory, authority or art variant. Reuse existing open #796 and preserve original head. Preserve old 40 native exact historical context and run seven strict new cases. Shared canonical scope serialized; #957 excluded.",
       "resources": [
         "REAL69_SOURCE_EGGRUMBLE_CASTLEGUARDIANRUNTIME",
@@ -33743,7 +33743,7 @@
         "operation_id": "ddb6f374-4599-48a9-8a88-2369839c50c4"
       },
       "bounded_rc_integration": {
-        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
         "permitted_head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
@@ -33756,7 +33756,7 @@
           "role": "FINITE_220_CODEx_PARENT_WRITER"
         },
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -33773,6 +33773,49 @@
           "trusted_queue_job": 140341056968,
           "lease": "2362f14650335e917a8cc3aea93403558b2128e5",
           "owner": "7bee6b42-4043-4af2-a877-76d98254b3ec"
+        },
+        "writer_acquire_ref": "e8f49004ecc10c97dc4866940e62d59e4bf01a68",
+        "writer_return_ref": "ceaf3a35004a0788dbd99d9e62d4a6b22465048a",
+        "exact_adoption_readback_at": "2026-11-27T06:06:16.291Z"
+      },
+      "actual_postpush": {
+        "branch": "rc/p0d-s1-kids-rc01",
+        "before_sha": "720dbfb8eba9c3f79efe61a3a592f53e0888e168",
+        "head": "5ccf60dc582f4b97c546cda8d68a44b256adb0fc",
+        "tree": "01e2f35e79b07f085fc04d71327d4881fbf19075",
+        "merged_pr": 796,
+        "metadata_lease": {
+          "commit": "3ff7dfc3033b05d71d7919c2194c674332c16d09",
+          "owner": "07f07101-63b6-4545-9e9e-72ee6a9ad06a"
+        },
+        "official_ci": {
+          "run": 45949728883,
+          "job": 140342538881,
+          "steps": 48,
+          "conclusion": "success",
+          "native_guardian_wall_cases": 7,
+          "artifact": 15175813609,
+          "zip": {
+            "bytes": 18696377,
+            "sha256": "8b8a4ef9105061644036060dabce70e1ddec828c1a8184909397cf50cc974476"
+          }
+        },
+        "windows_rebuilt_place": {
+          "bytes": 854300,
+          "sha256": "cb6c7d472588912559489b5beeac66cc8f02b2e43b5060f004f443316a1a2fc6"
+        },
+        "immediate_off": {
+          "bytes": 852755,
+          "sha256": "f5b64feb99beba89ecb40a22b919c0f51a8cf196673d1da4c4dd4dfe8ff8b5aa"
+        },
+        "older_rollbacks_verified": 14,
+        "source_lock": "325086d053c625a8f5dbc9b2bd62d2729ce1b33c72522d27d3cdc32f15f47694",
+        "studio": {
+          "state": "NOT_TESTED",
+          "deferred_by": "OWNER #1011 V3.0, 2026-11-27T05:37:30Z",
+          "pc_evidence_current": null,
+          "android": "NOT_TESTED",
+          "fun": "NOT_TESTED"
         }
       }
     }
