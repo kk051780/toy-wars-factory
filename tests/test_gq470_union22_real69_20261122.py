@@ -39,7 +39,7 @@ INTEGRATION_COUNTS = {"core": 72, "final": 21}
 
 
 def restore_combat(on, lock):
-    shorefoam_off = compose.shorefoam_parent(*compose.team_win_rule_parent(on, lock))
+    shorefoam_off = compose.shorefoam_parent(*compose.team_win_rule_parent(*compose.fractional_hp_parent(on, lock)))
     touch_off = compose.private_touch_parent(*compose.portrait_parent(*shorefoam_off))
     relay_off = compose.relay_eligibility_parent(*compose.moguron_parent(*touch_off))
     mage_off = compose.mage_contact_parent(*relay_off)
@@ -56,6 +56,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["fractional_hp_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["team_win_rule_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["shorefoam_followup"]["rows"].items()
@@ -499,13 +501,20 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        team_parent, team_lock = compose.team_win_rule_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != team_parent[name]}, {compose.VAULT_SOURCE})
+        hp_parent, hp_lock = compose.fractional_hp_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != hp_parent[name]}, {compose.HUD_SOURCE})
+        self.assertEqual(hp_lock["final_place"], self.lock["team_win_rule_followup"]["repaired_place"])
+        team_parent, team_lock = compose.team_win_rule_parent(hp_parent, hp_lock)
+        self.assertEqual({name for name in hp_parent if hp_parent[name] != team_parent[name]}, {compose.VAULT_SOURCE})
         self.assertEqual(team_lock["final_place"], self.lock["shorefoam_followup"]["repaired_place"])
         parent, parent_lock = compose.shorefoam_parent(team_parent, team_lock)
         self.assertEqual({name for name in team_parent if team_parent[name] != parent[name]},
                          {compose.SHOREFOAM_SOURCE})
         self.assertEqual(parent_lock["final_place"], self.lock["portrait_followup"]["repaired_place"])
+        root = self.current_copy()
+        shutil.copyfile(root / compose.TEAM_WIN_RULE_OFF_ARCHIVE, root / compose.FRACTIONAL_HP_OFF_ARCHIVE)
+        with self.assertRaisesRegex(ValueError, "ARCHIVE"):
+            verify.verify_core(root, self.prior, self.reports, self.context)
         root = self.current_copy()
         shutil.copyfile(root / compose.SHOREFOAM_OFF_ARCHIVE, root / compose.TEAM_WIN_RULE_OFF_ARCHIVE)
         with self.assertRaisesRegex(ValueError, "ARCHIVE"):
@@ -517,7 +526,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_portrait_inverse_changes_only_policy_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        previous, previous_lock = compose.shorefoam_parent(*compose.team_win_rule_parent(final, self.lock))
+        previous, previous_lock = compose.shorefoam_parent(*compose.team_win_rule_parent(*compose.fractional_hp_parent(final, self.lock)))
         parent, parent_lock = compose.portrait_parent(previous, previous_lock)
         self.assertEqual({name for name in previous if previous[name] != parent[name]}, {compose.PORTRAIT_SOURCE})
         self.assertEqual(parent_lock["final_place"], self.lock["private_touch_followup"]["repaired_place"])
@@ -528,7 +537,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_private_touch_inverse_changes_only_hud_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        previous, previous_lock = compose.portrait_parent(*compose.shorefoam_parent(*compose.team_win_rule_parent(final, self.lock)))
+        previous, previous_lock = compose.portrait_parent(*compose.shorefoam_parent(*compose.team_win_rule_parent(*compose.fractional_hp_parent(final, self.lock))))
         parent, parent_lock = compose.private_touch_parent(previous, previous_lock)
         self.assertEqual({name for name in previous if previous[name] != parent[name]}, {compose.PRIVATE_TOUCH_SOURCE})
         self.assertEqual(parent_lock["final_place"], self.lock["moguron_followup"]["repaired_place"])
@@ -540,7 +549,7 @@ class UnionBoundary(unittest.TestCase):
 
     def test_guardian_wall_inverse_restores_art_parent_and_rejects_stale_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        shorefoam_off = compose.shorefoam_parent(*compose.team_win_rule_parent(final, self.lock))
+        shorefoam_off = compose.shorefoam_parent(*compose.team_win_rule_parent(*compose.fractional_hp_parent(final, self.lock)))
         touch_off, touch_lock = compose.private_touch_parent(*compose.portrait_parent(*shorefoam_off))
         moguron_off, moguron_lock = compose.moguron_parent(touch_off, touch_lock)
         self.assertEqual({name for name in moguron_off if moguron_off[name] != touch_off[name]},
@@ -1142,9 +1151,10 @@ class UnionBoundary(unittest.TestCase):
         old_policy = self.lock["portrait_followup"]["rows"][compose.PORTRAIT_SOURCE]["parent"]["after"]
         old_traversal = self.lock["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
         old_host = self.lock["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
+        old_hud = self.lock["fractional_hp_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"]
         layout_lock = self.native_lock | {"sources": self.native_lock["sources"] | {
             compose.PORTRAIT_SOURCE: old_policy, compose.SHOREFOAM_SOURCE: old_traversal,
-            compose.VAULT_SOURCE: old_host}}
+            compose.VAULT_SOURCE: old_host, compose.HUD_SOURCE: old_hud}}
         good = self.temporary() / "good-layout"
         prepared = native.prepare_selected_hud_layout(
             historical_sources, good, layout_lock)
@@ -1721,7 +1731,8 @@ class UnionOfflineContract(unittest.TestCase):
         relay_eligibility_sources = self.lock["sources"]
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
-        for followup in (team_win, shorefoam, portrait, private_touch, moguron):
+        hp = self.lock["fractional_hp_followup"]
+        for followup in (hp, team_win, shorefoam, portrait, private_touch, moguron):
             relay_eligibility_sources = relay_eligibility_sources | {
                 name: row["parent"] for name, row in followup["rows"].items()}
         self.assertEqual(moguron["parent_place"], eligibility["repaired_place"])
@@ -1771,7 +1782,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(private_touch["repaired_place"], portrait["parent_place"])
         self.assertEqual(portrait["repaired_place"], shorefoam["parent_place"])
         self.assertEqual(shorefoam["repaired_place"], team_win["parent_place"])
-        self.assertEqual(team_win["repaired_place"], self.lock["final_place"])
+        self.assertEqual(team_win["repaired_place"], hp["parent_place"])
+        self.assertEqual(hp["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(hp["rows"]), {compose.HUD_SOURCE})
+        self.assertEqual(len(hp["rows"][compose.HUD_SOURCE]["forward"]), 1)
         self.assertEqual(set(team_win["rows"]), {compose.VAULT_SOURCE})
         self.assertEqual(len(team_win["rows"][compose.VAULT_SOURCE]["forward"]), 1)
         self.assertEqual(set(shorefoam["rows"]), {compose.SHOREFOAM_SOURCE})
