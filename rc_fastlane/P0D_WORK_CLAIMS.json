@@ -34842,7 +34842,7 @@
         "GQ470_FB015_CASTLE_GUARDIAN_7_SILHOUETTES_REAL69_20261121",
         "GQ470_FB015_FIELDART_916_934_COMPOSITE_20261121"
       ],
-      "state": "RC_INTEGRATED",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, reusing existing #940)",
       "parent_issue": 470,
@@ -35314,7 +35314,7 @@
           957,
           956
         ],
-        "state": "POSTPUSH_OFFICIAL_CI_PENDING",
+        "state": "RC_CI_PASS",
         "official_run": 45982367423,
         "metadata_lease": {
           "commit": "3dc5b8ec2bf9075b3230732628140702f76a3557",
@@ -35325,6 +35325,214 @@
           "android": "NOT_TESTED",
           "fun": "NOT_TESTED",
           "deferred_by": "#1011 V3.0 early December combined tests"
+        },
+        "published_full_metadata_lease": {
+          "commit": "8ac902f9a9fd164c226de7349e8194c8ff4505a8",
+          "owner": "f6291d3c-c2ae-4082-a28b-e6e570cdca01"
+        },
+        "independent_postpush_verified_context": "/root/p0_offer_review26",
+        "official_ci": {
+          "run": 45982367423,
+          "job": 140449239343,
+          "steps": 48,
+          "conclusion": "success",
+          "artifact": 15190421222,
+          "zip": {
+            "bytes": 23949074,
+            "sha256": "62913df388a5fefd30e1b73aaf95fb827e402e842209d17cc4c393801b1d4e7f"
+          }
+        },
+        "windows_rebuilt_place": {
+          "bytes": 887813,
+          "sha256": "7143dd44abd692ffb632438c3966a2d806868175bda642aaa1541d1725dff242"
+        },
+        "immediate_off": {
+          "bytes": 877289,
+          "sha256": "b62cc94ed5d6b51dd3afca811b87df45104bc7931b8636fd69cba94667c78fb7"
+        },
+        "older_rollbacks_verified": 17,
+        "source_lock": "96b6217379d927a722ea8e4311bc846dbca30dd49f09c5dc36ea9983ff1e9a5e"
+      }
+    },
+    {
+      "claim_id": "P0D-GQ470-MAGE-CLOSE-CONTACT-V3-20261127",
+      "feature_id": "GQ470_MAGE_CLOSE_BASIC_V3",
+      "state": "GRANTED",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, transporting the existing Mage V3 PC result)",
+      "parent_issue": 470,
+      "source_issue": 1028,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+      "base_rc_tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
+      "prep_branch": "quality/gq470-mage-close-basic-v3-20261127",
+      "allowed_new_prs": 1,
+      "source_scope_granted": true,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "registered_source_approval": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Existing two-source Mage V3 close neutral normal wand attacks only. Apply exact #1028 follow-up, then preserve the other six roles, wall rejection, no new authority, existing target ordering and 24-hit/48-ray budgets. Do not edit closed #1028 or #847. No rules, rank, mode, PvP, default profile or product gates change.",
+      "resources": [
+        "REAL69_SOURCE_EGGRUMBLE_SEVENROLECOMBAT",
+        "REAL69_SOURCE_EGGRUMBLE_SWARMCOMBAT",
+        "REAL69_UNION22_FINAL_RECEIPT",
+        "GQ470_MAGE_CLOSE_BASIC_V3"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_mage_contact_20261127/cases.luau",
+        "quality_gameplay/gq470_mage_contact_20261127/mage_close_v3.patch",
+        "quality_gameplay/gq470_mage_contact_20261127/priority.luau",
+        "quality_gameplay/gq470_mage_contact_20261127/role.luau",
+        "quality_gameplay/gq470_mage_contact_20261127/ties.luau",
+        "quality_gameplay/gq470_mage_contact_20261127/vectors.json",
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/1028#issuecomment-7185494343",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "f6291d3c-c2ae-4082-a28b-e6e570cdca01",
+      "issued_at": "2026-11-27T10:36:04.836Z",
+      "expires_at": "2026-11-27T12:36:04.836Z",
+      "actual_metadata_lease": {
+        "ref": "8ac902f9a9fd164c226de7349e8194c8ff4505a8",
+        "blob": "1d6c64fb0c61e21261a84369617860ba57fd170e",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "f6291d3c-c2ae-4082-a28b-e6e570cdca01",
+          "task_id": null,
+          "epoch": 879,
+          "acquired_at": "2026-11-27T10:35:46.294Z",
+          "expires_at": "2026-11-27T11:05:46.294Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated #1011 latest V3.0/#218/#220. One scope, one new draft as the prior implementation evidence is a comment in an already merged PR. Release remains separate and gated.",
+      "source_grant": {
+        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "branch": "quality/gq470-mage-close-basic-v3-20261127",
+        "formal_parent": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "tree": "ca766112c0e61d258940fab4d6d9235876d49278",
+        "local_head": "7ef85f21faafee0c88242708b254daca941d641d",
+        "permitted_create_draft": true,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_mage_contact_20261127/cases.luau",
+            "mode": "100644",
+            "blob": "f823bc20b9224a0c8ba6d8c56125718bf8b0a70b",
+            "bytes": 6524
+          },
+          {
+            "path": "quality_gameplay/gq470_mage_contact_20261127/mage_close_v3.patch",
+            "mode": "100644",
+            "blob": "84991ab2e6780f2a27bf54aa101a950a86c1a8f9",
+            "bytes": 4977
+          },
+          {
+            "path": "quality_gameplay/gq470_mage_contact_20261127/priority.luau",
+            "mode": "100644",
+            "blob": "c99865b86db2366e5c74a2e8323f7a396d8ad329",
+            "bytes": 3231
+          },
+          {
+            "path": "quality_gameplay/gq470_mage_contact_20261127/role.luau",
+            "mode": "100644",
+            "blob": "57348f13ccdb17741f78afa765395fd16efb27bd",
+            "bytes": 4658
+          },
+          {
+            "path": "quality_gameplay/gq470_mage_contact_20261127/ties.luau",
+            "mode": "100644",
+            "blob": "1a3262714d6674c218313a99b3d8a8e685e2d76d",
+            "bytes": 3365
+          },
+          {
+            "path": "quality_gameplay/gq470_mage_contact_20261127/vectors.json",
+            "mode": "100644",
+            "blob": "6e2fdbf5d28761e5c99707a63e7862d6d8f4b744",
+            "bytes": 7544
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "blob": "7b13d98b0c7a75fcd7957562415fca4a8edab29b",
+            "bytes": 59034
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "4fc684a7b14d605689c3d9c2f4a185f624abc311",
+            "bytes": 35255
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "mode": "100644",
+            "blob": "ef0268772e30a81ec36f087c461053568e63a420",
+            "bytes": 6894
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "blob": "ea18c7c307310fb802c3af413fe9145dd6505040",
+            "bytes": 18903
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "blob": "ebcd6f091d502b611a9011fe12e0309184673e64",
+            "bytes": 50826
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "blob": "b1367e936aaee65607eb3fbf9480414b20b1adb2",
+            "bytes": 1391230
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "blob": "82dc65086129b075321ae6c8728f0f326b390034",
+            "bytes": 146768
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "46207f9635d0f6b644a55afa74bffdedeac8ba06",
+            "bytes": 106794
+          }
+        ],
+        "local_qa": {
+          "source_lock": "d93e2bc46ebbe3e973fe967d35f0f334d2b75206ab2e70202c3ec3d06556c917",
+          "place_bytes": 889649,
+          "place_sha256": "e963ef81a41dfdfadc5fd5cb529c0a1ca5180dd727372ad5b7d7ee570a4e4efb",
+          "parent_off_bytes": 887813,
+          "changed_luau": 2,
+          "unchanged_luau": 67,
+          "compile": 172,
+          "rojo": 20,
+          "older_rollbacks": 18,
+          "mage_fullprograms": 38,
+          "full_bodies_each": 28,
+          "strict_vectors": 38
+        },
+        "expires_at": "2026-11-27T11:36:04.836Z",
+        "issued_from": {
+          "lease": "8ac902f9a9fd164c226de7349e8194c8ff4505a8",
+          "owner": "f6291d3c-c2ae-4082-a28b-e6e570cdca01"
         }
       }
     }
