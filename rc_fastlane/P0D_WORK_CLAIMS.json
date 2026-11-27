@@ -37529,7 +37529,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing #395/#397 eligible human roster rule for ACTIVE rich51 SCORE5 only with two participants and solo fallback to Classic, coordinated Game vote/projection and existing two mode HUD buttons. Preserve current results recovery, existing role/egg/score/authority, #395 branch, same private companion and old author history. No AI activation scope.",
       "resources": [
@@ -37686,6 +37686,72 @@
       "actual_binding_lease": {
         "commit": "11e8cd8fc7df4f8112b40f763863e7cd2e0c59b7",
         "operation_id": "ada24c5d-196e-4413-9f7a-4c58a4989752"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/397#pullrequestreview-6089005031",
+        "review_id": 6089005031,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46007124689,
+        "active_job": 140532984752,
+        "active_executed_steps": 93,
+        "active_place_bytes": 610958,
+        "active_place_sha256": "7cfa98cc5f3270a75cb0445fb2edb5ac953eec88217b8ddd27f3bc410e1c7c0b",
+        "immediate_off_bytes": 610358,
+        "active_artifact": 15201797738,
+        "active_zip_bytes": 177932,
+        "active_zip_digest": "sha256:6cf8aeb3afebf059a1194256bbf9f4db8fb40ce6a91d61046dbbad1fb8833791",
+        "private_ci": 46007124560,
+        "private_job": 140532983843,
+        "private_steps": 48,
+        "private_artifact": 15202184242,
+        "private_zip_bytes": 25131302,
+        "private_zip_digest": "sha256:8e7c933ce38edea84c41af15d434376e9d1fdb3f0443237a4bf4845513760fce",
+        "source_lock": "355961b9dd27a240cbec2806542db839d1fdf8d8725d942f6453b94db825c201",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "d896d448e3fd7bc3174aac9fb0c1cedbc9b56f49",
+        "operation_id": "334b98c5-16eb-40e7-a5c1-2692847017a0"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "permitted_head": "7ea616f8a88a6a4ccb72b502b72007a7bba0413b",
+        "permitted_tree": "68cf701af9adc8ac3988d12e6e908c2dce0f2dde",
+        "permitted_pr": 397,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T14:02:54.133Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "ACTIVE rich51 eligible human count for two-player SCORE5 selection and HUD, one-person Classic; retain #391 recovery and all PRIVATE same source, no bot or additional feature scope. Official exact two workflow quality and artifacts, V3.5 Studio December milestone.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "d896d448e3fd7bc3174aac9fb0c1cedbc9b56f49",
+          "owner": "334b98c5-16eb-40e7-a5c1-2692847017a0",
+          "review": 6089005031,
+          "trusted_queue_run": 46009322138,
+          "trusted_queue_job": 140540475146
+        }
       }
     }
   ],
