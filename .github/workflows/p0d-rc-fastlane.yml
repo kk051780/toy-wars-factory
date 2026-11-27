@@ -678,6 +678,7 @@ jobs:
                 /tmp/p0d_new_luau/luau /tmp/p0d_active_rich51_results.luau | tee /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
                 grep -Fx P0_RICH51_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
                 grep -Fx ACTIVE_RESULTS_ROUND_AND_TEAM_FENCE_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
+                grep -Fx ACTIVE_RESULTS_IN_FLIGHT_READY_AND_COUNTDOWN_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_RESULTS_NATIVE.log
               fi
             fi
           elif [ "$PROFILE" = rich47 ]; then

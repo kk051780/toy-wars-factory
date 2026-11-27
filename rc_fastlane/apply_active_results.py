@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from apply_active_ready import write_json
+from apply_core_round_ready import once
 from apply_p0_results78 import NEW as AUTHORED_RECOVERY
 from integrate import gitblob, sources
 
@@ -30,21 +31,36 @@ def patch_game(old):
                         root.AssemblyLinearVelocity=Vector3.zero
                         root.AssemblyAngularVelocity=Vector3.zero
 """
-    recovery = AUTHORED_RECOVERY.replace("LobbyIsland.spawn(team)", "map.teams[team].spawn + Vector3.new(0, 2, 0)")
-    recovery = recovery.replace(
-        "-- #391 authored Game recovery: the existing CharacterAdded\n"
-        "                        -- handler places this player on the physical lobby island.",
-        "-- #391 recovery: the existing CharacterAdded uses the same team spawn.",
-    )
-    recovery = recovery.replace(
-        'if p.Parent~=Players or match.phase~="LOBBY" then return end',
-        'if p.Parent~=Players or match.phase~="LOBBY" or match.serial~=endedRound then return end\n'
-        '                            local currentTeam=getTeamName(p)\n'
-        '                            if currentTeam~="RED" and currentTeam~="BLUE" then return end',
-    )
+    defer = "                        task.defer(function()"
+    checked(AUTHORED_RECOVERY.count(defer) == 1, "AUTHOR_RECOVERY_ANCHOR")
+    recovery = AUTHORED_RECOVERY.split(defer, 1)[0].replace(
+        "LobbyIsland.spawn(team)", "map.teams[team].spawn + Vector3.new(0, 2, 0)"
+    ).split("                        -- #391", 1)[0] + """                        -- CharacterAdded uses this same team spawn.
+                        lobbyRecoveryRound[p] = endedRound
+                        task.defer(function()
+                            if lobbyRecoveryRound[p] ~= endedRound then return end
+                            if p.Parent == Players and match.phase == "LOBBY" and match.serial == endedRound then
+                                local currentTeam = getTeamName(p)
+                                if (currentTeam == "RED" or currentTeam == "BLUE") and not healthy(p) then
+                                    local ok,err=pcall(function() p:LoadCharacter() end)
+                                    if not ok then warn("P0D_LOBBY_RESPAWN_FAIL",err) end
+                                end
+                            end
+                            if lobbyRecoveryRound[p] == endedRound then lobbyRecoveryRound[p] = nil end
+                        end)
+                    end"""
     suffix = "\n                end\n            end\n"
     start, rest = MARKER.split("\n", 1)
     amended = old.replace(MARKER, start + "\n" + jump + recovery + suffix + rest, 1)
+    roster = "local roundReady: {[Player]: boolean} = {}"
+    amended = once(amended, roster, roster + "\nlocal lobbyRecoveryRound: {[Player]: number} = {}")
+    amended = once(amended, "if roundReady[player] ~= true then return false end",
+                   "if roundReady[player] ~= true or lobbyRecoveryRound[player] ~= nil then return false end")
+    phase = '    if match.phase ~= "LOBBY" and match.phase ~= "COUNTDOWN" then return end'
+    amended = once(amended, phase, phase + "\n"
+                   "    if data.ready and (lobbyRecoveryRound[player] ~= nil or not healthy(player)) then return end")
+    leave = "    roundReady[player] = nil"
+    amended = once(amended, leave, leave + "\n    lobbyRecoveryRound[player] = nil")
     checked(amended.count("remote.OnServerEvent:Connect(") == 1 and amended.count("H2Score.deposit(") == 1,
             "SINGLE_GAME_AUTHORITY")
     return amended
