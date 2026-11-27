@@ -37215,7 +37215,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Reuse original #391 RESULTS->LOBBY recovery on existing ACTIVE rich51 Game. Return living participants to existing team spawn and defer guarded dead participant LoadCharacter. Keep fresh Ready consent, old Private78 physical lobby, original author parent and #1016 persistence intact.",
       "resources": [
@@ -37416,6 +37416,72 @@
         "applied_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
         "applied_lease": "b52895bc31c6f68f8daaf9785aff036566ac6a6f",
         "lease_returned_at_ref": "bf97415b0aab7557a6c159fab1c76ef814bf9e3a"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/391#pullrequestreview-6088740925",
+        "review_id": 6088740925,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46004492779,
+        "active_job": 140524117827,
+        "active_executed_steps": 93,
+        "active_place_bytes": 610358,
+        "active_place_sha256": "b8d81c3fcc19d712a71882f274ea94f894479e5adffdb6ac68eee7d940511813",
+        "immediate_off_bytes": 608571,
+        "active_artifact": 15201150341,
+        "active_zip_bytes": 177155,
+        "active_zip_digest": "sha256:031cea0d8742477a33256570163e595b9716b56bd2e787cd8d788714a3be24df",
+        "private_ci": 46004492721,
+        "private_job": 140524117094,
+        "private_steps": 48,
+        "private_artifact": 15201695920,
+        "private_zip_bytes": 25131149,
+        "private_zip_digest": "sha256:0da055386dee6540e89b42a82ba657a11cc7ed05c33c85db80a5405a4d8943f6",
+        "source_lock": "2bcc1ad246d32ab08c9fb2ffe7cec775de6068e445b093bcf48d84615fe24976",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "c105e8566aab95b982cb24813e6c8ffdd73b654a",
+        "operation_id": "39f2ac05-fba5-43d7-a6fc-eb2070f6de9e"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "81dacc9a26051c165385e87fd7c7fbc70a67e176",
+        "permitted_head": "149181b6af88906e91369ec0b67d50a5a4d7f580",
+        "permitted_tree": "ffef9da37d3d0556bf1f047374e47defe2c104ba",
+        "permitted_pr": 391,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T13:41:39.655Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact original #391 reused in playable ACTIVE rich51. One Game body only, prior artifacts and private sources preserved. Results recovery and ready/cancel while pending, both required official same-head builds and Place; #1011 V3.5 tests in December.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "c105e8566aab95b982cb24813e6c8ffdd73b654a",
+          "owner": "39f2ac05-fba5-43d7-a6fc-eb2070f6de9e",
+          "review": 6088740925,
+          "trusted_queue_run": 46006300394,
+          "trusted_queue_job": 140530188505
+        }
       }
     }
   ],
