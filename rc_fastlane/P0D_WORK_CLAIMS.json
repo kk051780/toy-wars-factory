@@ -40860,7 +40860,7 @@
     {
       "claim_id": "P0D-GQ828-PRIVATE-TOUCH-ATTACK-20261128",
       "feature_id": "GQ8_HUD_INTEL_FOG_20261119_TOUCH_ATTACK_EDGE",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent scoped Private companion)",
       "parent_issue": 828,
@@ -40874,7 +40874,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing GQ828/GQ470 G4 authored JumpButton overlap repair, Private REAL69_UNION22 only. One selected HUD +2307 B plus source pins/new immediate OFF and localized Native fixture. Active inputs and existing UI layout, all other 68 source bodies and 21 historical archives exact. No active defaults, gameplay authority or marker-only art claim.",
       "resources": [
@@ -41177,7 +41177,7 @@
         "operation_id": "7944177a-8ffa-4442-ad25-04dace363c6b"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
         "permitted_head": "236d26bb284d7653f4ed572236701acec8ecde6c",
@@ -41208,7 +41208,32 @@
           "review": 6091877381,
           "trusted_queue_run": 46046963554,
           "trusted_queue_job": 140668514063
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "1ec8b0ce465f9fb0b4afc1694852de45686f46b1",
+        "writer_return": "c37739e3b4136ced7d408d79efbccd4794585552",
+        "adopted_head": "236d26bb284d7653f4ed572236701acec8ecde6c",
+        "adopted_at": "2026-11-27T18:08:32.946Z"
+      },
+      "actual_official_rc": {
+        "head": "236d26bb284d7653f4ed572236701acec8ecde6c",
+        "tree": "cb1c203129eb8bf50318ce498708fe9c0b9ac8b0",
+        "previous": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "private_ci": 46047199208,
+        "private_job": 140669301961,
+        "private_steps": 48,
+        "private_artifact": 15222439394,
+        "private_zip_bytes": 26223319,
+        "private_zip_digest": "sha256:c31228cb46d284acdf62f454a9197e8beec6fe3a6e43b5044764424610c2018e",
+        "private_place_bytes": 894743,
+        "private_place_sha256": "46a8e6e4984e679b1265e90e84d5cec6422af4e25b417be5eb6fcad6136ce564",
+        "private_off_place_bytes": 891450,
+        "active_scope_unchanged": true,
+        "active_last_ci": 46043379981,
+        "active_place_bytes": 687144,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7225350825",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -41219,7 +41244,7 @@
       "owner": "/root (Codex parent scoped Active combat)",
       "parent_issue": 470,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1044,
       "base_rc_sha": "236d26bb284d7653f4ed572236701acec8ecde6c",
       "base_rc_tree": "cb1c203129eb8bf50318ce498708fe9c0b9ac8b0",
       "prep_branch": "quality/gq470-active-mage-armament-20261128",
@@ -41279,7 +41304,7 @@
       },
       "authority_basis": "#1011 V3.5, #218 and #220. Exact #471 authored armament module reuses the #297 retarget handoff. Broad existing #471 draft stays registered and untouched. One isolated scoped ACTIVE source draft, no formal writer grant.",
       "source_grant": {
-        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "status": "CONSUMED_BRANCH_AND_DRAFT_SOURCE_ONLY",
         "branch": "quality/gq470-active-mage-armament-20261128",
         "formal_parent": "236d26bb284d7653f4ed572236701acec8ecde6c",
         "tree": "e2c26254dd94690a8a76302118ce580d5eb85e3f",
@@ -41346,6 +41371,67 @@
           "native_touch_groups": 2,
           "device": "NOT_TESTED_V3.5"
         }
+      },
+      "source_head": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+      "prepared_candidate_head": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+      "prepared_candidate_tree": "e2c26254dd94690a8a76302118ce580d5eb85e3f",
+      "source_blob_submissions": [
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "mode": "100644",
+          "blob": "15f15e4e6b5fc21134569e639e7b01a8cd7d7c42",
+          "bytes": 245737
+        },
+        {
+          "path": "rc_fastlane/apply_active_mage_armament.py",
+          "mode": "100644",
+          "blob": "62a133ee481bc2e726ef91ac5e5e1162d25862a0",
+          "bytes": 13668
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_armament/SevenJobArmamentM1.luau",
+          "mode": "100644",
+          "blob": "7468f143ef801ebc7bdeab75f13bb5b16f66b103",
+          "bytes": 8719
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_armament/native_cases.luau",
+          "mode": "100644",
+          "blob": "186ae86b6a350bf87bc9c81be6c50b265e1a8919",
+          "bytes": 5841
+        },
+        {
+          "path": "rc_fastlane/features/active_mage_armament/source_lock.json",
+          "mode": "100644",
+          "blob": "0d91bb846260d813e8818d546956b4962dac7685",
+          "bytes": 971
+        },
+        {
+          "path": "rc_fastlane/verify_active_mage_armament_native.py",
+          "mode": "100644",
+          "blob": "7b9fb11a0fd4551a625200a0aff109fce80c0604",
+          "bytes": 4201
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "18557eb767d819a2a4c4d424f1d8dc90e86d6474",
+          "bytes": 118206
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1044,
+        "exact_head": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+        "exact_tree": "e2c26254dd94690a8a76302118ce580d5eb85e3f",
+        "exact_parent": "236d26bb284d7653f4ed572236701acec8ecde6c",
+        "previous_candidate": null,
+        "source_lease": "2f90b7167c9ecda3119cb39c23860dd2bfc387ba",
+        "source_lease_return": "25adc47d9d233422c4724ed08d0184f1f8bc8221",
+        "prepared_at": "2026-11-27T18:19:03.353Z"
+      },
+      "actual_binding_lease": {
+        "commit": "123019b7e60758da754104494b87dbf35499b546",
+        "operation_id": "27e69aa4-aad3-496f-b7d9-eb42de7e9cfc"
       }
     }
   ],
