@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 891450,
-    "sha256": "65f974c36acd5b100fbd76e3ea16b5dcf1be0d4a1d35e406f39e6eb4c1f156dc"
+    "bytes": 894743,
+    "sha256": "46a8e6e4984e679b1265e90e84d5cec6422af4e25b417be5eb6fcad6136ce564"
   },
   "followup_repair": {
     "author_contexts": [
@@ -24444,8 +24444,8 @@
     },
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
       "after": {
-        "bytes": 35646,
-        "sha256": "4c1a733908826e044fe5a75ac6e27922921199b375d3b2eff0f5c482e269da78"
+        "bytes": 38939,
+        "sha256": "4ae67a4e0a85fe601a98206973b364a7a0a0b98d54ec6b3d0660dc69367a5b3a"
       },
       "before": {
         "bytes": 24182,
@@ -24454,174 +24454,314 @@
       "class": "LocalScript",
       "forward": [
         {
+          "start": 3,
+          "stop": 3,
+          "old": "",
           "new": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
           "new_identity": {
             "bytes": 9020,
             "sha256": "9ad3d1e6d0931959b4cfef0d18ea547473f538c77a4a44cabdf9052c991ac407"
-          },
+          }
+        },
+        {
+          "start": 196,
+          "stop": 196,
           "old": "",
+          "new": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
           "old_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 3,
-          "stop": 3
-        },
-        {
-          "new": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
           "new_identity": {
             "bytes": 253,
             "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
-          },
+          }
+        },
+        {
+          "start": 447,
+          "stop": 447,
           "old": "",
+          "new": "local function touchJumpGeometry()\n if not UserInputService.TouchEnabled then return end\n local touchGui=playerGui:FindFirstChild(\"TouchGui\")\n if not touchGui or not touchGui:IsA(\"ScreenGui\") or not touchGui.Enabled then return end\n local controls=touchGui:FindFirstChild(\"TouchControlFrame\")\n if not controls or not controls:IsA(\"GuiObject\") or not controls.Visible then return end\n local jump=controls and controls:FindFirstChild(\"JumpButton\")\n if not jump or not jump:IsA(\"GuiButton\") or not jump.Visible then return end\n local size=jump.AbsoluteSize\n if size.X<=0 or size.Y<=0 then return end\n return jump.AbsolutePosition-gui.AbsolutePosition,size\nend\n\nlocal function separateAttackFromJump(anchors,jump,w,h)\n if not jump then return end\n local attack=anchors.ATTACK\n local half=attack.size*.5\n local gap=5\n local function intersects(x,y,rect)\n  return x+half+gap>rect.left and x-half-gap<rect.right\n   and y+half+gap>rect.top and y-half-gap<rect.bottom\n end\n if not intersects(attack.x,attack.y,jump) then return end\n local left,right=jump.left-half-gap,jump.right+half+gap\n local above,below=jump.top-half-gap,jump.bottom+half+gap\n local nearby={\n  {attack.x,above},{left,attack.y},{right,attack.y},{attack.x,below},\n  {left,above},{right,above},{left,below},{right,below},\n }\n local obstacles={jump}\n for name,other in pairs(anchors) do\n  if name==\"ATTACK\" or name==\"JUMP\" then continue end\n  local extent=other.size*.5\n  table.insert(obstacles,{left=other.x-extent,top=other.y-extent,right=other.x+extent,bottom=other.y+extent})\n end\n local function clearAt(x,y)\n  if x-half<0 or y-half<0 or x+half>w or y+half>h then return false end\n  for _,rect in ipairs(obstacles) do\n   if intersects(x,y,rect) then return false end\n  end\n  return true\n end\n for _,spot in ipairs(nearby) do\n  local x,y=spot[1],spot[2]\n  if clearAt(x,y) then\n   attack.x,attack.y=x,y\n   return\n  end\n end\n if w<2*half or h<2*half then return end\n -- If the authored nearby positions are full, the closest free centre lies\n -- on an edge of an expanded control or on a safe-area boundary.\n local xs={math.clamp(attack.x,half,w-half),half,w-half}\n local ys={math.clamp(attack.y,half,h-half),half,h-half}\n for _,rect in ipairs(obstacles) do\n  table.insert(xs,rect.left-half-gap)\n  table.insert(xs,rect.right+half+gap)\n  table.insert(ys,rect.top-half-gap)\n  table.insert(ys,rect.bottom+half+gap)\n end\n local bestX,bestY,bestDistance=attack.x,attack.y,math.huge\n for _,x in ipairs(xs) do\n  for _,y in ipairs(ys) do\n   local distance=(x-attack.x)^2+(y-attack.y)^2\n   if (distance<bestDistance or (distance==bestDistance and (y<bestY or (y==bestY and x<bestX))))\n    and clearAt(x,y) then\n    bestX,bestY,bestDistance=x,y,distance\n   end\n  end\n end\n attack.x,attack.y=bestX,bestY\nend\n\n",
           "old_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 196,
-          "stop": 196
+          "new_identity": {
+            "bytes": 2758,
+            "sha256": "de0d4b36ca0ffa68673c8ca5eeb7a1091efa89384601b8644935fa92d4c86921"
+          }
         },
         {
+          "start": 448,
+          "stop": 448,
+          "old": "",
+          "new": "local lastJumpAt,lastJumpSize,lastTouchBounds\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 46,
+            "sha256": "c6b842ea4a4376eda009f56f96b80c278b2e803a41d0c54051a97ea42bde08fd"
+          }
+        },
+        {
+          "start": 454,
+          "stop": 455,
+          "old": " if w==lastW and h==lastH and hand==lastHand then return end\n",
+          "new": " local jumpAt,jumpSize=touchJumpGeometry()\n local touchBounds=if jumpAt then gui.AbsoluteSize else nil\n if w==lastW and h==lastH and hand==lastHand\n  and jumpAt==lastJumpAt and jumpSize==lastJumpSize and touchBounds==lastTouchBounds then return end\n",
+          "old_identity": {
+            "bytes": 61,
+            "sha256": "5c88eb889f35b4ca3800f580e52900545fd7213ff742b54eb74caf17d9aa6773"
+          },
+          "new_identity": {
+            "bytes": 249,
+            "sha256": "eb0160652a52d5010c0d2b58ef5b9847408fc281fd07e4bad01376e4530d4e52"
+          }
+        },
+        {
+          "start": 456,
+          "stop": 456,
+          "old": "",
+          "new": " lastJumpAt,lastJumpSize,lastTouchBounds=jumpAt,jumpSize,touchBounds\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 69,
+            "sha256": "71fdff11b98a94bfe4e7973c03c7710c1d3e92f25402ee391c020fb60c450ea4"
+          }
+        },
+        {
+          "start": 458,
+          "stop": 458,
+          "old": "",
+          "new": " if jumpAt and jumpSize and touchBounds and touchBounds.X>0 and touchBounds.Y>0 then\n  separateAttackFromJump(p,{left=jumpAt.X,top=jumpAt.Y,\n   right=jumpAt.X+jumpSize.X,bottom=jumpAt.Y+jumpSize.Y},touchBounds.X,touchBounds.Y)\n end\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 232,
+            "sha256": "f3cce276d35f0badd5a62fc849b4f30292d3a88c096b43aeb15cd291bcc9d422"
+          }
+        },
+        {
+          "start": 488,
+          "stop": 488,
+          "old": "",
           "new": " growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
           "new_identity": {
             "bytes": 102,
             "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
-          },
-          "old": "",
-          "old_identity": {
-            "bytes": 0,
-            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-          },
-          "start": 488,
-          "stop": 488
+          }
         },
         {
-          "new": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
-          "new_identity": {
-            "bytes": 629,
-            "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
-          },
+          "start": 572,
+          "stop": 573,
           "old": " local inMatch=mapSnapshot~=nil\n",
+          "new": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
           "old_identity": {
             "bytes": 32,
             "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
           },
-          "start": 572,
-          "stop": 573
+          "new_identity": {
+            "bytes": 629,
+            "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
+          }
         },
         {
+          "start": 574,
+          "stop": 574,
+          "old": "",
           "new": " -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
           "new_identity": {
             "bytes": 948,
             "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
-          },
+          }
+        },
+        {
+          "start": 587,
+          "stop": 587,
           "old": "",
+          "new": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
           "old_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
           },
-          "start": 574,
-          "stop": 574
-        },
-        {
-          "new": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
           "new_identity": {
             "bytes": 544,
             "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
-          },
-          "old": "",
-          "old_identity": {
-            "bytes": 0,
-            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-          },
-          "start": 587,
-          "stop": 587
+          }
         }
       ],
       "inverse": [
         {
-          "new": "",
-          "new_identity": {
-            "bytes": 0,
-            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-          },
+          "start": 3,
+          "stop": 226,
           "old": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+          "new": "",
           "old_identity": {
             "bytes": 9020,
             "sha256": "9ad3d1e6d0931959b4cfef0d18ea547473f538c77a4a44cabdf9052c991ac407"
           },
-          "start": 3,
-          "stop": 226
-        },
-        {
-          "new": "",
           "new_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-          },
+          }
+        },
+        {
+          "start": 419,
+          "stop": 423,
           "old": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
+          "new": "",
           "old_identity": {
             "bytes": 253,
             "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
           },
-          "start": 419,
-          "stop": 423
-        },
-        {
-          "new": "",
           "new_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 674,
+          "stop": 747,
+          "old": "local function touchJumpGeometry()\n if not UserInputService.TouchEnabled then return end\n local touchGui=playerGui:FindFirstChild(\"TouchGui\")\n if not touchGui or not touchGui:IsA(\"ScreenGui\") or not touchGui.Enabled then return end\n local controls=touchGui:FindFirstChild(\"TouchControlFrame\")\n if not controls or not controls:IsA(\"GuiObject\") or not controls.Visible then return end\n local jump=controls and controls:FindFirstChild(\"JumpButton\")\n if not jump or not jump:IsA(\"GuiButton\") or not jump.Visible then return end\n local size=jump.AbsoluteSize\n if size.X<=0 or size.Y<=0 then return end\n return jump.AbsolutePosition-gui.AbsolutePosition,size\nend\n\nlocal function separateAttackFromJump(anchors,jump,w,h)\n if not jump then return end\n local attack=anchors.ATTACK\n local half=attack.size*.5\n local gap=5\n local function intersects(x,y,rect)\n  return x+half+gap>rect.left and x-half-gap<rect.right\n   and y+half+gap>rect.top and y-half-gap<rect.bottom\n end\n if not intersects(attack.x,attack.y,jump) then return end\n local left,right=jump.left-half-gap,jump.right+half+gap\n local above,below=jump.top-half-gap,jump.bottom+half+gap\n local nearby={\n  {attack.x,above},{left,attack.y},{right,attack.y},{attack.x,below},\n  {left,above},{right,above},{left,below},{right,below},\n }\n local obstacles={jump}\n for name,other in pairs(anchors) do\n  if name==\"ATTACK\" or name==\"JUMP\" then continue end\n  local extent=other.size*.5\n  table.insert(obstacles,{left=other.x-extent,top=other.y-extent,right=other.x+extent,bottom=other.y+extent})\n end\n local function clearAt(x,y)\n  if x-half<0 or y-half<0 or x+half>w or y+half>h then return false end\n  for _,rect in ipairs(obstacles) do\n   if intersects(x,y,rect) then return false end\n  end\n  return true\n end\n for _,spot in ipairs(nearby) do\n  local x,y=spot[1],spot[2]\n  if clearAt(x,y) then\n   attack.x,attack.y=x,y\n   return\n  end\n end\n if w<2*half or h<2*half then return end\n -- If the authored nearby positions are full, the closest free centre lies\n -- on an edge of an expanded control or on a safe-area boundary.\n local xs={math.clamp(attack.x,half,w-half),half,w-half}\n local ys={math.clamp(attack.y,half,h-half),half,h-half}\n for _,rect in ipairs(obstacles) do\n  table.insert(xs,rect.left-half-gap)\n  table.insert(xs,rect.right+half+gap)\n  table.insert(ys,rect.top-half-gap)\n  table.insert(ys,rect.bottom+half+gap)\n end\n local bestX,bestY,bestDistance=attack.x,attack.y,math.huge\n for _,x in ipairs(xs) do\n  for _,y in ipairs(ys) do\n   local distance=(x-attack.x)^2+(y-attack.y)^2\n   if (distance<bestDistance or (distance==bestDistance and (y<bestY or (y==bestY and x<bestX))))\n    and clearAt(x,y) then\n    bestX,bestY,bestDistance=x,y,distance\n   end\n  end\n end\n attack.x,attack.y=bestX,bestY\nend\n\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 2758,
+            "sha256": "de0d4b36ca0ffa68673c8ca5eeb7a1091efa89384601b8644935fa92d4c86921"
           },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 748,
+          "stop": 749,
+          "old": "local lastJumpAt,lastJumpSize,lastTouchBounds\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 46,
+            "sha256": "c6b842ea4a4376eda009f56f96b80c278b2e803a41d0c54051a97ea42bde08fd"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 755,
+          "stop": 759,
+          "old": " local jumpAt,jumpSize=touchJumpGeometry()\n local touchBounds=if jumpAt then gui.AbsoluteSize else nil\n if w==lastW and h==lastH and hand==lastHand\n  and jumpAt==lastJumpAt and jumpSize==lastJumpSize and touchBounds==lastTouchBounds then return end\n",
+          "new": " if w==lastW and h==lastH and hand==lastHand then return end\n",
+          "old_identity": {
+            "bytes": 249,
+            "sha256": "eb0160652a52d5010c0d2b58ef5b9847408fc281fd07e4bad01376e4530d4e52"
+          },
+          "new_identity": {
+            "bytes": 61,
+            "sha256": "5c88eb889f35b4ca3800f580e52900545fd7213ff742b54eb74caf17d9aa6773"
+          }
+        },
+        {
+          "start": 760,
+          "stop": 761,
+          "old": " lastJumpAt,lastJumpSize,lastTouchBounds=jumpAt,jumpSize,touchBounds\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 69,
+            "sha256": "71fdff11b98a94bfe4e7973c03c7710c1d3e92f25402ee391c020fb60c450ea4"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 763,
+          "stop": 767,
+          "old": " if jumpAt and jumpSize and touchBounds and touchBounds.X>0 and touchBounds.Y>0 then\n  separateAttackFromJump(p,{left=jumpAt.X,top=jumpAt.Y,\n   right=jumpAt.X+jumpSize.X,bottom=jumpAt.Y+jumpSize.Y},touchBounds.X,touchBounds.Y)\n end\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 232,
+            "sha256": "f3cce276d35f0badd5a62fc849b4f30292d3a88c096b43aeb15cd291bcc9d422"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 797,
+          "stop": 799,
           "old": " growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)\n",
+          "new": "",
           "old_identity": {
             "bytes": 102,
             "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
           },
-          "start": 715,
-          "stop": 717
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
         },
         {
-          "new": " local inMatch=mapSnapshot~=nil\n",
-          "new_identity": {
-            "bytes": 32,
-            "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
-          },
+          "start": 883,
+          "stop": 893,
           "old": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
+          "new": " local inMatch=mapSnapshot~=nil\n",
           "old_identity": {
             "bytes": 629,
             "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
           },
-          "start": 801,
-          "stop": 811
+          "new_identity": {
+            "bytes": 32,
+            "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
+          }
         },
         {
-          "new": "",
-          "new_identity": {
-            "bytes": 0,
-            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-          },
+          "start": 894,
+          "stop": 906,
           "old": " -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"\n",
+          "new": "",
           "old_identity": {
             "bytes": 948,
             "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
           },
-          "start": 812,
-          "stop": 824
-        },
-        {
-          "new": "",
           "new_identity": {
             "bytes": 0,
             "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-          },
+          }
+        },
+        {
+          "start": 919,
+          "stop": 929,
           "old": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
+          "new": "",
           "old_identity": {
             "bytes": 544,
             "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
           },
-          "start": 837,
-          "stop": 847
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
         }
       ],
       "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
@@ -25949,5 +26089,371 @@
       "route": "StarterPlayer/StarterPlayerScripts/GQ8_ViralCapture"
     }
   },
-  "unchanged_sources": 46
+  "unchanged_sources": 46,
+  "private_touch_followup": {
+    "origin": {
+      "commit": "9108fbfddbef9211a31322fd43dfd37a809f3023",
+      "url": "https://github.com/kk051780/toy-wars-factory/issues/470#issuecomment-7155720991",
+      "author_source": {
+        "bytes": 30115,
+        "sha256": "bdc1e1bb9748edc94a63a83c074774b364d72b47e85dea75ea41a3c76421810b"
+      }
+    },
+    "parent_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+    "parent_tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
+    "parent_place": {
+      "bytes": 891450,
+      "sha256": "65f974c36acd5b100fbd76e3ea16b5dcf1be0d4a1d35e406f39e6eb4c1f156dc"
+    },
+    "repaired_place": {
+      "bytes": 894743,
+      "sha256": "46a8e6e4984e679b1265e90e84d5cec6422af4e25b417be5eb6fcad6136ce564"
+    },
+    "rows": {
+      "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau": {
+        "parent": {
+          "after": {
+            "bytes": 35646,
+            "sha256": "4c1a733908826e044fe5a75ac6e27922921199b375d3b2eff0f5c482e269da78"
+          },
+          "before": {
+            "bytes": 24182,
+            "sha256": "fef035395ef803a74bedb95deace210a40ea5ab4b191a36422ea3acab192fbe8"
+          },
+          "class": "LocalScript",
+          "forward": [
+            {
+              "new": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+              "new_identity": {
+                "bytes": 9020,
+                "sha256": "9ad3d1e6d0931959b4cfef0d18ea547473f538c77a4a44cabdf9052c991ac407"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 3,
+              "stop": 3
+            },
+            {
+              "new": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
+              "new_identity": {
+                "bytes": 253,
+                "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 196,
+              "stop": 196
+            },
+            {
+              "new": " growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)\n",
+              "new_identity": {
+                "bytes": 102,
+                "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 488,
+              "stop": 488
+            },
+            {
+              "new": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
+              "new_identity": {
+                "bytes": 629,
+                "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
+              },
+              "old": " local inMatch=mapSnapshot~=nil\n",
+              "old_identity": {
+                "bytes": 32,
+                "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
+              },
+              "start": 572,
+              "stop": 573
+            },
+            {
+              "new": " -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"\n",
+              "new_identity": {
+                "bytes": 948,
+                "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 574,
+              "stop": 574
+            },
+            {
+              "new": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
+              "new_identity": {
+                "bytes": 544,
+                "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
+              },
+              "old": "",
+              "old_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "start": 587,
+              "stop": 587
+            }
+          ],
+          "inverse": [
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "\n-- Existing relay visibility V2 (private Studio)\ntask.spawn(function()\n--!strict\n-- Local presentation for the private Studio match. The server owns relay eligibility.\nlocal RunService = game:GetService(\"RunService\")\nif not RunService:IsStudio() then return end\n\nlocal player = game:GetService(\"Players\").LocalPlayer\nlocal relayName = \"EGGRUMBLE_ClassicEggRelay\"\ntype CharacterWatch = {\n\tcharacter: Model,\n\tadded: RBXScriptConnection?,\n\tremoving: RBXScriptConnection?,\n\trelays: { [ProximityPrompt]: RBXScriptConnection },\n}\nlocal current: CharacterWatch?\n\nlocal function clearCharacter()\n\tlocal old = current\n\tif not old then return end\n\tcurrent = nil\n\tif old.added then old.added:Disconnect() end\n\tif old.removing then old.removing:Disconnect() end\n\tfor _, connection in pairs(old.relays) do\n\t\tconnection:Disconnect()\n\tend\nend\n\nlocal function watchCharacter(character: Model)\n\tif player.Character ~= character or (current and current.character == character) then return end\n\tclearCharacter()\n\tlocal watch: CharacterWatch = {character = character, added = nil, removing = nil, relays = {}}\n\tcurrent = watch\n\n\tlocal function consider(instance: Instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") or instance.Name ~= relayName then return end\n\t\tlocal root = instance.Parent\n\t\tif not root or not root:IsA(\"BasePart\")\n\t\t\tor root.Name ~= \"HumanoidRootPart\" or root.Parent ~= character then return end\n\t\tif watch.relays[instance] then return end\n\n\t\tlocal function hideOwnRelay()\n\t\t\tif current == watch and player.Character == character\n\t\t\t\tand instance.Parent == root and root.Parent == character and instance.Enabled then\n\t\t\t\tinstance.Enabled = false\n\t\t\tend\n\t\tend\n\t\twatch.relays[instance] = instance:GetPropertyChangedSignal(\"Enabled\"):Connect(hideOwnRelay)\n\t\thideOwnRelay()\n\tend\n\n\twatch.added = character.DescendantAdded:Connect(consider)\n\twatch.removing = character.DescendantRemoving:Connect(function(instance)\n\t\tif not instance:IsA(\"ProximityPrompt\") then return end\n\t\tlocal connection = watch.relays[instance]\n\t\tif not connection then return end\n\t\twatch.relays[instance] = nil\n\t\tconnection:Disconnect()\n\tend)\n\tfor _, instance in ipairs(character:GetDescendants()) do\n\t\tconsider(instance)\n\tend\nend\n\nplayer.CharacterAdded:Connect(watchCharacter)\nplayer.CharacterRemoving:Connect(function(character)\n\tif current and current.character == character then\n\t\tclearCharacter()\n\tend\nend)\nif player.Character then\n\twatchCharacter(player.Character)\nend\n\n-- Host availability and its transport order belong to the server. Apply the\n-- local view through separate properties, without writing a peer's Enabled.\nlocal peers = game:GetService(\"Players\")\nlocal roundAttribute = \"EGGRUMBLE_RelayPresentationRoundV1\"\nlocal teamAttribute = \"EGGRUMBLE_RelayPresentationTeam\"\nlocal readyAttribute = \"EGGRUMBLE_RelayPresentationReady\"\nlocal heightAttribute = \"EGGRUMBLE_RelayPresentationHeight\"\nlocal receiverReadyAttribute = \"EGGRUMBLE_RelayPresentationReceiverReady\"\nlocal rayLift = Vector3.new(0, 1, 0)\nlocal rayParams = RaycastParams.new()\nrayParams.FilterType = Enum.RaycastFilterType.Exclude\nrayParams.RespectCanCollide = true\n\ntype Viewer = { character: Model, root: BasePart, round: number, team: string }\ntype Peer = {\n\tcarrier: Player,\n\tcharacter: Model,\n\troot: BasePart,\n\tprompt: ProximityPrompt,\n\trange: number,\n\tenabledChanged: RBXScriptConnection?,\n\treadyChanged: RBXScriptConnection?,\n\tseen: number,\n}\nlocal tracked: { [ProximityPrompt]: Peer } = {}\n\nlocal function findRelay(character: Model?): (BasePart?, ProximityPrompt?)\n\tlocal root = character and character:FindFirstChild(\"HumanoidRootPart\")\n\tif not root or not root:IsA(\"BasePart\") then return nil, nil end\n\tlocal prompt = root:FindFirstChild(relayName)\n\tif not prompt or not prompt:IsA(\"ProximityPrompt\") then return root, nil end\n\treturn root, prompt\nend\n\nlocal function liveTeamPlayer(actor: Player, character: Model): boolean\n\tif not character.Parent or actor:GetAttribute(\"EGGRUMBLE_QueuedMode\") ~= \"TEAM\"\n\t\tor actor:GetAttribute(\"EGGRUMBLE_Eliminated\") == true then return false end\n\tlocal humanoid = character:FindFirstChildOfClass(\"Humanoid\")\n\treturn humanoid ~= nil and humanoid.Health > 0\nend\n\nlocal function getViewer(): Viewer?\n\tlocal character = player.Character\n\tif not character or not liveTeamPlayer(player, character) then return nil end\n\tlocal lobby = workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n\tlocal arena = lobby and lobby:FindFirstChild(\"TEAM_Arena\")\n\tif not arena or arena:GetAttribute(\"EGGRUMBLE_MatchPhase\") ~= \"ACTIVE\" then return nil end\n\tlocal root, prompt = findRelay(character)\n\tif not root or not prompt or prompt:GetAttribute(receiverReadyAttribute) ~= true then return nil end\n\tlocal round = prompt:GetAttribute(roundAttribute)\n\tlocal team = prompt:GetAttribute(teamAttribute)\n\tif type(round) ~= \"number\" or (team ~= \"RED\" and team ~= \"BLUE\") then return nil end\n\treturn { character = character, root = root, round = round, team = team }\nend\n\nlocal function present(binding: Peer, visible: boolean)\n\tlocal prompt = binding.prompt\n\tif visible and prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = false end\n\tlocal distance = if visible then binding.range else 0\n\tif prompt.MaxActivationDistance ~= distance then prompt.MaxActivationDistance = distance end\n\tif not visible and not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\nend\n\nlocal function refreshPeer(binding: Peer, viewer: Viewer?)\n\tlocal carrier, character, root, prompt = binding.carrier, binding.character, binding.root, binding.prompt\n\tif prompt.Parent ~= root or root.Parent ~= character then\n\t\tpresent(binding, false)\n\t\treturn\n\tend\n\tlocal height = prompt:GetAttribute(heightAttribute)\n\tlocal visible = false\n\tif viewer and carrier.Parent == peers and carrier.Character == character and liveTeamPlayer(carrier, character)\n\t\tand prompt.Enabled and prompt:GetAttribute(readyAttribute) == true\n\t\tand prompt:GetAttribute(roundAttribute) == viewer.round and prompt:GetAttribute(teamAttribute) == viewer.team\n\t\tand type(height) == \"number\" then\n\t\tlocal delta = root.Position - viewer.root.Position\n\t\tif math.abs(delta.Y) <= height and delta.Magnitude <= binding.range then\n\t\t\trayParams.FilterDescendantsInstances = { viewer.character, character }\n\t\t\tlocal hit = workspace:Raycast(viewer.root.Position + rayLift, delta, rayParams)\n\t\t\tvisible = hit == nil or not hit.Instance.CanCollide\n\t\tend\n\tend\n\tpresent(binding, visible)\nend\n\nlocal function disconnect(binding: Peer)\n\tif binding.enabledChanged then binding.enabledChanged:Disconnect(); binding.enabledChanged = nil end\n\tif binding.readyChanged then binding.readyChanged:Disconnect(); binding.readyChanged = nil end\nend\n\nlocal sweep = 0\nlocal function refreshPeerRelays()\n\tsweep += 1\n\tlocal viewer = getViewer()\n\tfor _, carrier in ipairs(peers:GetPlayers()) do\n\t\tif carrier == player then continue end -- the original own filter owns Enabled for self\n\t\tlocal character = carrier.Character\n\t\tlocal root, prompt = findRelay(character)\n\t\tif not character or not root or not prompt or type(prompt:GetAttribute(roundAttribute)) ~= \"number\" then continue end\n\t\tlocal binding = tracked[prompt]\n\t\tif not binding or not binding.enabledChanged or binding.carrier ~= carrier\n\t\t\tor binding.character ~= character or binding.root ~= root then\n\t\t\tlocal range = if binding then binding.range else prompt.MaxActivationDistance\n\t\t\tif range <= 0 then continue end\n\t\t\tif binding then disconnect(binding) end\n\t\t\tlocal nextBinding: Peer = { carrier = carrier, character = character, root = root, prompt = prompt,\n\t\t\t\trange = range, seen = sweep }\n\t\t\ttracked[prompt] = nextBinding\n\t\t\tlocal function changed()\n\t\t\t\t-- An event that was queued for an old body or binding cannot act on a replacement.\n\t\t\t\tif tracked[prompt] == nextBinding and nextBinding.enabledChanged then\n\t\t\t\t\trefreshPeer(nextBinding, getViewer())\n\t\t\t\tend\n\t\t\tend\n\t\t\tnextBinding.enabledChanged = prompt:GetPropertyChangedSignal(\"Enabled\"):Connect(changed)\n\t\t\tnextBinding.readyChanged = prompt:GetAttributeChangedSignal(readyAttribute):Connect(changed)\n\t\t\tbinding = nextBinding\n\t\tend\n\t\tbinding.seen = sweep\n\t\trefreshPeer(binding, viewer)\n\tend\n\tfor prompt, binding in pairs(tracked) do\n\t\tif binding.seen == sweep then continue end\n\t\tdisconnect(binding)\n\t\tif prompt:IsDescendantOf(workspace) then\n\t\t\t-- A retired avatar can still be visible briefly. Retain its original\n\t\t\t-- radius for rebind while its exact prompt remains in the scene.\n\t\t\tpresent(binding, false)\n\t\telse\n\t\t\t-- Outside the scene it is safe to restore the original range before\n\t\t\t-- releasing our reference, even if this object is later reinserted.\n\t\t\tif not prompt.RequiresLineOfSight then prompt.RequiresLineOfSight = true end\n\t\t\tif prompt.MaxActivationDistance ~= binding.range then prompt.MaxActivationDistance = binding.range end\n\t\t\ttracked[prompt] = nil\n\t\tend\n\tend\nend\n\nrefreshPeerRelays()\nlocal elapsed = 0\nRunService.Heartbeat:Connect(function(deltaTime)\n\telapsed += deltaTime\n\tif elapsed < 0.125 then return end\n\telapsed = 0\n\trefreshPeerRelays()\nend)\n\nend)\n",
+              "old_identity": {
+                "bytes": 9020,
+                "sha256": "9ad3d1e6d0931959b4cfef0d18ea547473f538c77a4a44cabdf9052c991ac407"
+              },
+              "start": 3,
+              "stop": 226
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": "-- GQ470_S1A_BOUNDED_GROWTH_FOOTER_20261123\nlocal growthFooter=label(\"BattleGrowthFooter\",gui,\"\",11)\ngrowthFooter.Visible=false;growthFooter.ZIndex=3\nlocal growthRoles={WARRIOR=true,MAGE=true,NINJA=true,TRAPPER=true,BUILDER=true,BEAST=true,ZOMBIE=true}\n",
+              "old_identity": {
+                "bytes": 253,
+                "sha256": "4aa99c51fd8bc2d277fcbcb56c8c474169d732d789f0204241e56d5b2dd60568"
+              },
+              "start": 419,
+              "stop": 423
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " growthFooter.Position=UDim2.fromOffset(status.x,43)\n growthFooter.Size=UDim2.fromOffset(status.w,12)\n",
+              "old_identity": {
+                "bytes": 102,
+                "sha256": "ed8ddf2b384be5129d9052d704c19ac9b92cba54b393912bab7dcb55cd6d24d0"
+              },
+              "start": 715,
+              "stop": 717
+            },
+            {
+              "new": " local inMatch=mapSnapshot~=nil\n",
+              "new_identity": {
+                "bytes": 32,
+                "sha256": "4ef6bb2d7aec8f25b8e6ee2b3ae83f515af36f317e7545feb27ff00a88a64471"
+              },
+              "old": " -- The existing Host owns this replicated phase; map data alone outlives combat.\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n local supported=mode==\"TEAM\" or mode==\"BATTLE_ROYALE\"\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=if supported and world then world:FindFirstChild(mode..\"_Arena\") else nil\n local inMatch=mapSnapshot~=nil and supported and mapSnapshot.mode==mode\n  and char~=nil and h~=nil and h.Health>0\n  and player:GetAttribute(\"EGGRUMBLE_Eliminated\")~=true\n  and arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\n",
+              "old_identity": {
+                "bytes": 629,
+                "sha256": "de787b0baa8c3cd40412c68101f57a4464717432289cc44f25c36934f80c6914"
+              },
+              "start": 801,
+              "stop": 811
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Read current server publications in this existing .16s tick; no new event or polling connection.\n local battleStage=player:GetAttribute(\"EGGRUMBLE_BattleStage\")\n local battleXP=player:GetAttribute(\"EGGRUMBLE_BattleXP\")\n local actualRole=player:GetAttribute(\"EGGRUMBLE_Role\")\n local validGrowth=player:GetAttribute(\"EGGRUMBLE_GrowthActive\")==true\n  and type(actualRole)==\"string\" and growthRoles[actualRole]==true\n  and type(battleStage)==\"number\" and battleStage==math.floor(battleStage) and battleStage>=1 and battleStage<=3\n  and type(battleXP)==\"number\" and battleXP==math.floor(battleXP) and battleXP>=0 and battleXP<=80\n local activeToast=gui:FindFirstChild(\"LegacyExploreDiscoveryToast\")\n growthFooter.Visible=inMatch and validGrowth and not mapExpanded\n  and not (activeToast and activeToast:IsA(\"TextLabel\") and activeToast.Visible)\n growthFooter.Text=if validGrowth then string.format(\"覚醒B%d XP%d/80\",battleStage,battleXP) else \"\"\n",
+              "old_identity": {
+                "bytes": 948,
+                "sha256": "af3ec18efabc9cc51e47dea3db5a2f42056b7abb043581e7c6cedae45ea8d927"
+              },
+              "start": 812,
+              "stop": 824
+            },
+            {
+              "new": "",
+              "new_identity": {
+                "bytes": 0,
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "old": " -- Existing Realm controls own the mounted-action presentation. Keep the\n -- verified map/status, but close the ordinary tool drawer and its actions.\n local realmGui=playerGui:FindFirstChild(\"GQ8_RealmBattleControls\")\n local realmPanel=realmGui and realmGui:FindFirstChild(\"Controls\")\n if inMatch and realmGui and realmGui:IsA(\"ScreenGui\") and realmGui.Enabled\n  and realmPanel and realmPanel:IsA(\"Frame\") and realmPanel.Visible then\n  closeDrawer()\n  for _,control in pairs(actions) do control.Visible=false end\n  skillUse.Visible=false\n end\n",
+              "old_identity": {
+                "bytes": 544,
+                "sha256": "6c1faf90d7f5c78a98d896414733db07679dea43c102cb47c8729653347ebaee"
+              },
+              "start": 837,
+              "stop": 847
+            }
+          ],
+          "route": "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime"
+        },
+        "forward": [
+          {
+            "start": 674,
+            "stop": 674,
+            "old": "",
+            "new": "local function touchJumpGeometry()\n if not UserInputService.TouchEnabled then return end\n local touchGui=playerGui:FindFirstChild(\"TouchGui\")\n if not touchGui or not touchGui:IsA(\"ScreenGui\") or not touchGui.Enabled then return end\n local controls=touchGui:FindFirstChild(\"TouchControlFrame\")\n if not controls or not controls:IsA(\"GuiObject\") or not controls.Visible then return end\n local jump=controls and controls:FindFirstChild(\"JumpButton\")\n if not jump or not jump:IsA(\"GuiButton\") or not jump.Visible then return end\n local size=jump.AbsoluteSize\n if size.X<=0 or size.Y<=0 then return end\n return jump.AbsolutePosition-gui.AbsolutePosition,size\nend\n\nlocal function separateAttackFromJump(anchors,jump,w,h)\n if not jump then return end\n local attack=anchors.ATTACK\n local half=attack.size*.5\n local gap=5\n local function intersects(x,y,rect)\n  return x+half+gap>rect.left and x-half-gap<rect.right\n   and y+half+gap>rect.top and y-half-gap<rect.bottom\n end\n if not intersects(attack.x,attack.y,jump) then return end\n local left,right=jump.left-half-gap,jump.right+half+gap\n local above,below=jump.top-half-gap,jump.bottom+half+gap\n local nearby={\n  {attack.x,above},{left,attack.y},{right,attack.y},{attack.x,below},\n  {left,above},{right,above},{left,below},{right,below},\n }\n local obstacles={jump}\n for name,other in pairs(anchors) do\n  if name==\"ATTACK\" or name==\"JUMP\" then continue end\n  local extent=other.size*.5\n  table.insert(obstacles,{left=other.x-extent,top=other.y-extent,right=other.x+extent,bottom=other.y+extent})\n end\n local function clearAt(x,y)\n  if x-half<0 or y-half<0 or x+half>w or y+half>h then return false end\n  for _,rect in ipairs(obstacles) do\n   if intersects(x,y,rect) then return false end\n  end\n  return true\n end\n for _,spot in ipairs(nearby) do\n  local x,y=spot[1],spot[2]\n  if clearAt(x,y) then\n   attack.x,attack.y=x,y\n   return\n  end\n end\n if w<2*half or h<2*half then return end\n -- If the authored nearby positions are full, the closest free centre lies\n -- on an edge of an expanded control or on a safe-area boundary.\n local xs={math.clamp(attack.x,half,w-half),half,w-half}\n local ys={math.clamp(attack.y,half,h-half),half,h-half}\n for _,rect in ipairs(obstacles) do\n  table.insert(xs,rect.left-half-gap)\n  table.insert(xs,rect.right+half+gap)\n  table.insert(ys,rect.top-half-gap)\n  table.insert(ys,rect.bottom+half+gap)\n end\n local bestX,bestY,bestDistance=attack.x,attack.y,math.huge\n for _,x in ipairs(xs) do\n  for _,y in ipairs(ys) do\n   local distance=(x-attack.x)^2+(y-attack.y)^2\n   if (distance<bestDistance or (distance==bestDistance and (y<bestY or (y==bestY and x<bestX))))\n    and clearAt(x,y) then\n    bestX,bestY,bestDistance=x,y,distance\n   end\n  end\n end\n attack.x,attack.y=bestX,bestY\nend\n\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 2758,
+              "sha256": "de0d4b36ca0ffa68673c8ca5eeb7a1091efa89384601b8644935fa92d4c86921"
+            }
+          },
+          {
+            "start": 675,
+            "stop": 675,
+            "old": "",
+            "new": "local lastJumpAt,lastJumpSize,lastTouchBounds\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 46,
+              "sha256": "c6b842ea4a4376eda009f56f96b80c278b2e803a41d0c54051a97ea42bde08fd"
+            }
+          },
+          {
+            "start": 681,
+            "stop": 682,
+            "old": " if w==lastW and h==lastH and hand==lastHand then return end\n",
+            "new": " local jumpAt,jumpSize=touchJumpGeometry()\n local touchBounds=if jumpAt then gui.AbsoluteSize else nil\n if w==lastW and h==lastH and hand==lastHand\n  and jumpAt==lastJumpAt and jumpSize==lastJumpSize and touchBounds==lastTouchBounds then return end\n",
+            "old_identity": {
+              "bytes": 61,
+              "sha256": "5c88eb889f35b4ca3800f580e52900545fd7213ff742b54eb74caf17d9aa6773"
+            },
+            "new_identity": {
+              "bytes": 249,
+              "sha256": "eb0160652a52d5010c0d2b58ef5b9847408fc281fd07e4bad01376e4530d4e52"
+            }
+          },
+          {
+            "start": 683,
+            "stop": 683,
+            "old": "",
+            "new": " lastJumpAt,lastJumpSize,lastTouchBounds=jumpAt,jumpSize,touchBounds\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 69,
+              "sha256": "71fdff11b98a94bfe4e7973c03c7710c1d3e92f25402ee391c020fb60c450ea4"
+            }
+          },
+          {
+            "start": 685,
+            "stop": 685,
+            "old": "",
+            "new": " if jumpAt and jumpSize and touchBounds and touchBounds.X>0 and touchBounds.Y>0 then\n  separateAttackFromJump(p,{left=jumpAt.X,top=jumpAt.Y,\n   right=jumpAt.X+jumpSize.X,bottom=jumpAt.Y+jumpSize.Y},touchBounds.X,touchBounds.Y)\n end\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 232,
+              "sha256": "f3cce276d35f0badd5a62fc849b4f30292d3a88c096b43aeb15cd291bcc9d422"
+            }
+          }
+        ],
+        "inverse": [
+          {
+            "start": 674,
+            "stop": 747,
+            "old": "local function touchJumpGeometry()\n if not UserInputService.TouchEnabled then return end\n local touchGui=playerGui:FindFirstChild(\"TouchGui\")\n if not touchGui or not touchGui:IsA(\"ScreenGui\") or not touchGui.Enabled then return end\n local controls=touchGui:FindFirstChild(\"TouchControlFrame\")\n if not controls or not controls:IsA(\"GuiObject\") or not controls.Visible then return end\n local jump=controls and controls:FindFirstChild(\"JumpButton\")\n if not jump or not jump:IsA(\"GuiButton\") or not jump.Visible then return end\n local size=jump.AbsoluteSize\n if size.X<=0 or size.Y<=0 then return end\n return jump.AbsolutePosition-gui.AbsolutePosition,size\nend\n\nlocal function separateAttackFromJump(anchors,jump,w,h)\n if not jump then return end\n local attack=anchors.ATTACK\n local half=attack.size*.5\n local gap=5\n local function intersects(x,y,rect)\n  return x+half+gap>rect.left and x-half-gap<rect.right\n   and y+half+gap>rect.top and y-half-gap<rect.bottom\n end\n if not intersects(attack.x,attack.y,jump) then return end\n local left,right=jump.left-half-gap,jump.right+half+gap\n local above,below=jump.top-half-gap,jump.bottom+half+gap\n local nearby={\n  {attack.x,above},{left,attack.y},{right,attack.y},{attack.x,below},\n  {left,above},{right,above},{left,below},{right,below},\n }\n local obstacles={jump}\n for name,other in pairs(anchors) do\n  if name==\"ATTACK\" or name==\"JUMP\" then continue end\n  local extent=other.size*.5\n  table.insert(obstacles,{left=other.x-extent,top=other.y-extent,right=other.x+extent,bottom=other.y+extent})\n end\n local function clearAt(x,y)\n  if x-half<0 or y-half<0 or x+half>w or y+half>h then return false end\n  for _,rect in ipairs(obstacles) do\n   if intersects(x,y,rect) then return false end\n  end\n  return true\n end\n for _,spot in ipairs(nearby) do\n  local x,y=spot[1],spot[2]\n  if clearAt(x,y) then\n   attack.x,attack.y=x,y\n   return\n  end\n end\n if w<2*half or h<2*half then return end\n -- If the authored nearby positions are full, the closest free centre lies\n -- on an edge of an expanded control or on a safe-area boundary.\n local xs={math.clamp(attack.x,half,w-half),half,w-half}\n local ys={math.clamp(attack.y,half,h-half),half,h-half}\n for _,rect in ipairs(obstacles) do\n  table.insert(xs,rect.left-half-gap)\n  table.insert(xs,rect.right+half+gap)\n  table.insert(ys,rect.top-half-gap)\n  table.insert(ys,rect.bottom+half+gap)\n end\n local bestX,bestY,bestDistance=attack.x,attack.y,math.huge\n for _,x in ipairs(xs) do\n  for _,y in ipairs(ys) do\n   local distance=(x-attack.x)^2+(y-attack.y)^2\n   if (distance<bestDistance or (distance==bestDistance and (y<bestY or (y==bestY and x<bestX))))\n    and clearAt(x,y) then\n    bestX,bestY,bestDistance=x,y,distance\n   end\n  end\n end\n attack.x,attack.y=bestX,bestY\nend\n\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 2758,
+              "sha256": "de0d4b36ca0ffa68673c8ca5eeb7a1091efa89384601b8644935fa92d4c86921"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 748,
+            "stop": 749,
+            "old": "local lastJumpAt,lastJumpSize,lastTouchBounds\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 46,
+              "sha256": "c6b842ea4a4376eda009f56f96b80c278b2e803a41d0c54051a97ea42bde08fd"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 755,
+            "stop": 759,
+            "old": " local jumpAt,jumpSize=touchJumpGeometry()\n local touchBounds=if jumpAt then gui.AbsoluteSize else nil\n if w==lastW and h==lastH and hand==lastHand\n  and jumpAt==lastJumpAt and jumpSize==lastJumpSize and touchBounds==lastTouchBounds then return end\n",
+            "new": " if w==lastW and h==lastH and hand==lastHand then return end\n",
+            "old_identity": {
+              "bytes": 249,
+              "sha256": "eb0160652a52d5010c0d2b58ef5b9847408fc281fd07e4bad01376e4530d4e52"
+            },
+            "new_identity": {
+              "bytes": 61,
+              "sha256": "5c88eb889f35b4ca3800f580e52900545fd7213ff742b54eb74caf17d9aa6773"
+            }
+          },
+          {
+            "start": 760,
+            "stop": 761,
+            "old": " lastJumpAt,lastJumpSize,lastTouchBounds=jumpAt,jumpSize,touchBounds\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 69,
+              "sha256": "71fdff11b98a94bfe4e7973c03c7710c1d3e92f25402ee391c020fb60c450ea4"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 763,
+            "stop": 767,
+            "old": " if jumpAt and jumpSize and touchBounds and touchBounds.X>0 and touchBounds.Y>0 then\n  separateAttackFromJump(p,{left=jumpAt.X,top=jumpAt.Y,\n   right=jumpAt.X+jumpSize.X,bottom=jumpAt.Y+jumpSize.Y},touchBounds.X,touchBounds.Y)\n end\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 232,
+              "sha256": "f3cce276d35f0badd5a62fc849b4f30292d3a88c096b43aeb15cd291bcc9d422"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ]
+      }
+    },
+    "author_patch": {
+      "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/hud.patch",
+      "identity": {
+        "bytes": 4249,
+        "sha256": "f13d7e9365d836f37655df64128bb7ac4c59e9e948865bfece6d73b6084b5929"
+      }
+    },
+    "native_fixture": {
+      "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/layout_scene.luau",
+      "bytes": 4023,
+      "sha256": "a1e4c9c7622e7463e9fa475cec894df317d53ede651b4195061e5e3a5dba7814"
+    },
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED"
+  }
 }

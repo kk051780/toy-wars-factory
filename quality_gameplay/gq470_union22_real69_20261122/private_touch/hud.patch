@@ -1,0 +1,103 @@
+--- a/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau
++++ b/StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau
+@@ -672,17 +672,99 @@
+  if not mapExpanded then activeLayer=s.layer or "LAND" end
+  redraw()
+ end)
++local function touchJumpGeometry()
++ if not UserInputService.TouchEnabled then return end
++ local touchGui=playerGui:FindFirstChild("TouchGui")
++ if not touchGui or not touchGui:IsA("ScreenGui") or not touchGui.Enabled then return end
++ local controls=touchGui:FindFirstChild("TouchControlFrame")
++ if not controls or not controls:IsA("GuiObject") or not controls.Visible then return end
++ local jump=controls and controls:FindFirstChild("JumpButton")
++ if not jump or not jump:IsA("GuiButton") or not jump.Visible then return end
++ local size=jump.AbsoluteSize
++ if size.X<=0 or size.Y<=0 then return end
++ return jump.AbsolutePosition-gui.AbsolutePosition,size
++end
++
++local function separateAttackFromJump(anchors,jump,w,h)
++ if not jump then return end
++ local attack=anchors.ATTACK
++ local half=attack.size*.5
++ local gap=5
++ local function intersects(x,y,rect)
++  return x+half+gap>rect.left and x-half-gap<rect.right
++   and y+half+gap>rect.top and y-half-gap<rect.bottom
++ end
++ if not intersects(attack.x,attack.y,jump) then return end
++ local left,right=jump.left-half-gap,jump.right+half+gap
++ local above,below=jump.top-half-gap,jump.bottom+half+gap
++ local nearby={
++  {attack.x,above},{left,attack.y},{right,attack.y},{attack.x,below},
++  {left,above},{right,above},{left,below},{right,below},
++ }
++ local obstacles={jump}
++ for name,other in pairs(anchors) do
++  if name=="ATTACK" or name=="JUMP" then continue end
++  local extent=other.size*.5
++  table.insert(obstacles,{left=other.x-extent,top=other.y-extent,right=other.x+extent,bottom=other.y+extent})
++ end
++ local function clearAt(x,y)
++  if x-half<0 or y-half<0 or x+half>w or y+half>h then return false end
++  for _,rect in ipairs(obstacles) do
++   if intersects(x,y,rect) then return false end
++  end
++  return true
++ end
++ for _,spot in ipairs(nearby) do
++  local x,y=spot[1],spot[2]
++  if clearAt(x,y) then
++   attack.x,attack.y=x,y
++   return
++  end
++ end
++ if w<2*half or h<2*half then return end
++ -- If the authored nearby positions are full, the closest free centre lies
++ -- on an edge of an expanded control or on a safe-area boundary.
++ local xs={math.clamp(attack.x,half,w-half),half,w-half}
++ local ys={math.clamp(attack.y,half,h-half),half,h-half}
++ for _,rect in ipairs(obstacles) do
++  table.insert(xs,rect.left-half-gap)
++  table.insert(xs,rect.right+half+gap)
++  table.insert(ys,rect.top-half-gap)
++  table.insert(ys,rect.bottom+half+gap)
++ end
++ local bestX,bestY,bestDistance=attack.x,attack.y,math.huge
++ for _,x in ipairs(xs) do
++  for _,y in ipairs(ys) do
++   local distance=(x-attack.x)^2+(y-attack.y)^2
++   if (distance<bestDistance or (distance==bestDistance and (y<bestY or (y==bestY and x<bestX))))
++    and clearAt(x,y) then
++    bestX,bestY,bestDistance=x,y,distance
++   end
++  end
++ end
++ attack.x,attack.y=bestX,bestY
++end
++
+ local lastW,lastH,lastHand=-1,-1,nil
++local lastJumpAt,lastJumpSize,lastTouchBounds
+ local function updateLayout()
+  local camera=workspace.CurrentCamera
+  local size=camera and camera.ViewportSize
+  if not size or size.X<=0 or size.Y<=0 then return end
+  local w,h=size.X,size.Y
+  local hand=player:GetAttribute("EGGRUMBLE_LeftHanded") and "LEFT" or "RIGHT"
+- if w==lastW and h==lastH and hand==lastHand then return end
++ local jumpAt,jumpSize=touchJumpGeometry()
++ local touchBounds=if jumpAt then gui.AbsoluteSize else nil
++ if w==lastW and h==lastH and hand==lastHand
++  and jumpAt==lastJumpAt and jumpSize==lastJumpSize and touchBounds==lastTouchBounds then return end
+  lastW,lastH,lastHand=w,h,hand
++ lastJumpAt,lastJumpSize,lastTouchBounds=jumpAt,jumpSize,touchBounds
+  local data=view.layout(w,h,hand)
+  local p=data.anchors
++ if jumpAt and jumpSize and touchBounds and touchBounds.X>0 and touchBounds.Y>0 then
++  separateAttackFromJump(p,{left=jumpAt.X,top=jumpAt.Y,
++   right=jumpAt.X+jumpSize.X,bottom=jumpAt.Y+jumpSize.Y},touchBounds.X,touchBounds.Y)
++ end
+  for name,b in pairs(actions) do
+   if p[name] then
+    b.AnchorPoint=Vector2.new(.5,.5)

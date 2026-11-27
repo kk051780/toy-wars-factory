@@ -66,6 +66,7 @@ def collect(root, folder, binary_pin, context, lock, compose, execute=None):
             compose.need(compose.identity(compose.read_file(selected.parent / compose.PLACE)) == identity,
                          "MAGE_CONTACT_PLACE")
             expected = {name: row["after"] for name, row in lock["sources"].items()}
+            expected.update({name: row["parent"]["after"] for name, row in lock["private_touch_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["moguron_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["relay_eligibility_followup"]["rows"].items()})
             if before:
