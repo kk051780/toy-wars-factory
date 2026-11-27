@@ -40531,7 +40531,7 @@
     {
       "claim_id": "P0D-GQ219-WARRIOR-001-ACTIVE-297-20261128",
       "feature_id": "GQ219_WARRIOR_001_ACTIVE_GROWTH_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 219,
@@ -40546,7 +40546,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Current rich51 real #297 existing seven-role PvE path, mount fixed #219 WARRIOR-001 mechanical vertical slice for explicitly selected WARRIOR, 180 active sec Lv1, S0–4 6/7/8/9/10 reach and 2/3/4/5/6 neutral caps, CD15/energy30/100 and old Game/Horde/Remote authority. Author TimePremiumRules naturalGrowth exact reuse; time premium not activated. Game/HUD/Horde and two modules only, PRIVATE unchanged, no ART/device acceptance.",
       "resources": [
@@ -40793,7 +40793,7 @@
         "operation_id": "4ea07f91-1f61-4d67-8e11-289c2457b03e"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
         "permitted_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
@@ -40824,7 +40824,37 @@
           "review": 6091612054,
           "trusted_queue_run": 46043074090,
           "trusted_queue_job": 140655423676
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "fec14a7b685aa2fa7d81d5dfae5c9ff6ba0d93ea",
+        "writer_return": "0ab045e11d3ce1f1c25efefcfe61649837d33a79",
+        "adopted_head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "adopted_at": "2026-11-27T17:38:04.833Z"
+      },
+      "actual_official_rc": {
+        "head": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
+        "previous": "232ee9ef84454f823c5d7691ffa83d0053f01faa",
+        "active_ci": 46043379981,
+        "active_job": 140656455406,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15220303658,
+        "active_zip_bytes": 209605,
+        "active_zip_digest": "sha256:7ffb4dad681b8f5bd94861e8d70bbdefc6186f5d404568f96a8c87b9c3bd1c16",
+        "active_place_bytes": 687144,
+        "active_place_sha256": "4efab0dc6dffd4d5ca488ae5e78375b5a371c733ab334e8803c70d0a8818a7db",
+        "active_off_place_bytes": 674623,
+        "private_ci": 46043380292,
+        "private_job": 140656456296,
+        "private_steps": 48,
+        "private_artifact": 15220959038,
+        "private_zip_bytes": 25665764,
+        "private_zip_digest": "sha256:649911d9f34f5ddeeecdbb3cedd0ddf6dd93bf0da8fdf29988fa0903757015c7",
+        "private_place_bytes": 891450,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7224784883",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -40835,7 +40865,7 @@
       "owner": "/root (Codex parent scoped Private companion)",
       "parent_issue": 828,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1043,
       "base_rc_sha": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
       "base_rc_tree": "1a2bfb21833dc060202efd6121cdb8805e0f7fd2",
       "prep_branch": "quality/gq828-private-touch-attack-20261128",
@@ -40897,7 +40927,7 @@
       },
       "authority_basis": "#1011 V3.5 and #218/#220; #828 original authored local touch repair. #829 already merged, one bounded successor draft only; no RC writer grant.",
       "source_grant": {
-        "status": "ONE_CREATE_BRANCH_AND_EXACT_DRAFT_PR",
+        "status": "CONSUMED_BRANCH_AND_DRAFT_SOURCE_ONLY",
         "branch": "quality/gq828-private-touch-attack-20261128",
         "formal_parent": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
         "tree": "ea606397e4bab64ffe177d1b188b64ffab28f7d8",
@@ -40996,6 +41026,97 @@
           "old_relay_cases": 82,
           "device": "NOT_TESTED_V3.5"
         }
+      },
+      "source_head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
+      "prepared_candidate_head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
+      "prepared_candidate_tree": "ea606397e4bab64ffe177d1b188b64ffab28f7d8",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "27a796fe2abb1caabefc1f81687e42c7048f8386",
+          "bytes": 63408
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "6d35d846c6d9747f25f6707e69942688a0773279",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "0b2ef56902ff9f72262083c7b28b0fe523e52033",
+          "bytes": 10006
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "c621a99e957197f4c1630cb6397bb11a248f03ec",
+          "bytes": 7326
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/private_touch_native.py",
+          "mode": "100644",
+          "blob": "9117310313d0c6564aefc5f276a488f947a39741",
+          "bytes": 2965
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "cc3c061f2db995fcdc168c1c6716868b650431ee",
+          "bytes": 20341
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "1beb9cb742a7ea3d31208321771a30b25a97291d",
+          "bytes": 51808
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/hud.patch",
+          "mode": "100644",
+          "blob": "93527ae789c11f51279613a78b1682377b0dff38",
+          "bytes": 3238
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/private_touch/layout_scene.luau",
+          "mode": "100644",
+          "blob": "6348339a0c8cfec24bc6fcc312c78e4f37220696",
+          "bytes": 3187
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "4a65b265a89c097d74d7cccf2f9c52908a04bc10",
+          "bytes": 1578942
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "9a019cce205b884fb55a7ee5bcc67712153bc16d",
+          "bytes": 154533
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "f8d10e35c4a1f9480f41a38e5e0387bc0aa945cc",
+          "bytes": 117268
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1043,
+        "exact_head": "e04a97b907e43658cfac23f01770ce46d2e1a8a4",
+        "exact_tree": "ea606397e4bab64ffe177d1b188b64ffab28f7d8",
+        "exact_parent": "905e6aa5fd6dcd4598a90cadeb83a54f1d8be3df",
+        "previous_candidate": null,
+        "source_lease": "051b5a4122de69c20a6f4b54cf03d97fca42d479",
+        "source_lease_return": "283afefc5ecfdeb006bfd0ed4fabbf89a19cb1bc",
+        "prepared_at": "2026-11-27T17:47:53.012Z"
+      },
+      "actual_binding_lease": {
+        "commit": "07b356ec3c78ca002a746c1f7dd7e74b375f0945",
+        "operation_id": "9944ab34-e96f-4603-a3cd-e423e2e31cd4"
       }
     }
   ],
