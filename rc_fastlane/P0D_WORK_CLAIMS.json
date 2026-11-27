@@ -44214,6 +44214,221 @@
           "trusted_queue_job": 140748748646
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-PRIVATE-MAGE-PROJECTILE-BATCH-20261128",
+      "feature_id": "GQ219_PRIVATE_MAGE_PROJECTILE_AND_ROLE_GROWTH_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "843180dc0daaf54da840f900282cbcaa77301372",
+      "base_rc_tree": "8e97b7a0d665be24b62ceb80509d9ebb9fcf5678",
+      "prep_branch": "quality/gq219-private-mage-projectile-batch-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Selected V4.2 PRIVATE trial profile. Reuse the existing authoritative Swarm/Combat, lobby and tool activation for role growth and fixed MAGE-033, MAGE-051, MAGE-071, one path from lobby to confirmed neutral hit and KO, exact hunk inverse. Keep prior B1-B3, legacy skill slots and no cross-world target. Author-index corrections under V4.2 tied to the game diff. No ACTIVE, Store, winner-rule, public, new Remote or main scope.",
+      "resources": [
+        "PRIVATE_7ROLE_S0_S4_ROLE_GROWTH",
+        "PRIVATE_MAGE_033_051_071_FIXED_EFFECTS"
+      ],
+      "target_paths": [
+        "AGENTS.md",
+        "docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/INPUTS.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/engine_fixture.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/pure_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7207198342",
+      "protected_overlap": {
+        "issues": [
+          1049,
+          1048,
+          1045,
+          1047,
+          1028
+        ],
+        "partition": "Existing selected PRIVATE five sources and an exact current one-stage rollback. FB002/003 kept, earlier B1–B3 remains, ACTIVE donor lanes unchanged. AGENTS old model hint and linked superseded procedure only are scoped under #1011 V4.2."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "c7ba1bce-5503-45f0-a246-156079e126f4",
+      "issued_at": "2026-11-27T22:09:50.251Z",
+      "expires_at": "2026-11-28T00:09:50.251Z",
+      "actual_metadata_lease": {
+        "ref": "e1f80e9e50dc7a50d5ffb0ec284af5b263f2b1e1",
+        "blob": "b60e81372f2af8a0d54942b1d33213c4e47d2aa3",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "c7ba1bce-5503-45f0-a246-156079e126f4",
+          "task_id": null,
+          "epoch": 1059,
+          "acquired_at": "2026-11-27T22:09:26.190Z",
+          "expires_at": "2026-11-27T22:39:26.190Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V4.2 07:05 JST, #218/#220 and the fixed #219 catalog. Preserve the current writer's scoped work. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq219-private-mage-projectile-batch-20261128",
+        "formal_parent": "843180dc0daaf54da840f900282cbcaa77301372",
+        "tree": "ec2c684353cb5e10be50f283ef7c46cdc1e71e88",
+        "local_head": "95f137827cfa38c0a9ddf20e3d964478a77a7aa6",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": "AGENTS.md",
+            "blob": "783453ff27a4f68e2c142ec29b04516589bc3e68",
+            "bytes": 8165,
+            "mode": "100644"
+          },
+          {
+            "path": "docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+            "blob": "b7b855f8688e38ad9c5d8cb1df39c3a45ee88c16",
+            "bytes": 1164,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "blob": "fea8a31b93225681986f2518cd925023abeeabd7",
+            "bytes": 70737,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "blob": "0f11b391f042d0bf479376dc8abba4a76078d88d",
+            "bytes": 35255,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "blob": "7a61f5ed82e0e51b715fa22a5c88d62ce643acfa",
+            "bytes": 10554,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "blob": "c6dc7382f9025ebd1ff7b1003f509fff1f82ba03",
+            "bytes": 7939,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/INPUTS.json",
+            "blob": "1b7c72806583c5a3f5befc2aaf89496ba750e143",
+            "bytes": 5747,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/__init__.py",
+            "blob": "813ba7f8c22dbeefe09da0e961327ecbd772318e",
+            "bytes": 8177,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/cases.luau",
+            "blob": "c6891c69be1f7364335663ea583619b5def2b89d",
+            "bytes": 12707,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/engine_fixture.luau",
+            "blob": "53935df94ffadfc1ba8270ffc24bec6f8d0b9b18",
+            "bytes": 86010,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_projectiles/pure_cases.luau",
+            "blob": "c01f40851889248771e3d8e067e53ffeafefd270",
+            "bytes": 4041,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "blob": "6f7113d8164cde7bc138b4d2d4bc0f9cec60e965",
+            "bytes": 22704,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "blob": "d0ec45a14c664ddd41a87c1143f474c2450e9a3d",
+            "bytes": 54704,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "blob": "f5c077a9de98058145f4d07e4d514c22e313e5fa",
+            "bytes": 2089552,
+            "mode": "100644"
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "blob": "fe3f85be9ec89edb0ec86beba5efbfe7e2c686b1",
+            "bytes": 168693,
+            "mode": "100644"
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "blob": "6181173c247d5a9cf6e9b0bb990d83ea8dd6f47d",
+            "bytes": 128132,
+            "mode": "100644"
+          }
+        ],
+        "expires_at": "2026-11-27T23:09:50.251Z",
+        "issued_from": {
+          "lease": "e1f80e9e50dc7a50d5ffb0ec284af5b263f2b1e1",
+          "owner": "c7ba1bce-5503-45f0-a246-156079e126f4"
+        },
+        "local_qa": {
+          "place_bytes": 921149,
+          "place_sha256": "2faaab03021f930f98a4ecd1b02345923e85aa07c75505da214cc00f5abbec03",
+          "off_bytes": 895935,
+          "off_sha256": "163a3045fb4a68f315a1c3d8fa467811be384983026ef0c06112f3aa3182b899",
+          "unchanged_selected_sources": 64,
+          "prior_archives_byte_exact": 26,
+          "windows_compiles": 185,
+          "windows_rojo": 28,
+          "actual_native_e2e_cases": 17,
+          "actual_native_all_ids_stages": 15,
+          "new_native_binary_processes": 18,
+          "local_case_fix_earlier_service": "Use existing Workspace flag and field basis vector operations, preserving original pinned Native cases and field extents.",
+          "device": "NOT_TESTED_V4.2",
+          "retained_selected_native_vector": [
+            10,
+            7,
+            12
+          ],
+          "doc_scope": {
+            "file": "AGENTS.md",
+            "git_blob": "783453ff27a4f68e2c142ec29b04516589bc3e68",
+            "companion": "docs/EGGRUMBLE_AI_DEVELOPMENT_SYSTEM_V1.md",
+            "companion_blob": "b7b855f8688e38ad9c5d8cb1df39c3a45ee88c16"
+          },
+          "runtime_exact_local_commit": "9e389872e4f9fb0cb35b1e9fc4e8b0743e0c2989"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
