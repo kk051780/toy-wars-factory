@@ -1,0 +1,74 @@
+{
+  "fixtures": {
+    "engine_fixture.luau": {
+      "bytes": 86010,
+      "sha256": "5bbec5d6561243274c3f4b39b62de9ff88dbc9c4652d7982580bc02f2fcbd250"
+    },
+    "cases.luau": {
+      "bytes": 12707,
+      "sha256": "1b7ec0a8897cfa9ec3934fa749d1cca7fb9027982796d0a236f2b9e2c9fab10a"
+    },
+    "pure_cases.luau": {
+      "bytes": 4041,
+      "sha256": "1e940cef254474c57e0448f5fd3b3ea734ca7e38b552b18d04c572c0dcd4b8f5"
+    }
+  },
+  "runtime_routes": {
+    "BasicMobilityPolicy": "ServerScriptService/EGGRUMBLE_BasicMobilityPolicy.luau",
+    "CombatBalance": "ServerScriptService/EGGRUMBLE_CombatBalance.luau",
+    "AttackGeometry": "ServerScriptService/EGGRUMBLE_AttackGeometry.luau",
+    "StatusTickFence": "ServerScriptService/EGGRUMBLE_StatusTickFence.luau",
+    "CastleMatchRules": "ServerScriptService/EGGRUMBLE_CastleMatchRules.luau",
+    "CastleSiegeGuardianPolicy": "ServerScriptService/EGGRUMBLE_CastleSiegeGuardianPolicy.luau",
+    "CastleSiegeBridge": "ServerScriptService/EGGRUMBLE_CastleSiegeBridge.luau",
+    "InteractionGuard": "ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+    "RoundReplay": "ServerScriptService/EGGRUMBLE_RoundReplay.luau",
+    "ScoreBalance": "ServerScriptService/EGGRUMBLE_ScoreBalance.luau",
+    "MatchResultService": "ServerScriptService/EGGRUMBLE_MatchResultService.luau",
+    "BossSessionFence": "ServerScriptService/EGGRUMBLE_BossSessionFence.luau",
+    "DualModeNeutralBudget": "ServerScriptService/EGGRUMBLE_DualModeNeutralBudget.luau",
+    "InvulnerabilityPolicy": "ServerScriptService/EGGRUMBLE_InvulnerabilityPolicy.luau",
+    "InvulCounterNeutral": "ServerScriptService/EGGRUMBLE_InvulCounterNeutral.luau",
+    "InvulRuntime": "ServerScriptService/EGGRUMBLE_InvulRuntime.luau",
+    "NeutralFinisherPolicy": "ServerScriptService/EGGRUMBLE_NeutralFinisherPolicy.luau",
+    "MusouFeverPolicy": "ServerScriptService/EGGRUMBLE_MusouFeverPolicy.luau",
+    "CurseConversionPolicy": "ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau",
+    "NeutralMeleePolicy": "ServerScriptService/EGGRUMBLE_NeutralMeleePolicy.luau",
+    "NeutralSpawnPacing": "ServerScriptService/EGGRUMBLE_NeutralSpawnPacing.luau",
+    "NeutralEncounterFairness": "ServerScriptService/EGGRUMBLE_NeutralEncounterFairness.luau",
+    "FieldItemPickups": "ServerScriptService/EGGRUMBLE_FieldItemPickups.luau",
+    "RaidItemIntake": "ServerScriptService/EGGRUMBLE_RaidItemIntake.luau",
+    "CastleGuardianRuntime": "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
+    "SwarmCombat": "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+    "SevenRoleCombat": "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "Host": "ServerScriptService/EGGRUMBLE_LobbyCastleModesPreview.server.luau"
+  },
+  "selected_only": [
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau"
+  ],
+  "markers": {
+    "mage_cancel_avatar": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_avatar\tPASS\tactual warned flight cancels at avatar",
+    "mage_cancel_dead": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_dead\tPASS\tactual warned flight cancels at dead",
+    "mage_cancel_egg": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_egg\tPASS\tactual warned flight cancels at egg",
+    "mage_cancel_end": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_end\tPASS\tactual warned flight cancels at end",
+    "mage_cancel_leave": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_leave\tPASS\tactual warned flight cancels at leave",
+    "mage_cancel_off": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_off\tPASS\tactual warned flight cancels at off",
+    "mage_cancel_role": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_role\tPASS\tactual warned flight cancels at role",
+    "mage_cancel_world": "CASE\tGROWTH_ACCEPTANCE_mage_cancel_world\tPASS\tactual warned flight cancels at world",
+    "mage_cooldown_and_energy": "CASE\tGROWTH_ACCEPTANCE_mage_cooldown_and_energy\tPASS\tthree real paid Tools at exact CD, no idle charge, no cooldown or insufficient-E receipt",
+    "mage_crossworld_neutral_reparent": "CASE\tGROWTH_ACCEPTANCE_mage_crossworld_neutral_reparent\tPASS\tactual live map token moved to another world fails query, direct damage acceptance and Tool flight",
+    "mage_legacy_tools": "CASE\tGROWTH_ACCEPTANCE_mage_legacy_tools\tPASS\tfeature OFF routes old Mage A, B and C damage through exact prior roles; C heals and does not debit new E",
+    "mage_player_restraint_midflight": "CASE\tGROWTH_ACCEPTANCE_mage_player_restraint_midflight\tPASS\tserver Player restraint after start cancels before the old warned hit, no double spend",
+    "mage_stage_energy_attributes": "CASE\tGROWTH_ACCEPTANCE_mage_stage_energy_attributes\tPASS\tactual S/E debut, immediate Tool debit, existing tick recharge, independent B, phase-driven clear",
+    "mage_star_tell_and_nontracking": "CASE\tGROWTH_ACCEPTANCE_mage_star_tell_and_nontracking\tPASS\tactual Star Tool fixed line, visible 0.22s warning, real HP and no retarget when caster turns",
+    "mage_stone_wall_and_dodge": "CASE\tGROWTH_ACCEPTANCE_mage_stone_wall_and_dodge\tPASS\tactual stone Tool; solid world blocker; next exact CD cast; active sideways dodge; no terrain mutation",
+    "mage_wind_hit": "CASE\tGROWTH_ACCEPTANCE_mage_wind_hit\tPASS\tactual Mage equip prompt -> Host Tool A -> private E/CD -> swept real neutral -> one KO and unchanged B2",
+    "same_round_death_respawn": "CASE\tGROWTH_ACCEPTANCE_same_round_death_respawn\tPASS\tsame-round death and genuine Host delayed return preserve cumulative B/XP/KO",
+    "mage_projectile_stage_math": "PRIVATE_MAGE_PROJECTILE_3_IDS_X_5_STAGES_AND_SWEPT_CONTACT_PASS"
+  },
+  "pure_inline": {
+    "bytes": 4511,
+    "sha256": "830af9878778cbb4d5035d0a690c436088f3dd7a8c156a3c286b37a6e8195595"
+  }
+}

@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "3e77ec1ea2a1a0d0527f8eb30ebf3b653a69e8a842a0eb2fc53233beec6605aa"
+INPUT_LOCK_SHA256 = "258fd63c14a507bfefd83175bd509afe23a05eb69d6f759f7c21eac68b731d43"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -714,7 +714,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         traversal_parent = profile["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
         host_parent = profile["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
         hud_parent = profile["fractional_hp_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"]
-        layout_pins = lock | {"sources": lock["sources"] | {compose.PORTRAIT_SOURCE: layout_parent,
+        projectile_parent_pins = lock["sources"] | {
+            name: row["parent"]["after"] for name, row in profile["mage_projectile_followup"]["rows"].items()
+        }
+        layout_pins = lock | {"sources": projectile_parent_pins | {compose.PORTRAIT_SOURCE: layout_parent,
                                                          compose.SHOREFOAM_SOURCE: traversal_parent,
                                                          compose.VAULT_SOURCE: host_parent,
                                                          compose.HUD_SOURCE: hud_parent}}
@@ -771,6 +774,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         run_team_win_rule(root, output / "team_win_rule", binary, pin, context, profile, compose, clean_environment())
         from fractional_hp_native import run as run_fractional_hp
         run_fractional_hp(root, output / "fractional_hp", binary, pin, context, profile, compose, clean_environment())
+        from mage_projectiles import FILES as projectile_files, PROCESS_COUNT as projectile_runs
+        from mage_projectiles import run as run_mage_projectiles
+        run_mage_projectiles(root, output / "mage_projectiles", binary, pin, context, profile,
+                             compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -798,7 +805,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         portrait_files = sum(name.startswith("portrait/") for name in evidence)
         team_win_rule_files = sum(name.startswith("team_win_rule/") for name in evidence)
         hp_files = sum(name.startswith("fractional_hp/") for name in evidence)
-        require(len(evidence) == 315 and growth_files == 103 and art_files == 4 and mage_files == 77
+        require(len(evidence) == 315 + len(projectile_files)
+                and {name.removeprefix("mage_projectiles/") for name in evidence
+                     if name.startswith("mage_projectiles/")} == projectile_files
+                and growth_files == 103 and art_files == 4 and mage_files == 77
                 and eligibility_files == 10 and touch_files == 4 and portrait_files == 4
                 and team_win_rule_files == 4 and hp_files == 4,
                 "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
@@ -831,6 +841,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "portrait": identity(read(output / "portrait/receipt.json")),
                    "team_win_rule": identity(read(output / "team_win_rule/receipt.json")),
                    "fractional_hp": identity(read(output / "fractional_hp/receipt.json")),
+                   "mage_projectiles": identity(read(output / "mage_projectiles/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -838,8 +849,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "hud_client_runtime_executed_in_original_suites": False,
                                           "growth_ui_full_bodies_each": 31,
                                           "hud_client_runtime_executed_in_growth": True},
-                   "native_process_count": 99,
-                   "native_evidence_file_count": 316,
+                   "native_process_count": 99 + projectile_runs,
+                   "native_evidence_file_count": 316 + len(projectile_files),
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile
