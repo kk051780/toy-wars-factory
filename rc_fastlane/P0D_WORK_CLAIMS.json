@@ -42800,7 +42800,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Fixed #219 MAGE-025 selected ACTIVE neutral chain: 1–5 distinct targets, each hop 4–8 studs, 20s independent cooldown and one 40E spend, 0.24s warning, real existing Horde HP/KO/LOS and safe new C/touch control. Keeps Water Q, staff F, all non-Mage roles and PRIVATE source unchanged. Stage sound/standalone lightning staff physical ART to be reviewed at the fixed milestone; no combo bundled.",
       "resources": [
@@ -43043,6 +43043,72 @@
       "actual_binding_lease": {
         "commit": "8d855c58a8e536bd617fef78ae5527e3414ae690",
         "operation_id": "eef0bc4a-5a46-4eb6-b03d-24f96320c4d8"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1047#pullrequestreview-6092966884",
+        "review_id": 6092966884,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46061083176,
+        "active_job": 140715234248,
+        "active_executed_steps": 95,
+        "active_place_bytes": 729423,
+        "active_place_sha256": "ac26ad336fc5c3c54c367f68d979be3ac0aec14c24c8180e717e1cc7d426ed85",
+        "immediate_off_bytes": 718628,
+        "active_artifact": 15229251489,
+        "active_zip_bytes": 227529,
+        "active_zip_digest": "sha256:e4a68db778cd752af5a23335a764041b0745d8b6ca1bb78c1c3efe00c61148bc",
+        "private_ci": 46061083156,
+        "private_job": 140715233664,
+        "private_steps": 48,
+        "private_artifact": 15229133207,
+        "private_zip_bytes": 26761840,
+        "private_zip_digest": "sha256:15b9c29ada2098a651ee5c3cbc5c39753540fad5577c823ba9c02fb12301899d",
+        "source_lock": "9342e160ae008b825eee081288c0d32b631302c0f1f54600185aeb7436dc1b08",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "ccba283e366b0912549e1b5838c4fdd92f13fb7a",
+        "operation_id": "3df43aef-963c-4c09-ace9-824b3dfb1a22"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "permitted_head": "f9412f6931cd0153e56bd0955f9e780381702ad4",
+        "permitted_tree": "e43ec5ff44c38b1aecff71feeba027be6aef59df",
+        "permitted_pr": 1047,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T20:35:38.692Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Fixed #219 MAGE-025 selected ACTIVE neutral chain: 1–5 distinct targets, each hop 4–8 studs, 20s independent cooldown and one 40E spend, 0.24s warning, real existing Horde HP/KO/LOS and safe new C/touch control. Keeps Water Q, staff F, all non-Mage roles and PRIVATE source unchanged. Stage sound/standalone lightning staff physical ART to be reviewed at the fixed milestone; no combo bundled.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "ccba283e366b0912549e1b5838c4fdd92f13fb7a",
+          "owner": "3df43aef-963c-4c09-ace9-824b3dfb1a22",
+          "review": 6092966884,
+          "trusted_queue_run": 46062308525,
+          "trusted_queue_job": 140719248216
+        }
       }
     }
   ],
