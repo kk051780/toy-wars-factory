@@ -30775,10 +30775,10 @@
         "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py": "bfab58d621d8ac5e20e36e4708c75edd19725420",
         "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json": "d52260af7871d270d167ab5459f5a6e8ff7f4515",
         "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py": "f16592c64ee5dd6bad5ebcf769be76393faf4936",
-        "tests/test_gq470_union22_real69_20261122.py": "4493d7075e333c8b499f790013ace83616612cef"
+        "tests/test_gq470_union22_real69_20261122.py": "860a53175367d13b24ff74ae8c5faa3fc37ed71d"
       },
-      "prepared_candidate_tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb",
-      "prepared_candidate_head": "0065e204445db840861c4610770cd1b8cb470db6",
+      "prepared_candidate_tree": "228e8b1f12e7232f46809017e51eae8ff45a39a4",
+      "prepared_candidate_head": "ff60d7559c3352a8d38b54af19ab496b499d3037",
       "prep_branch": "feature/p0d-prep-482-empty-vault-20261127",
       "allowed_new_prs": 0,
       "expected_source_branch": "ABSENT",
@@ -30846,6 +30846,35 @@
           "epoch": 767,
           "acquired_at": "2026-11-26T23:56:56.479Z",
           "expires_at": "2026-11-27T00:26:56.479Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "expected_source_head": "0065e204445db840861c4610770cd1b8cb470db6",
+      "allowed_update_paths": [
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "failed_ci": [
+        45913773115
+      ],
+      "source_scope_revision": 2,
+      "second_fix": "Actual one test invocation follows the new Vault OFF before legacy Item and Beast rollback. Independent normal and -O test reached the old Beast assertions successfully. No runtime or workflow mutation.",
+      "previous_source_binding": {
+        "registry": "c5bf5d1f2ce0133a1818284e659ad41697052051",
+        "head": "0065e204445db840861c4610770cd1b8cb470db6",
+        "tree": "2a6fcff2894aebf8cfebe73508b3b097390804fb"
+      },
+      "actual_test_repair_scope_lease": {
+        "ref": "ce78b4723affcb860e5124c1e0c0f5a334f23587",
+        "blob": "f5d5932c122d2fdd0e0a1456ee03f81d02b98c46",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "a9bc8050-e204-4ed4-8262-e13c2832236c",
+          "task_id": null,
+          "epoch": 768,
+          "acquired_at": "2026-11-27T00:01:09.411Z",
+          "expires_at": "2026-11-27T00:31:09.411Z",
           "base_main_sha": null,
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
