@@ -36733,6 +36733,48 @@
       "actual_binding_lease": {
         "commit": "e4d6ea6b2a7dceaa1e51200e152a1a6e2cabc59f",
         "operation_id": "6e2370d8-aebb-4346-914a-461d73993570"
+      },
+      "qa_correction_grant": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "permitted_pr": 1041,
+        "branch": "quality/gq910-active-sky-routes-20261127",
+        "prior_remote_head": "a585e962ba29af31954c8b24f5a2bb1c6cb31761",
+        "formal_parent": "538872eefca5ffff2ccb23f5ee6219362f1bd0d3",
+        "local_head": "4e87f91e4e9dfae38f55f596307721980c8e42ba",
+        "tree": "a504747453e9f2a1df088884cfe3708e648c644f",
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "226895f74bf2cd5b34735091d3d230b962a836f3",
+            "bytes": 204501
+          },
+          {
+            "path": "rc_fastlane/apply_active_sky_routes.py",
+            "mode": "100644",
+            "blob": "f225466d3986a537bada094cdf9b4c7e3a34b71f",
+            "bytes": 4428
+          },
+          {
+            "path": "rc_fastlane/apply_wcs_f01_c01.py",
+            "mode": "100644",
+            "blob": "e248876c99d24a30fec67d0553050547065d0ffd",
+            "bytes": 5525
+          }
+        ],
+        "gameplay_source_blobs_unchanged": true,
+        "reason": "Candidate mandatory fastlane returned WRONG_66_SOURCE_DISTRIBUTION at downstream immutable owner private70 preflight. Restore WCS hook, isolate two unchanged ACTIVE geometry bodies into final playable copy. Preserve private70/77/78 and all gates.",
+        "failed_run": 45994561170,
+        "failed_job": 140490580906,
+        "local_scope_evidence": {
+          "active_place": 602614,
+          "active_sha": "8d0774c778b593f1f791729eec603663ca5ae2e9ed188de8d7811dc026e391d3",
+          "baseline_off": 602236,
+          "original_private70_unchanged": true
+        },
+        "grant_lease": "377b868aa5255d9367207707ade6278e7aa9a1eb",
+        "grant_operation": "4cf5ccfe-6961-4bf6-9198-8ea3345d33b8",
+        "expires_at": "2026-11-27T13:04:10.732Z"
       }
     }
   ],
