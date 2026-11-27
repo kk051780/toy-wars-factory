@@ -31861,7 +31861,7 @@
     {
       "claim_id": "P0D-GQ910-BR-CANYON-APPROACH-20261127",
       "feature_id": "GQ910_BR_CASTLE_ENTRANCE_CANYON_COLLISION",
-      "state": "SOURCE_WIP",
+      "state": "RELEASED_AFTER_EXACT_RC_ADOPTION",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent and existing #910 correction)",
       "parent_issue": 910,
@@ -31874,7 +31874,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "original_candidate": "1a2d1dc5ab8bcf7455171a2ad934b5b3605692b3",
@@ -32146,7 +32146,7 @@
         }
       },
       "bounded_rc_integration": {
-        "status": "AUTHORIZED_ONE_EXACT_ADOPTION",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "36c14af432e7221301a9cec6dea75ab54d4daadf",
         "permitted_head": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
@@ -32154,7 +32154,7 @@
         "permitted_pr": 1037,
         "sole_executor": "/root (Codex parent, B coordinator for #1037)",
         "one_exact_adoption_only": true,
-        "one_time_authorization_consumed": false,
+        "one_time_authorization_consumed": true,
         "force_allowed": false,
         "source_edits_allowed": false,
         "future_unbounded_RC_writes_authorized": false,
@@ -32186,7 +32186,74 @@
           "registry_parent": "9cc87cf60bb11500e3185be970f0ebcf6c42524d",
           "registry_blob": "fd379c310e479355a32f0d9e9075e613b04b9d0e",
           "authority_basis": "Authenticated delegated owner #1011 V2.1, #220 exclusive CAS, authentic narrow #218, independent 6082978201 and trusted green fixed #1037."
-        }
+        },
+        "writer_acquire_ref": "d427a1a047472e4f2515f4fbc147738f314a0d01",
+        "writer_return_ref": "4f3ae041baa237416a5580dc2e17192bc91c74c1",
+        "exact_adoption_readback_at": "2026-11-27T03:16:46.464Z"
+      },
+      "actual_postpush": {
+        "rc": "ff38e3b38a8351c28ecca10f2fcb195f21066483",
+        "place": {
+          "bytes": 842354,
+          "sha256": "56fa11667869cf5ca0848bb8e57258b39a2ecc7a8184b3572a7479b44b94db0a"
+        },
+        "rollback_place_bytes": 842005,
+        "source_lock_sha256": "23545934453d2efe92ce75bfb51ee61635efa6a731f80cee4625a66ae19296e7",
+        "official_ci": {
+          "run": 45933231184,
+          "job": 140290424818,
+          "steps_success": 48,
+          "artifact": 15169896009,
+          "zip_bytes": 16500229,
+          "digest": "sha256:a2e477790972d8e5ee4c6c31b7b193bd108d5440db285e88f34b423bf96f9583"
+        },
+        "studio": {
+          "runtime": "PRIVATE_COMPANION REAL69_UNION22",
+          "solo_both_BR_gates": "PASS",
+          "first_trial": "INCONCLUSIVE_POST_INPUT_TIMING",
+          "source_routes_exact": 69,
+          "first_closure_sha256": "d94d7b051d0a0e99da36487751e07d0ce75c73aaba58386bc0bfec90b7ec364a",
+          "first_closed_pids": [
+            37436,
+            49712
+          ],
+          "second_closure_sha256": "6574011230a7799399ae51613d69c75dfc9fd2bc401ca98bf72cec951acb4d3a",
+          "second_closed_pids": [
+            35520,
+            50336
+          ],
+          "second_proof_sha256": "43131190cb844df9fc5c41d5ba5407b9cadbc842e03716a4213c1c96189fd933",
+          "gates": {
+            "WEST": {
+              "finish_x": 558.992919921875,
+              "finish_z": 275.1964416503906,
+              "distance": 55.196,
+              "gate_reached": true,
+              "personal_e": true
+            },
+            "EAST": {
+              "finish_x": 680.9947509765625,
+              "finish_z": 274.9224853515625,
+              "distance": 54.922,
+              "gate_reached": true,
+              "personal_e": true
+            }
+          },
+          "server_HP_after_each": "144/180",
+          "registered_independent_context": "/root/p0_offer_review26",
+          "bridges_full_walk": "NOT_TESTED",
+          "PC_PACKET": {
+            "sha256": "a6c951fa6ab7c222abea6b6ec30d93bb9be831b4d19420ff1c11ab64c87e8320",
+            "bytes": 1470499,
+            "members": 11,
+            "upload": "GITHUB_UPLOAD_BLOCKED_PROTECTED_GATE"
+          }
+        },
+        "accepted_by": "AUTHENTICATED_DELEGATED_INTEGRATION_ACTOR",
+        "owner_product_acceptance": "UNKNOWN",
+        "recorded_at": "2026-11-27T03:43:29.315Z",
+        "metadata_lease_sha": "463fa4a71d0cda4435109438e2e1d1a99ad4c267",
+        "metadata_owner_id": "f192b3cf-b2a5-4102-9272-cb21573f3c5b"
       }
     }
   ],
