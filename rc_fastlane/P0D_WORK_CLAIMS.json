@@ -2954,7 +2954,7 @@
         "Actual metadata issuer CODEX_ROOT_D5F15C074B2E, authenticated kk051780/233213370; CONTROLLER 49d9b63e-e10b-41e3-b34c-8ff5c93b6eaf, epoch 643, acquisition 65e4cd56d71f589f6164efa2a81efebdd521bd6a, expected registry parent 1a8490dcf5fffe4bddc26556af52220788bf557c, independent scope receipt 2b3e3fa665a9bedfb09a275d2fb485f2677086b1fdecadf760d8ded6bf317fa2. This scope grants no RC write, CI success or new source-HEAD approval."
       ],
       "base_rc_sha": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
-      "candidate_head": "aa85898a67287927d5c21ad3e88174c091414aba",
+      "candidate_head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
       "candidate_history": [
         {
           "actual_candidate_evidence": {
@@ -3184,7 +3184,7 @@
       ],
       "candidate_patch_sha256": "839a0d5154c9b3451c3fea79ce6f13f00e5fcabf33858e21fa2b354d89c0da88",
       "candidate_pr_status": "SCOPE_GRANTED_WAIT_SEPARATE_SOURCE_LEASE_ACTUAL_NEW_HEAD_CI_AND_REVIEW",
-      "candidate_tree": "3f3953b95233f5dbbba7ccd5c6568ca7b2711356",
+      "candidate_tree": "72b6ae7cc452aa17635a16210d923962f30f31e9",
       "candidate_tree_proposal": "d55bd8d3556aa090bcef770495afa6a53ff79e30",
       "canonical_parent": 282,
       "claim_id": "P0D-ACTIVE66-PERSISTENCE-20261122-D4D718",
@@ -12953,9 +12953,9 @@
           "origin": "controller"
         }
       },
-      "source_head": "aa85898a67287927d5c21ad3e88174c091414aba",
-      "prepared_candidate_head": "aa85898a67287927d5c21ad3e88174c091414aba",
-      "prepared_candidate_tree": "3f3953b95233f5dbbba7ccd5c6568ca7b2711356",
+      "source_head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+      "prepared_candidate_head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+      "prepared_candidate_tree": "72b6ae7cc452aa17635a16210d923962f30f31e9",
       "source_blob_submissions": [
         {
           "mode": "100644",
@@ -12971,19 +12971,19 @@
         },
         {
           "mode": "100644",
-          "blob": "217ce26e12f826e5a35d9c6c6d18c805aaee9ad5",
+          "blob": "041983584ea706201fd995b473ec385abe8dc2fd",
           "path": "rc_fastlane/features/active_persistence_lifecycle/persistence.json",
-          "bytes": 28375
+          "bytes": 30527
         },
         {
           "mode": "100644",
-          "blob": "d5b280f0bbfb59985aea80ee79499893b682b225",
+          "blob": "d3af32e536b0df6dd381c24accb3951eddec5f1a",
           "path": "rc_fastlane/features/active_persistence_lifecycle/regression.luau",
-          "bytes": 4358
+          "bytes": 6715
         },
         {
           "mode": "100644",
-          "blob": "8b1d92cf9e2ccdbab54d5e3ed06505a4f2fce7aa",
+          "blob": "cdcf7949542b67ab2d0c1ad509cb5292cc9dc5d9",
           "path": "rc_fastlane/features/active_persistence_lifecycle/source_lock.json",
           "bytes": 1285
         },
@@ -12995,9 +12995,9 @@
         },
         {
           "mode": "100644",
-          "blob": "90ba69719cd4b4c219e8a9fc9a962602226a28ac",
+          "blob": "96002fb98af3c80271d7e957ddc9293e51b02e9b",
           "path": "rc_fastlane/verify_active_persistence_native.py",
-          "bytes": 7095
+          "bytes": 7120
         },
         {
           "mode": "100644",
@@ -13008,24 +13008,25 @@
       ],
       "actual_candidate_readback": {
         "pr": 1016,
-        "exact_head": "aa85898a67287927d5c21ad3e88174c091414aba",
-        "exact_tree": "3f3953b95233f5dbbba7ccd5c6568ca7b2711356",
+        "exact_head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "exact_tree": "72b6ae7cc452aa17635a16210d923962f30f31e9",
         "exact_formal_parent": "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e",
         "preserved_author_first_parent": "84b39ba8dab77a5bda67969fe380484b619f1e00",
         "ordered_parents": [
           "84b39ba8dab77a5bda67969fe380484b619f1e00",
           "167ce58dc94e08ac1b06d28d53732a2dddcb9f5e"
         ],
-        "source_lease": "f1ffb59ecca29329d1781d174ec0353e71dfce4e",
-        "source_lease_return": "89bd02e4010dacb6b78ed267b16728eabb9d2e9f",
-        "prepared_at": "2026-11-27T14:36:33.690Z"
+        "source_lease": "52de74e1ac76d594e8fa776e3fdc5aaac22ee52a",
+        "source_lease_return": "abb04c302206c573e242a6c2ab3a8861ab8d0be0",
+        "prepared_at": "2026-11-27T14:48:56.708Z",
+        "prior_head": "aa85898a67287927d5c21ad3e88174c091414aba"
       },
       "actual_binding_lease": {
-        "commit": "339f6c310f4dc44c3cfb7bff4ee2bd74976ea1e2",
-        "operation_id": "7b7fb16e-e34a-4c65-8a35-76b283175d2b"
+        "commit": "c0b5051c173645225d5eadf9f4eb64a2bec586aa",
+        "operation_id": "7bd98307-1c85-4614-891e-4deed2f4996e"
       },
       "qa_correction_grant": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_SOURCE_CORRECTION",
+        "status": "CONSUMED_EXACT_SCOPED_CORRECTION",
         "permitted_pr": 1016,
         "branch": "feature/p0d-active66-persistence-20261122-d4d718",
         "prior_remote_head": "aa85898a67287927d5c21ad3e88174c091414aba",
@@ -13071,7 +13072,10 @@
         "independent_context": "/root/p0_offer_review26",
         "grant_lease": "3a02ce7c00fb5d652d40fed1a3505f042d8a15c6",
         "grant_operation": "364ed607-33d7-4363-981d-28c747abff49",
-        "expires_at": "2026-11-27T15:47:18.730Z"
+        "expires_at": "2026-11-27T15:47:18.730Z",
+        "applied_head": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "applied_lease": "52de74e1ac76d594e8fa776e3fdc5aaac22ee52a",
+        "lease_returned_at_ref": "abb04c302206c573e242a6c2ab3a8861ab8d0be0"
       }
     },
     {
