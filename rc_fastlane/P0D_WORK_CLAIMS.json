@@ -39239,7 +39239,7 @@
     {
       "claim_id": "P0D-GQ470-FB015-MOGURON-967-20261128",
       "feature_id": "GQ470_FB015_MOGURON_MATTE_SILHOUETTE_REAL69_20261121",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, scoped original PR reuse)",
       "parent_issue": 420,
@@ -39254,7 +39254,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Original #967 Private Companion Moguron 8 matte Parts in four authored bridge markers. One existing Luau source +963 bytes, 68 neighbors untouched, 20 inherited OFF archives exact. Retain interactive route/bridge timing, collision and actor semantics. ACTIVE inputs untouched. Current parent gate pinned, no Engine/ART/device/publish claim.",
       "resources": [
@@ -39537,7 +39537,7 @@
         "operation_id": "dddaa3cb-e15d-4a63-99a1-0008b394800e"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
         "permitted_head": "349d45f868b1594f3cb5f058e42c02b614278236",
@@ -39568,7 +39568,33 @@
           "review": 6090854627,
           "trusted_queue_run": 46032111749,
           "trusted_queue_job": 140618223515
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "efd2dd3514881bf1d684135cf053b457a2d824af",
+        "writer_return": "d4ea9474abea5a96ce6b519317758844448ee50b",
+        "adopted_head": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "adopted_at": "2026-11-27T16:17:46.978Z"
+      },
+      "actual_official_rc": {
+        "head": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "tree": "2031bda70eac4db20202cbe2d4b4114ee027ed32",
+        "previous": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "private_ci": 46032391000,
+        "private_job": 140619177867,
+        "private_steps": 48,
+        "private_artifact": 15215092478,
+        "private_zip_bytes": 25665826,
+        "private_zip_digest": "sha256:0c6abf2556b6a9b26dd17892f4597311e4bda7ea57de90fd57ccdef3db987104",
+        "private_place_bytes": 891450,
+        "private_place_sha256": "65f974c36acd5b100fbd76e3ea16b5dcf1be0d4a1d35e406f39e6eb4c1f156dc",
+        "private_off_place_bytes": 890487,
+        "old_rollback_archives_exact": 20,
+        "active_ci_status": "NOT_TRIGGERED_PRIVATE_ONLY",
+        "active_exact_base": "0bd1da19cb5bd8903d4c3624fbc49127443de53c",
+        "active_place_bytes": 656824,
+        "active_zip_bytes": 195858,
+        "device_evidence": "NOT_TESTED",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7223274974"
       }
     },
     {
@@ -39633,7 +39659,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "pr": 479,
         "branch": "feature/p0d-fb026-undead-siege-native85-20261115",
         "old_pr_head": "872b00383d60cc411571365754f6a6cff2507463",
@@ -39727,6 +39753,74 @@
         "author_parent": "3541e5106001fc89ef9a507825f395d63be8f603",
         "failed_job": 140620325360,
         "reason": "CAPACITY_GATE_MISSING_NEW_EXACT_MODULE"
+      },
+      "source_head": "376be660477492d0a6621d8ca7f28033da396260",
+      "prepared_candidate_head": "376be660477492d0a6621d8ca7f28033da396260",
+      "prepared_candidate_tree": "561fcb77b124445f1f423143bd0a1d1e263b745a",
+      "source_blob_submissions": [
+        {
+          "path": ".github/workflows/p0d-rc-fastlane.yml",
+          "mode": "100644",
+          "blob": "6b336281b64c967a24396e0104a8db895959704d",
+          "bytes": 230729
+        },
+        {
+          "mode": "100644",
+          "blob": "8001b4958fb2d892a535bd88cae7633784845fa7",
+          "path": "rc_fastlane/apply_active_undead_squad.py",
+          "bytes": 4409
+        },
+        {
+          "mode": "100644",
+          "blob": "4d1e7012e8ab2cd5c40ba6e51db1d52bb2812341",
+          "path": "rc_fastlane/features/active_undead_squad/UndeadSquad.luau",
+          "bytes": 9048
+        },
+        {
+          "mode": "100644",
+          "blob": "43a301bf4c2e0c5bd42519fd3d738d4eceeb59f6",
+          "path": "rc_fastlane/features/active_undead_squad/adapter.json",
+          "bytes": 5605
+        },
+        {
+          "mode": "100644",
+          "blob": "24ce88f034d4a825c9c81d8199be2791b80e0407",
+          "path": "rc_fastlane/features/active_undead_squad/native.luau",
+          "bytes": 11272
+        },
+        {
+          "mode": "100644",
+          "blob": "2a0714638c08960ed2896dd802e9e191fe07ca19",
+          "path": "rc_fastlane/features/active_undead_squad/source_lock.json",
+          "bytes": 882
+        },
+        {
+          "mode": "100644",
+          "blob": "bc5a636e29ef67c11a26f9b0bbf0aace80f44370",
+          "path": "rc_fastlane/verify_active_undead_native.py",
+          "bytes": 2471
+        },
+        {
+          "mode": "100644",
+          "blob": "ab721e3306a7315b5165ddd0053b7621e229d4d8",
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "bytes": 114240
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 479,
+        "exact_head": "376be660477492d0a6621d8ca7f28033da396260",
+        "exact_tree": "561fcb77b124445f1f423143bd0a1d1e263b745a",
+        "exact_parent": "349d45f868b1594f3cb5f058e42c02b614278236",
+        "older_capacity_candidate": "872b00383d60cc411571365754f6a6cff2507463",
+        "preserved_author_parent": "3541e5106001fc89ef9a507825f395d63be8f603",
+        "source_lease": "47c51840c15c74a2590a80a4b6d11878e3513437",
+        "source_lease_return": "3377137494ab71160835cc7ab1a287a9be50c246",
+        "prepared_at": "2026-11-27T16:28:35.898Z"
+      },
+      "actual_binding_lease": {
+        "commit": "83ed82cea1f849999452ff8aede7811955e6bf70",
+        "operation_id": "db9c6fc1-a75f-44f9-ac81-5795cb5a2798"
       }
     }
   ],
