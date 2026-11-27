@@ -41824,7 +41824,7 @@
     {
       "claim_id": "P0D-GQ219-NINJA-031-ACTIVE-BLINK-20261128",
       "feature_id": "GQ219_NINJA_031_ACTIVE_BLINK_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent scoped Active companion)",
       "parent_issue": 219,
@@ -41838,7 +41838,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Fixed #219 selected NINJA Q short Blink with 0.18s direction tell 5/7/9/11/13 studs, CD16/E30; server avatar/life/phase/role/pos controls, ground and seat guards, exact author Private movement sweep reuse, no collision bypass/iframe/damage. Preserve normal F, existing R Assassin Wind, other Q, PRIVATE and original map.",
       "resources": [
@@ -42065,7 +42065,7 @@
         "operation_id": "ca0533e5-d4cd-4dc7-8aad-8c95d603c30a"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "63d6092d876325b16e540708d3ec992d8bd9540d",
         "permitted_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
@@ -42096,7 +42096,37 @@
           "review": 6092353086,
           "trusted_queue_run": 46053959272,
           "trusted_queue_job": 140691817306
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "b20e007728323265777a4c8b019eede0502af28e",
+        "writer_return": "bd24c5a245dba0afaa5069bffb7318d03bcf301e",
+        "adopted_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "adopted_at": "2026-11-27T19:05:47.896Z"
+      },
+      "actual_official_rc": {
+        "head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "tree": "db391980f1224e82028e84a2e033c6218e154871",
+        "previous": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "active_ci": 46054236754,
+        "active_job": 140692725969,
+        "active_success_steps": 109,
+        "active_conditional_skip": 14,
+        "active_artifact": 15225373472,
+        "active_zip_bytes": 222432,
+        "active_zip_digest": "sha256:d0209f255cedadf6bd31574d6832eb8cf6f8f9a2c172f26bb93b638159f20472",
+        "active_place_bytes": 718470,
+        "active_place_sha256": "8668e2fb65b62b6f25865184bcbdeed36328df05a61dea43140b347804252d6a",
+        "active_off_place_bytes": 709077,
+        "private_ci": 46054236965,
+        "private_job": 140692726675,
+        "private_steps": 48,
+        "private_artifact": 15225713678,
+        "private_zip_bytes": 26223305,
+        "private_zip_digest": "sha256:404fcebec32cbb2186467f363cf26cabe66e9b5d55091cb8670ede0e78721f02",
+        "private_place_bytes": 894743,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7226326872",
+        "device_evidence": "NOT_TESTED_PER_V35",
+        "independent_context": "/root/p0_offer_review26"
       }
     },
     {
@@ -42161,7 +42191,7 @@
       },
       "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "pr": 947,
         "branch": "feature/gq470-hud-portrait-clearance-real69-20261121",
         "old_pr_head": "5bece8c60a4a3600b821ff52d6d15b4508d23ec2",
@@ -42276,6 +42306,92 @@
         "author_parent": "47eef95e1b824d3d196cc119174df8a9e7426ecf",
         "failed_job": 140694635693,
         "reason": "Two historic tests used the current portrait policy: old BOT reverse lacked the portrait/attack parent steps, and the historical native generator was passed current 64px source instead of the pinned prior 62px policy. Existing condition/mutant assertions unchanged."
+      },
+      "source_head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+      "prepared_candidate_head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+      "prepared_candidate_tree": "26f4e02041b56a49ab9f25f0d67479bf4e546b8f",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "aa65a51043a6f905296c7316b0a4e81081624375",
+          "bytes": 64798
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "86d0d557c5a294eccc6365d6454b062e4274fd89",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "3a268cc465543b2e39e6390175a08cebf492867e",
+          "bytes": 10112
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "6a4111020d678b1f4752edb7c0f725761e3db6e6",
+          "bytes": 7445
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/portrait_native.py",
+          "mode": "100644",
+          "blob": "c0db9e977fa8e9e2143dff21edc43a6994d15b31",
+          "bytes": 2385
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "c64658497e8e21a7043f6d3a8e0bb6b6d87c557c",
+          "bytes": 20802
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "b5688f64880457b508a60feeb24d1b19985e6bc2",
+          "bytes": 52483
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/portrait/prepare.py",
+          "mode": "100644",
+          "blob": "31fdc6328dce73bdc6e960989dc43906c50f1cd6",
+          "bytes": 8148
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "0764e0ab61a1aa2a27d3cdcdc084488a9b3242f0",
+          "bytes": 1592476
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "a530735c7cd7f027977c935418dcb5dec7529efd",
+          "bytes": 157671
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "186cb7570338f0b75718e4d32210ca2a7a5deef1",
+          "bytes": 121410
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 947,
+        "exact_head": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "exact_tree": "26f4e02041b56a49ab9f25f0d67479bf4e546b8f",
+        "exact_parent": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "previous_candidate": "5bece8c60a4a3600b821ff52d6d15b4508d23ec2",
+        "preserved_author_parent": "47eef95e1b824d3d196cc119174df8a9e7426ecf",
+        "source_lease": "0fa7a9d1eafd04923bef0599a31b20be11375f52",
+        "source_lease_return": "c984ea52c839dd642831d619792e0e622fd49355",
+        "prepared_at": "2026-11-27T19:26:32.396Z"
+      },
+      "actual_binding_lease": {
+        "commit": "366d7516d43a81ac8c6378c8a90d468bd8a52792",
+        "operation_id": "465ae731-fce3-44ed-a58d-f59ce1068bea"
       }
     }
   ],
