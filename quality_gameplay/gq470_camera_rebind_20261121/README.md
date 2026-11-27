@@ -1,0 +1,7 @@
+# GQ470 camera visual access | A only
+
+Official REAL69 base: `e80973c354f14a0d0088577f3cc1a875454f0f8f`. Adds only new `StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CameraRebind` on a private candidate, unchanged original69. When the local live character spawns and its camera's subject is nil, destroyed, or the previous own Humanoid, rebind subject within 4 seconds; never set CameraType or CFrame, never hijack non-local spectating or vehicle. No new GUI, parts, Remote, score, Combat, Store, Game, spawn.
+
+This cannot make a missing avatar spawn and does not resolve Play vs Run. #980 server-side early spawn is a separate independent candidate. Candidate Native Luau/Rojo and source preservation must be checked. ART PC/Android screenshot comparison 0/32; Studio solo/2-client, mobile FPS, player visibility and OWNER acceptance all NOT_TESTED. Formal RC writes and public Publish disallowed; #220 B writer has exclusive nonforce CAS responsibility after P0 priority evaluation.
+## Mock coverage and limits
+The native fixture executes the exact new LocalScript against 13 deterministic ownership/lifecycle cases with 15 asserts, including 4-second expiry and missing Humanoid. Its fake Roblox camera is deliberately not an engine pass. Real Studio verification must compare owner avatar, HumanoidRootPart, Health, CameraSubject, CurrentCamera.CameraType, SpawnLocation, and F9 error logs in Solo and two-client sessions before classifying the symptom as fixed.
