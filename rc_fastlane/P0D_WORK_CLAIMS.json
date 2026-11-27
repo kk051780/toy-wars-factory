@@ -32084,6 +32084,42 @@
       "actual_binding_lease": {
         "commit": "202a3d00c610032b71b1bbde4e4abfb81a1e2fd8",
         "operation_id": "76d14a30-0029-4451-b442-662f9d0bf5fa"
+      },
+      "source_repair": {
+        "status": "ONE_NONFORCE_UPDATE_SAME_BRANCH_AND_PR",
+        "base": "ebdaa5ea7a5a8cda590674e407b292bdd82d3998",
+        "pr": 1037,
+        "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "blob": "66a8575e33b94f19cd79256bd13e698e686f6d62",
+        "tree": "dec3aab9999d46a56aebd0896dd84551376717c1",
+        "local_commit": "3c909931568e31e8cdc7cc7af930fd1780e933cc",
+        "reason": "Native geometry adds four verified files; strict pre-aggregate cardinality 77 -> 81 preserves the exact expected set.",
+        "failed_run": 45931653069,
+        "one_commit_only": true,
+        "additional_prs": 0,
+        "force": false,
+        "formal_rc_write": false,
+        "expires_at": "2026-11-27T04:46:19.808Z",
+        "authority": {
+          "actor": {
+            "login": "kk051780",
+            "id": 233213370
+          },
+          "operation_id": "ecc8df96-99e0-4f88-92ce-9a5d746d7262",
+          "acquire_commit": "352bb27b6dfe5206a1468c61a8e63a400c78c6a5",
+          "holder": {
+            "kind": "CONTROLLER",
+            "owner_id": "ecc8df96-99e0-4f88-92ce-9a5d746d7262",
+            "task_id": null,
+            "epoch": 806,
+            "acquired_at": "2026-11-27T03:05:41.087Z",
+            "expires_at": "2026-11-27T03:35:41.087Z",
+            "base_main_sha": null,
+            "work_branch": "coord/p0d-work-claims",
+            "origin": "controller"
+          },
+          "registry_parent": "575ef47377699ec9e1eee49c06020f8d07d4f4a9"
+        }
       }
     }
   ],
