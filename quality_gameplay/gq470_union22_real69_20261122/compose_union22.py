@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "69c9968f8138ad3558e174c112b4341488c4b4bc37aa8619163846882d226277"
+LOCK_SHA256 = "024a6080d72b9f9a8f34727b090f42fed506ad7c8734735b250d99f66487f442"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -90,6 +90,9 @@ MAGE_CONTACT_SOURCES = ("ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
 RELAY_ELIGIBILITY_OFF = "off69_relay_eligibility_mage_parent"
 RELAY_ELIGIBILITY_OFF_ARCHIVE = "OFF69_RELAY_ELIGIBILITY_MAGE_PARENT_ROLLBACK.tar.gz"
 RELAY_ELIGIBILITY_SOURCES = RELAY_PRESENTATION_SOURCES
+MOGURON_SOURCE = BR_CANYON_SOURCES[0]
+MOGURON_OFF = "off69_moguron_relay_parent"
+MOGURON_OFF_ARCHIVE = "OFF69_MOGURON_RELAY_PARENT_ROLLBACK.tar.gz"
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -489,6 +492,11 @@ def relay_eligibility_parent(on, lock):
                                 lock["mage_contact_followup"]["repaired_place"], "RELAY_ELIGIBILITY")
 
 
+def moguron_parent(on, lock):
+    return paired_source_parent(on, lock, lock["moguron_followup"], (MOGURON_SOURCE,),
+                                lock["relay_eligibility_followup"]["repaired_place"], "MOGURON")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -656,7 +664,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    eligibility_off, eligibility_off_lock = relay_eligibility_parent(on, lock)
+    moguron_off, moguron_off_lock = moguron_parent(on, lock)
+    eligibility_off, eligibility_off_lock = relay_eligibility_parent(moguron_off, moguron_off_lock)
     mage_off, mage_off_lock = mage_contact_parent(eligibility_off, eligibility_off_lock)
     art_off, art_off_lock = art_polish_parent(mage_off, mage_off_lock)
     growth_off, growth_off_lock = growth_musou_parent(art_off, art_off_lock)
@@ -705,7 +714,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / ART_POLISH_OFF, art_off, art_off_lock["final_place"], ART_POLISH_SOURCES),
                   (stage / MAGE_CONTACT_OFF, mage_off, mage_off_lock["final_place"], MAGE_CONTACT_SOURCES),
                   (stage / RELAY_ELIGIBILITY_OFF, eligibility_off, eligibility_off_lock["final_place"],
-                   RELAY_ELIGIBILITY_SOURCES))
+                   RELAY_ELIGIBILITY_SOURCES),
+                  (stage / MOGURON_OFF, moguron_off, moguron_off_lock["final_place"], MOGURON_SOURCE))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -771,6 +781,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         mage_archive_identity = identity(read_file(stage / MAGE_CONTACT_OFF_ARCHIVE))
         make_archive(stage / RELAY_ELIGIBILITY_OFF, stage / RELAY_ELIGIBILITY_OFF_ARCHIVE, RELAY_ELIGIBILITY_OFF)
         eligibility_archive_identity = identity(read_file(stage / RELAY_ELIGIBILITY_OFF_ARCHIVE))
+        make_archive(stage / MOGURON_OFF, stage / MOGURON_OFF_ARCHIVE, MOGURON_OFF)
+        moguron_archive_identity = identity(read_file(stage / MOGURON_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -855,6 +867,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({RELAY_ELIGIBILITY_OFF + "/" + PROJECT: lock["project"],
                                RELAY_ELIGIBILITY_OFF + "/" + PLACE: eligibility_off_lock["final_place"],
                                RELAY_ELIGIBILITY_OFF_ARCHIVE: eligibility_archive_identity})
+        expected_stage.update({MOGURON_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in moguron_off.items()})
+        expected_stage.update({MOGURON_OFF + "/" + PROJECT: lock["project"],
+                               MOGURON_OFF + "/" + PLACE: moguron_off_lock["final_place"],
+                               MOGURON_OFF_ARCHIVE: moguron_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -910,6 +927,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_contact_rollback_archive": mage_archive_identity,
             "relay_eligibility_followup": lock["relay_eligibility_followup"],
             "relay_eligibility_rollback_archive": eligibility_archive_identity,
+            "moguron_followup": lock["moguron_followup"],
+            "moguron_rollback_archive": moguron_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -922,7 +941,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
             "source_count": 69, "changed_sources": 33, "unchanged_sources": 36,
-            "compile_count": 174, "rojo_build_count": 21, "instances": 75,
+            "compile_count": 175, "rojo_build_count": 22, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
