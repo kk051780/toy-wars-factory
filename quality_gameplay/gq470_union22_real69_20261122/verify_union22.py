@@ -531,9 +531,18 @@ def verify_core(root, base, reports, context):
             and hp["feedback"] == {"id": "FB-002", "issue": 364}, "FRACTIONAL_HP_SCOPE")
     hp_row = hp["rows"][compose.HUD_SOURCE]
     require(len(hp_row["forward"]) == len(hp_row["inverse"]) == 1, "FRACTIONAL_HP_SINGLE_HUNK")
+    projectiles = lock["mage_projectile_followup"]
+    require(set(projectiles["rows"]) == set(compose.MAGE_PROJECTILES_SOURCES)
+            and projectiles["ids"] == ["MAGE-033", "MAGE-051", "MAGE-071"]
+            and projectiles["catalog_commit"] == "6810cefc345066ad465b981aabca045499add6d5",
+            "MAGE_PROJECTILES_SCOPE")
+    expected_projectile_off, projectile_off_lock, projectile_off = verify_source_rollback(
+        root, root, lock, current, projectiles, projectiles["rows"], hp["repaired_place"],
+        compose.MAGE_PROJECTILES_OFF, compose.MAGE_PROJECTILES_OFF_ARCHIVE, "MAGE_PROJECTILES")
     team_win = lock["team_win_rule_followup"]
     expected_hp_off, hp_off_lock, hp_off = verify_source_rollback(
-        root, root, lock, current, hp, hp["rows"], team_win["repaired_place"],
+        root, root / compose.MAGE_PROJECTILES_OFF, projectile_off_lock, projectile_off,
+        hp, hp["rows"], team_win["repaired_place"],
         compose.FRACTIONAL_HP_OFF, compose.FRACTIONAL_HP_OFF_ARCHIVE, "FRACTIONAL_HP")
     require(set(team_win["rows"]) == {compose.VAULT_SOURCE}
             and team_win["feedback"] == {"id": "FB-003", "issue": 364, "queue": "TEAM"}, "TEAM_WIN_RULE_SCOPE")
@@ -749,6 +758,8 @@ def verify_core(root, base, reports, context):
         "team_win_rule_rollback_archive": digest(read(root / compose.TEAM_WIN_RULE_OFF_ARCHIVE)),
         "fractional_hp_followup": hp,
         "fractional_hp_rollback_archive": digest(read(root / compose.FRACTIONAL_HP_OFF_ARCHIVE)),
+        "mage_projectile_followup": projectiles,
+        "mage_projectile_rollback_archive": digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -759,7 +770,7 @@ def verify_core(root, base, reports, context):
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
             and core.get("changed_sources") == 34 and core.get("unchanged_sources") == 35
-            and core.get("compile_count") == 180 and core.get("rojo_build_count") == 27
+            and core.get("compile_count") == 185 and core.get("rojo_build_count") == 28
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
             and core.get("castle_release_stock_parent_place") == castle_off_lock["final_place"]
@@ -780,6 +791,7 @@ def verify_core(root, base, reports, context):
             and core.get("shorefoam_parent_place") == shorefoam_off_lock["final_place"]
             and core.get("team_win_rule_parent_place") == team_win_off_lock["final_place"]
             and core.get("fractional_hp_parent_place") == hp_off_lock["final_place"]
+            and core.get("mage_projectile_parent_place") == projectile_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -853,6 +865,9 @@ def verify_core(root, base, reports, context):
     expected_stage[compose.TEAM_WIN_RULE_OFF_ARCHIVE] = digest(read(root / compose.TEAM_WIN_RULE_OFF_ARCHIVE))
     expected_stage.update({compose.FRACTIONAL_HP_OFF + "/" + name: pin for name, pin in expected_hp_off.items()})
     expected_stage[compose.FRACTIONAL_HP_OFF_ARCHIVE] = digest(read(root / compose.FRACTIONAL_HP_OFF_ARCHIVE))
+    expected_stage.update({compose.MAGE_PROJECTILES_OFF + "/" + name: pin
+                           for name, pin in expected_projectile_off.items()})
+    expected_stage[compose.MAGE_PROJECTILES_OFF_ARCHIVE] = digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -861,11 +876,11 @@ def verify_core(root, base, reports, context):
                      "CORE_BUILD_REPORT.json": digest(read(root / "CORE_BUILD_REPORT.json"))}
     require(files(root) == expected_root, "CURRENT_ROOT_PAYLOAD_SET_OR_IDENTITY")
     commands = core.get("commands", [])
-    require(len(commands) == 207 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
+    require(len(commands) == 213 and all(c.get("exit") == 0 for c in commands), "CORE_COMMAND_COMPLETION")
     compile_commands = [c for c in commands if len(c.get("command", [])) == 3 and c["command"][1] == "--text"]
     rojo_commands = [c for c in commands if len(c.get("command", [])) == 5 and c["command"][1] == "build"
                      and c["command"][3] == "-o"]
-    require(len(compile_commands) == 180 and len(rojo_commands) == 27, "CORE_COMMAND_TYPES")
+    require(len(compile_commands) == 185 and len(rojo_commands) == 28, "CORE_COMMAND_TYPES")
     stage = core.get("build_command_namespace", {}).get("executed_stage")
     require(isinstance(stage, str) and Path(stage).is_absolute()
             and core["build_command_namespace"].get("committed_root") == str(root)
@@ -894,6 +909,8 @@ def verify_core(root, base, reports, context):
     expected_compile.add(str(Path(stage) / compose.SHOREFOAM_OFF / "sources" / compose.SHOREFOAM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.TEAM_WIN_RULE_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.FRACTIONAL_HP_OFF / "sources" / compose.HUD_SOURCE))
+    expected_compile.update(str(Path(stage) / compose.MAGE_PROJECTILES_OFF / "sources" / name)
+                            for name in compose.MAGE_PROJECTILES_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -917,7 +934,8 @@ def verify_core(root, base, reports, context):
                                compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
                                compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
-                               compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF)},
+                               compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
+                               compose.MAGE_PROJECTILES_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -949,7 +967,9 @@ def verify_core(root, base, reports, context):
                         compose.PORTRAIT_OFF: [compose.PORTRAIT_SOURCE],
                         compose.SHOREFOAM_OFF: [compose.SHOREFOAM_SOURCE],
                         compose.TEAM_WIN_RULE_OFF: [compose.VAULT_SOURCE],
-                        compose.FRACTIONAL_HP_OFF: [compose.HUD_SOURCE]}
+                        compose.FRACTIONAL_HP_OFF: [compose.HUD_SOURCE],
+                        compose.MAGE_PROJECTILES_OFF: [name for name in lock["sources"]
+                                                      if name in compose.MAGE_PROJECTILES_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected)
         expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
@@ -1578,6 +1598,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["mage_projectile_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["fractional_hp_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["shorefoam_followup"]["rows"].items()
@@ -1996,6 +2018,10 @@ def verify_native(native, root, lock, context):
     spec = importlib.util.spec_from_file_location("union22_native_contract", HERE / "native/run_profile.py")
     adapter = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(adapter)
+    projectile_spec = importlib.util.spec_from_file_location(
+        "union22_mage_projectiles_verify", HERE / "native/mage_projectiles/__init__.py")
+    projectiles = importlib.util.module_from_spec(projectile_spec)
+    projectile_spec.loader.exec_module(projectiles)
     require(digest(read(input_lock_path))["sha256"] == adapter.INPUT_LOCK_SHA256, "NATIVE_LOCK_IDENTITY")
     pins = data(input_lock_path)
     require(pins.get("schema") == "UNION22_NATIVE_DUAL_CLEAR_LOS_SOURCE_BUILD_INPUTS_V3"
@@ -2050,7 +2076,8 @@ def verify_native(native, root, lock, context):
                 "selected_hud_policy": 1, "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                 "hud_client_runtime_executed_in_original_suites": False,
                 "growth_ui_full_bodies_each": 31, "hud_client_runtime_executed_in_growth": True}
-            and aggregate.get("native_process_count") == 99 and aggregate.get("native_evidence_file_count") == 316,
+            and aggregate.get("native_process_count") == 99 + projectiles.PROCESS_COUNT
+            and aggregate.get("native_evidence_file_count") == 316 + len(projectiles.FILES),
             "NATIVE_AGGREGATE_BODY_AND_PROCESS_COVERAGE")
     for name, pin in pins["fixtures"].items():
         require(digest(read(HERE / "native/fixtures" / name)) == pin, "NATIVE_FIXED_FIXTURE_DRIFT")
@@ -2148,8 +2175,17 @@ def verify_native(native, root, lock, context):
     expected_files |= team_win_rule_files
     hp, hp_files = verify_fractional_hp_native(native, root, lock, build, aggregate, context)
     expected_files |= hp_files
+    projectile_folder = native / "mage_projectiles"
+    projectile_receipt = projectile_folder / "receipt.json"
+    projectile_result = projectiles.observe(root / "sources", projectile_folder, Path(build["binary_path"]),
+                                            build["binary_before_suites"], context, lock, compose)
+    require(set(files(projectile_folder)) == projectiles.FILES
+            and data(projectile_receipt) == projectile_result
+            and digest(read(projectile_receipt)) == aggregate["mage_projectiles"], "MAGE_PROJECTILES_EXACT_RECEIPT")
+    expected_files |= {"mage_projectiles/" + name for name in projectiles.FILES}
     guardian, guardian_files = verify_guardian_target(native, root, lock, pins, build, aggregate, context)
-    require(len(expected_files) == 316 and set(files(native)) == expected_files | guardian_files,
+    require(len(expected_files) == 316 + len(projectiles.FILES)
+            and set(files(native)) == expected_files | guardian_files,
             "NATIVE_RESULT_FILE_SET")
     return {"results": results, "build": build, "payload": files(native), "aggregate": aggregate,
             "guardian_target_diagnostic": guardian,
@@ -2169,6 +2205,7 @@ def verify_native(native, root, lock, context):
             "portrait": portrait,
             "team_win_rule": team_win_rule,
             "fractional_hp": hp,
+            "mage_projectiles": projectile_result,
             "selected_hud_layout": {key: value for key, value in layout.items() if key != "files"},
             "bot_vault_supplement": {key: value for key, value in bot.items() if key != "files"}}
 
@@ -2216,6 +2253,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.PRIVATE_TOUCH_OFF_ARCHIVE,
                             compose.PORTRAIT_OFF_ARCHIVE, compose.SHOREFOAM_OFF_ARCHIVE,
                             compose.TEAM_WIN_RULE_OFF_ARCHIVE, compose.FRACTIONAL_HP_OFF_ARCHIVE,
+                            compose.MAGE_PROJECTILES_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2332,6 +2370,9 @@ def admit_delivery(root, base, reports, native, context):
             "fractional_hp_followup": verified["lock"]["fractional_hp_followup"],
             "fractional_hp_inverse_place": verified["lock"]["fractional_hp_followup"]["parent_place"],
             "fractional_hp_inverse_archive": digest(read(root / compose.FRACTIONAL_HP_OFF_ARCHIVE)),
+            "mage_projectile_followup": verified["lock"]["mage_projectile_followup"],
+            "mage_projectile_inverse_place": verified["lock"]["mage_projectile_followup"]["parent_place"],
+            "mage_projectile_inverse_archive": digest(read(root / compose.MAGE_PROJECTILES_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2361,6 +2402,7 @@ def admit_delivery(root, base, reports, native, context):
             "portrait": runtime["portrait"],
             "team_win_rule": runtime["team_win_rule"],
             "fractional_hp": runtime["fractional_hp"],
+            "mage_projectiles": runtime["mage_projectiles"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
