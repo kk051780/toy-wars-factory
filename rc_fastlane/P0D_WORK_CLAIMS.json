@@ -34283,7 +34283,7 @@
     {
       "claim_id": "P0D-GQ470-GROWTH-MUSOU-1028-20261127",
       "feature_id": "GQ470_GROWTH_MUSOU_P0D033",
-      "state": "SOURCE_WIP",
+      "state": "PREP_READY",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, existing #1028 branch only)",
       "parent_issue": 470,
@@ -34298,8 +34298,8 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Existing #1028 four-source S1A in-match neutral KO growth B1-B3 and #825 one-source aura Head lifecycle only. Keep original data rights, Combat and Host; no skill-composition implementation, progression beyond B3, publishing, default profile change, purchases. Do not write #825 source branch.",
       "resources": [
@@ -34725,6 +34725,22 @@
         "actual_candidate": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
         "source_lease": "d9e66d7850b88a4fc528b71e47173aad4694b48e",
         "source_return": "52bc53f1e1042856b2859bf446287a2239466070"
+      },
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1028#pullrequestreview-6084741789",
+        "review_id": 6084741789,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "scope_registration": "21697aaa15f33acd1310a88b4020ff39309a6cd4",
+        "review_is_comment": true,
+        "author_self_approval": false,
+        "canonical_ci_run": 45956884289,
+        "canonical_job": 140365310405,
+        "canonical_steps": 48
+      },
+      "actual_prep_ready_lease": {
+        "commit": "5b5b755b9faa3658bcd61145c66509d10ed5dc14",
+        "operation_id": "c1612c5c-75b3-4cc2-a00b-3c3f3a52f4b0"
       }
     }
   ],
