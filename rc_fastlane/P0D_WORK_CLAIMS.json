@@ -38917,6 +38917,140 @@
           "trusted_queue_job": 140588973679
         }
       }
+    },
+    {
+      "claim_id": "P0D-FB019-ACTIVE-HIT-423-20261128",
+      "feature_id": "FB019_ATTACK_RESPONSE_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 910,
+      "source_issue": 423,
+      "integration_issue": 220,
+      "pr": 423,
+      "base_rc_sha": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+      "base_rc_tree": "c9507a4c778b442c10b7612d452eeb531083d7be",
+      "prep_branch": "feature/p0d-fb019-server-ack-v2-nativeQA-20261115",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Original #423 Game/HUD actual server HIT/MISS on current ACTIVE rich51 existing normal attack. Players/Bot/neutral Horde/castle gain feedback only on actual authority results; existing damage, Remote, snapshot cadence, keyboard F, cooldown and mode untouched. Only Game/HUD paths; no legacy gesture/extra effects, no Private/device claims.",
+      "resources": [
+        "ACTIVE68_FB019_GAME_ATTACK_RESULT",
+        "ACTIVE68_FB019_HUD_EXISTING_ATTACK",
+        "FB019_ATTACK_RESPONSE_V1"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_confirmed_hit.py",
+        "rc_fastlane/features/active_confirmed_hit/cue.json",
+        "rc_fastlane/features/active_confirmed_hit/original_native.py",
+        "rc_fastlane/features/active_confirmed_hit/source_lock.json",
+        "rc_fastlane/verify_active_confirmed_hit_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/423",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "3d89dc2e-69d0-4524-97d6-352e7c0073c1",
+      "issued_at": "2026-11-27T15:21:59.802Z",
+      "expires_at": "2026-11-27T17:21:59.802Z",
+      "actual_metadata_lease": {
+        "ref": "03e1cb8920dd74cfff884eb5da81546d869f3184",
+        "blob": "741070f80cef85a651c98890fcf4bf8732dff725",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "3d89dc2e-69d0-4524-97d6-352e7c0073c1",
+          "task_id": null,
+          "epoch": 953,
+          "acquired_at": "2026-11-27T15:21:43.640Z",
+          "expires_at": "2026-11-27T15:51:43.640Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 423,
+        "branch": "feature/p0d-fb019-server-ack-v2-nativeQA-20261115",
+        "old_pr_head": "8d1c18214402074a1ebdabbc730fe20a9ceb7e63",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "tree": "1841f5e364af833e4cd494710d66e714baedf29a",
+        "local_head": "961ff0afc296788fdce454ab8cafa675e88d299a",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "2a0dcb7819f5c75c463ce09bd60e2b2b2ed6cc19",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 226540
+          },
+          {
+            "mode": "100644",
+            "blob": "fff493711c3c6e37f503b63c8baae6291b17ed72",
+            "path": "rc_fastlane/apply_active_confirmed_hit.py",
+            "bytes": 4423
+          },
+          {
+            "mode": "100644",
+            "blob": "19730a5d160dd9c49e4970bc70b3a4385e05e7ac",
+            "path": "rc_fastlane/features/active_confirmed_hit/cue.json",
+            "bytes": 8945
+          },
+          {
+            "mode": "100644",
+            "blob": "77a20dee8577dd4aa6d1ff7568cf408af65fe950",
+            "path": "rc_fastlane/features/active_confirmed_hit/original_native.py",
+            "bytes": 13197
+          },
+          {
+            "mode": "100644",
+            "blob": "950923738ad133090e657d1568bebab790981214",
+            "path": "rc_fastlane/features/active_confirmed_hit/source_lock.json",
+            "bytes": 866
+          },
+          {
+            "mode": "100644",
+            "blob": "a5fdd8550e0db587edfa978460f31bc85a8efd64",
+            "path": "rc_fastlane/verify_active_confirmed_hit_native.py",
+            "bytes": 4093
+          },
+          {
+            "mode": "100644",
+            "blob": "ad1949c940462d0daad7786c6e29c191cfbb38be",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 112511
+          }
+        ],
+        "expires_at": "2026-11-27T16:21:59.802Z",
+        "issued_from": {
+          "lease": "03e1cb8920dd74cfff884eb5da81546d869f3184",
+          "owner": "3d89dc2e-69d0-4524-97d6-352e7c0073c1"
+        },
+        "local_qa": {
+          "on": 656824,
+          "off": 653907,
+          "place_sha256": "184498f6732783f8fcf954ee2d7bac150295008fe96132e90d768ce823005bd0",
+          "off_sha256": "3e5ac7b22b388fcdb928a38c0f0cdd27c942fb80f34ff1d8b1c8c744d17d85d9",
+          "mounts": 68,
+          "source_count_same": true,
+          "game_delta": 1463,
+          "hud_delta": 1454,
+          "other_66_same": true,
+          "original_game_paths": 18,
+          "original_hud_cases": 6,
+          "new_negative_groups": 2,
+          "actual_snapshot_identical": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
