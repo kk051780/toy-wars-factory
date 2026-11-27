@@ -43578,11 +43578,11 @@
       },
       "authority_basis": "#1011 V3.5, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "branch": "quality/gq470-private-fb003-team-win-gate-20261128",
         "formal_parent": "54bb8dcdf13ac60c9d1ee1c9038bf306a0588ed3",
-        "tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
-        "local_head": "5a0f61eb819bd27bce6ecb00f9145cb64717aa46",
+        "tree": "6811f298bea27bad3293daac4afc3baad620ab95",
+        "local_head": "ef0235bcbf223d4a718f53ea5bd1dd3fe2da29bc",
         "permitted_create_draft": 1,
         "allowed_changed_files": [
           {
@@ -43624,8 +43624,8 @@
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py",
             "mode": "100644",
-            "blob": "efd9785a39fdccdcc3eb7dd6eb0884da78f25de9",
-            "bytes": 3418
+            "blob": "b6881b07883e14f9098db2e4be21684aba5094fd",
+            "bytes": 3509
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_scene.luau",
@@ -43652,10 +43652,10 @@
             "bytes": 125890
           }
         ],
-        "expires_at": "2026-11-27T21:48:33.876Z",
+        "expires_at": "2026-11-27T22:03:12.817Z",
         "issued_from": {
-          "lease": "5372811174ff53af61af2cc7874c0f15e175bbf3",
-          "owner": "d14e1462-e349-4172-9de4-005e99b9a2cb"
+          "lease": "f3f197c7a6153a65aeadf13aad3fbd949dbc3ff7",
+          "owner": "8b538714-75ff-4b07-9556-19097e4bff6f"
         },
         "local_qa": {
           "place_bytes": 895843,
@@ -43670,12 +43670,20 @@
           "source_bytes_delta": 3,
           "real_rule_modes_16_castles": true,
           "old_guard_boundary_negatives": 6,
-          "device": "NOT_TESTED_V3.5"
-        }
+          "device": "NOT_TESTED_V3.5",
+          "real_copy_relocation_reproduced_and_fixed": true,
+          "native_same_program_8": true,
+          "mutated_program_rejected": true,
+          "selected_source_place_and_rollbacks_unchanged": true
+        },
+        "old_pr_head": "5000f077dc900000aa772092b085f930ef503e89",
+        "repair_changed_paths_from_red": [
+          "quality_gameplay/gq470_union22_real69_20261122/native/team_win_rule_native.py"
+        ]
       },
-      "source_head": "5000f077dc900000aa772092b085f930ef503e89",
-      "prepared_candidate_head": "5000f077dc900000aa772092b085f930ef503e89",
-      "prepared_candidate_tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
+      "source_head": null,
+      "prepared_candidate_head": null,
+      "prepared_candidate_tree": null,
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -43744,7 +43752,12 @@
           "bytes": 125890
         }
       ],
-      "actual_candidate_readback": {
+      "actual_candidate_readback": null,
+      "actual_binding_lease": {
+        "commit": "f3a2fe0858c1c01394ccc9401bb283eb7e83ed25",
+        "operation_id": "4dc09999-97d5-4c8d-bbc1-1d725229fbb4"
+      },
+      "superseded_binding": {
         "pr": 1048,
         "exact_head": "5000f077dc900000aa772092b085f930ef503e89",
         "exact_tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
@@ -43755,9 +43768,14 @@
         "source_lease_return": "515b756144716c6d86cca5933f42f9600ae53a97",
         "prepared_at": "2026-11-27T20:58:55.945Z"
       },
-      "actual_binding_lease": {
-        "commit": "f3a2fe0858c1c01394ccc9401bb283eb7e83ed25",
-        "operation_id": "4dc09999-97d5-4c8d-bbc1-1d725229fbb4"
+      "first_candidate": {
+        "head": "5000f077dc900000aa772092b085f930ef503e89",
+        "tree": "838c25f5df2b96e7de15e7f8bf59571cb6fba4ab",
+        "source_lease": "5863ee7040701f1929d9e4079844c99d50b8897a",
+        "source_return": "515b756144716c6d86cca5933f42f9600ae53a97",
+        "author_parent": null,
+        "failed_job": 140732284620,
+        "reason": "Actual two existing final-delivery fixtures copy Native evidence; absolute script location prevented them reaching the existing payload mutation rejection. Record and execute the precise canonical relative script argument; verify original and relocated real Native receipts and reject mutated program. Game/world sources and rollback remain exact."
       }
     }
   ],
