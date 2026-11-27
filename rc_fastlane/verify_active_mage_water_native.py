@@ -18,9 +18,13 @@ def make(dist):
                         '    if attribute=="P0D_RC_ENABLE_MAGE_WATER_BOLT" then return waterFlag end\n'
                         '    if attribute=="P0D_RC_ENABLE_MATCH_ROLE_GROWTH" then return growthFlag end\n', 1)
     catalog = (dist / "src" / WATER).read_text(encoding="utf-8")
+    companion = dist / "src/server/MageChain.luau"
+    chain_setup = ""
+    if companion.is_file():
+        chain_setup = "SevenJobs.Chain=(function()\n" + companion.read_text(encoding="utf-8") + "\nend)()\n"
     anchor = "local function sevenJobStrike("
     assert base.count(anchor) == 1
-    base = base.replace(anchor, "SevenJobs.Water=(function()\n" + catalog + "\nend)()\n" + anchor, 1)
+    base = base.replace(anchor, "SevenJobs.Water=(function()\n" + catalog + "\nend)()\n" + chain_setup + anchor, 1)
     assert base.count("local picked='WARRIOR'") == 1
     base = base.replace("local picked='WARRIOR'", "local picked='MAGE'", 1)
     return (base + (PACKAGE / "native_cases.luau").read_text(encoding="utf-8")).encode("utf-8")

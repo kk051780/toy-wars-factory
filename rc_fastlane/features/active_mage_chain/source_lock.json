@@ -1,0 +1,41 @@
+{
+  "enabled": true,
+  "feature": "GQ219_MAGE_025_ACTIVE_LIGHTNING_CHAIN_V1",
+  "profile": "rich51",
+  "source_origin": {
+    "issue": 219,
+    "comment": 7204247109,
+    "design": "MAGE-025",
+    "reuse": [
+      "Current MusouHorde neutral targeting and damage",
+      "Current MAGE Armament and growth authority",
+      "Existing touch safe-position solver"
+    ]
+  },
+  "off_place": {
+    "bytes": 718628,
+    "sha256": "708c77549d59dadf24545e29fcc68883245489045a3c05ea1f66cabb207a4825"
+  },
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "c3838c538977ef76ab8cd888a2808b32b460fd18",
+      "after": "0bccfbcce4eff3424f079446e703d040932110c6"
+    },
+    "server/MusouHorde.luau": {
+      "before": "c0a700509c950611d33651c20fca817ea9b324c0",
+      "after": "94b37c130c3afcbe31c3f059e9aa56979ac35150"
+    },
+    "server/MatchRoleGrowth.luau": {
+      "before": "8ecd53d4e1240b5520577e0c2f9f83cb4a1e49fe",
+      "after": "ba3910c8c2d9499a0cf43713e866904e1e0fb54d"
+    },
+    "client/HUD.client.luau": {
+      "before": "2f740e51aefdea39349c11ecf31e3675d20de7bd",
+      "after": "a31d2d269587771af20552fa8042376008432881"
+    },
+    "server/MageChain.luau": {
+      "before": null,
+      "after": "330c1b5653ea1f962f4792200c228806dba4565c"
+    }
+  }
+}

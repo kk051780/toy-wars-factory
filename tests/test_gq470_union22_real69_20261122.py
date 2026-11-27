@@ -279,6 +279,22 @@ class UnionBoundary(unittest.TestCase):
         adapter = (active.parent / crowd["source_origin"]["adapter_path"]).read_bytes()
         header = b"blob " + str(len(adapter)).encode() + bytes([0])
         self.assertEqual(hashlib.sha1(header + adapter).hexdigest(), crowd["source_origin"]["adapter_blob"])
+        chain_dir = active / "features/active_mage_chain"
+        chain = verify.data(chain_dir / "source_lock.json")
+        self.assertEqual(chain["profile"], selection["active_profile"])
+        upstream = {
+            "server/Game.server.luau": blink,
+            "server/MusouHorde.luau": crowd,
+            "server/MatchRoleGrowth.luau": water,
+            "client/HUD.client.luau": blink,
+        }
+        for relative, previous in upstream.items():
+            self.assertEqual(chain["routes"][relative]["before"], previous["routes"][relative]["after"])
+        module = (chain_dir / "MageChain.luau").read_bytes()
+        header = b"blob " + str(len(module)).encode() + bytes([0])
+        self.assertEqual(chain["routes"]["server/MageChain.luau"]["after"],
+                         hashlib.sha1(header + module).hexdigest())
+        self.assertTrue(private_blobs.isdisjoint(route["after"] for route in chain["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
