@@ -34516,9 +34516,9 @@
           "owner": "d5ff1bbf-768d-4760-9f4f-6bfeb5443021"
         }
       },
-      "source_head": "db8943c2218fdfdd5a763657cdd3d8086b493953",
-      "prepared_candidate_head": "db8943c2218fdfdd5a763657cdd3d8086b493953",
-      "prepared_candidate_tree": "a549103aa270eff35cf15df733d2d9bfc6f7e878",
+      "source_head": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
+      "prepared_candidate_head": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
+      "prepared_candidate_tree": "32ce6bcb70c081a0acccbafeb0d069472c5791ba",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_match_role_growth_20261123/apply_growth.py",
@@ -34533,16 +34533,16 @@
           "blob": "3ea286d147c3bdf1d8313afa2255ebca640382b2"
         },
         {
-          "path": "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
-          "mode": "100644",
-          "bytes": 199839,
-          "blob": "12fb2904cc07d489380c953dd0c51660964a4ff9"
-        },
-        {
           "path": "quality_gameplay/gq470_match_role_growth_20261123/native/growth_cases.luau",
           "mode": "100644",
           "bytes": 128366,
           "blob": "6c0fc9ebc663a8e6f70e398e3cd545bc41f9447d"
+        },
+        {
+          "path": "quality_gameplay/gq470_match_role_growth_20261123/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "bytes": 199839,
+          "blob": "12fb2904cc07d489380c953dd0c51660964a4ff9"
         },
         {
           "path": "quality_gameplay/gq470_match_role_growth_20261123/native/run_growth.py",
@@ -34557,16 +34557,16 @@
           "blob": "deade9da53c9849c652e52a1bda979132cd7f88d"
         },
         {
-          "path": "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/MusouAuraController.client.luau",
-          "mode": "100644",
-          "bytes": 4407,
-          "blob": "ebbcfbd88d076f441b8741a497a2375792d21e85"
-        },
-        {
           "path": "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/apply_lifecycle.py",
           "mode": "100644",
           "bytes": 7212,
           "blob": "897dc81b9bb5bf22fc9bedf1dffb1debe7237650"
+        },
+        {
+          "path": "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/MusouAuraController.client.luau",
+          "mode": "100644",
+          "bytes": 4407,
+          "blob": "ebbcfbd88d076f441b8741a497a2375792d21e85"
         },
         {
           "path": "quality_gameplay/gq470_musou_head_lifecycle_real69_20261123/native_fixture.luau",
@@ -34593,16 +34593,22 @@
           "blob": "102603c6231393908e1bfb7de74e6860a787f8d4"
         },
         {
-          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixtures/growth_ancestry.luau",
           "mode": "100644",
-          "bytes": 35087,
-          "blob": "1375c815f26f62215f6d7a797f23329421316c33"
+          "bytes": 713,
+          "blob": "60f8769be64a207e35c6689be040c6584fbb48d4"
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
           "mode": "100644",
           "bytes": 9446,
           "blob": "5f3a0c24b797601289eab9b99994d909e3770841"
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "bytes": 35255,
+          "blob": "6521a642bc88abd397c4e2d1f3279701869350ba"
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
@@ -34614,7 +34620,7 @@
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
           "mode": "100644",
           "bytes": 49913,
-          "blob": "d3ccb2136da989b91d7c6834764a9767e9bf2385"
+          "blob": "59b3d3e6473e2c7df9ceb3209a1a9d0a5296f44b"
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
@@ -34636,22 +34642,24 @@
         }
       ],
       "actual_candidate_readback": {
-        "commit": "db8943c2218fdfdd5a763657cdd3d8086b493953",
-        "tree": "a549103aa270eff35cf15df733d2d9bfc6f7e878",
+        "commit": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
+        "tree": "32ce6bcb70c081a0acccbafeb0d069472c5791ba",
         "branch": "quality/gq470-match-growth-817bc984-20261123",
-        "source_lease": "b9e5dc8f2a125657008f0bd1ef5b3602796f90e4",
-        "return": "a1f7a8b2231e2cdd8174ec40a34bd0f3fb1cc946",
+        "source_lease": "e2b182e5589e6b36b23a1ed2612a4349b70abbb3",
+        "return": "4d4357cb570d7590e1826ad3c7331148177c56b2",
         "existing_pr": 1028,
         "old_author_parent": "785c4c546b0cb0af3efcdcad3a8ec52784e79c72",
         "formal_parent": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
-        "observed_initial_pr_base": "93a1147561a531610ac1609ebc68cc0ecf546623"
+        "observed_initial_pr_base": "93a1147561a531610ac1609ebc68cc0ecf546623",
+        "observed_pr_base_after": "c0fe5998a7e09e16a5ddb32a7f6cfb73d7a0d0f3",
+        "qa_only_predecessor": "db8943c2218fdfdd5a763657cdd3d8086b493953"
       },
       "actual_binding_lease": {
-        "commit": "16f6773e1a33e018a42e07d67be987d04db03277",
-        "operation_id": "0a62616a-483e-4953-afb1-cb528dfd1bf9"
+        "commit": "0451f4530cbc8f5d0e3aac20f981bb04edd54c2c",
+        "operation_id": "f2b0f009-4be4-4298-ac4d-d10dfed3683b"
       },
       "source_correction_grant": {
-        "status": "AUTHORIZED_ONE_EXACT_NONFORCE_QA_ONLY",
+        "status": "CONSUMED_EXACT_QA_ONLY",
         "pr": 1028,
         "branch": "quality/gq470-match-growth-817bc984-20261123",
         "old_candidate": "db8943c2218fdfdd5a763657cdd3d8086b493953",
@@ -34685,7 +34693,10 @@
         "metadata": {
           "lease": "4ffdc797d81d20efe6176bc6e0b7d8b9226ca154",
           "owner": "532aad69-6778-416c-876e-b0e4c35e9cf0"
-        }
+        },
+        "actual_candidate": "36ae7f853b7e5e42ea199967e6701bcb3a2deb68",
+        "source_lease": "e2b182e5589e6b36b23a1ed2612a4349b70abbb3",
+        "source_return": "4d4357cb570d7590e1826ad3c7331148177c56b2"
       }
     }
   ],
