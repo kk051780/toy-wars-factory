@@ -35265,6 +35265,39 @@
       "actual_prep_ready_lease": {
         "commit": "82b5e8259af288dd486cb940a114e421a92b07f6",
         "operation_id": "3fb36ab4-7b3a-4dc4-89b3-aa7e594346c2"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "ff54a45130e21a096f8d5ce7f834b4767bd4c2ab",
+        "permitted_head": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "permitted_tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
+        "permitted_pr": 940,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T10:56:03.430Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Five exact previously authored FB-015 visuals in the PRIVATE_COMPANION only. V3.0 regular device tests deferred. Retain mandatory same-head formal CI, official ZIP and rebuilt Place. No main, activation, publishing or spending.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Authenticated #1011 V3.0 and #220 after exact independent review and actual trusted queue",
+          "lease": "880aa5d28cd67a41e36e7d297862b2f5fd545323",
+          "owner": "20d5ed72-cf89-47d8-9c49-886f23db3c2f",
+          "review": 6086675925,
+          "trusted_queue_run": 45981837697,
+          "trusted_queue_job": 140447409755
+        }
       }
     }
   ],
