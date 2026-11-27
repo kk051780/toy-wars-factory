@@ -39888,6 +39888,149 @@
           "trusted_queue_job": 140627186966
         }
       }
+    },
+    {
+      "claim_id": "P0D-FB020-ACTIVE-ASSASSIN-WIND-476-20261128",
+      "feature_id": "FB020_ASSASSIN_WIND_ACTIVE_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 219,
+      "source_issue": 476,
+      "integration_issue": 220,
+      "pr": 476,
+      "base_rc_sha": "376be660477492d0a6621d8ca7f28033da396260",
+      "base_rc_tree": "561fcb77b124445f1f423143bd0a1d1e263b745a",
+      "prep_branch": "feature/p0d-fb020-owner-studio-wind-repair-20261115",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Original #476 wind action only on ACTIVE rich51. Selected NINJA author alias, validated ground, existing speed 27 duration 2.5 cooldown 18 and original exact boundary. Preserve legacy RAIDER, underlying combat role GET, Game controls, existing Remote. Separate touch wind and trap, no art/Android claim, unsigned portfolio changes, no PRIVATE source effect.",
+      "resources": [
+        "FB020_ASSASSIN_WIND_ACTIVE_V1",
+        "ACTIVE69_NINJA_WIND_BURST",
+        "ACTIVE69_NINJA_WIND_HUD_SLOT",
+        "ACTIVE69_ORIGINAL_S1RAIDERWIND_RULES"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_assassin_wind.py",
+        "rc_fastlane/features/active_assassin_wind/adapter.json",
+        "rc_fastlane/features/active_assassin_wind/native.luau",
+        "rc_fastlane/features/active_assassin_wind/original_wind_patch.py",
+        "rc_fastlane/features/active_assassin_wind/source_lock.json",
+        "rc_fastlane/verify_active_assassin_wind_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/476",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "bcd39af9-6e7e-415f-b513-6c88a529820c",
+      "issued_at": "2026-11-27T16:37:15.737Z",
+      "expires_at": "2026-11-27T18:37:15.737Z",
+      "actual_metadata_lease": {
+        "ref": "bc635977b6a4f88f13ddcadeabd72a37f36daaf9",
+        "blob": "11eb51e754f9a14dd36854740c335bf3b276430d",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "bcd39af9-6e7e-415f-b513-6c88a529820c",
+          "task_id": null,
+          "epoch": 975,
+          "acquired_at": "2026-11-27T16:37:00.041Z",
+          "expires_at": "2026-11-27T17:07:00.041Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 476,
+        "branch": "feature/p0d-fb020-owner-studio-wind-repair-20261115",
+        "old_pr_head": "915402105a88fe29b417e769003a8d8c9395ff22",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "376be660477492d0a6621d8ca7f28033da396260",
+        "tree": "15b8e3a1a0c096b35f2837fed6f99b76232b71f2",
+        "local_head": "d09aad140054995fc1eea0a883e16601833568d3",
+        "allowed_changed_files": [
+          {
+            "mode": "100644",
+            "blob": "cbe95accaa2df0c4b613f171d3aa4ace71762a4e",
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "bytes": 234499
+          },
+          {
+            "mode": "100644",
+            "blob": "e8d35dbfbb00d889b84c354ed61773ddb69932b3",
+            "path": "rc_fastlane/apply_active_assassin_wind.py",
+            "bytes": 4364
+          },
+          {
+            "mode": "100644",
+            "blob": "e9f85ee154c01ba51656bceb23f2cafb37e7f4e5",
+            "path": "rc_fastlane/features/active_assassin_wind/adapter.json",
+            "bytes": 2712
+          },
+          {
+            "mode": "100644",
+            "blob": "55c54a99e76bdc16f4e0c42719f15365a3683cba",
+            "path": "rc_fastlane/features/active_assassin_wind/native.luau",
+            "bytes": 5596
+          },
+          {
+            "mode": "100644",
+            "blob": "9aa7197b4fa178449a5a120ed2b8cf50b2ffa03f",
+            "path": "rc_fastlane/features/active_assassin_wind/original_wind_patch.py",
+            "bytes": 5703
+          },
+          {
+            "mode": "100644",
+            "blob": "635fd54316f383e27f5712fc2a0eb8943cf0eaa3",
+            "path": "rc_fastlane/features/active_assassin_wind/source_lock.json",
+            "bytes": 864
+          },
+          {
+            "mode": "100644",
+            "blob": "2f3d9be7a27892a870529acbf9cb38de467219ff",
+            "path": "rc_fastlane/verify_active_assassin_wind_native.py",
+            "bytes": 2036
+          },
+          {
+            "mode": "100644",
+            "blob": "28706f4949e9ecb859ebaab594437467f97c5821",
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "bytes": 114805
+          }
+        ],
+        "expires_at": "2026-11-27T17:37:15.737Z",
+        "issued_from": {
+          "lease": "bc635977b6a4f88f13ddcadeabd72a37f36daaf9",
+          "owner": "bcd39af9-6e7e-415f-b513-6c88a529820c"
+        },
+        "local_qa": {
+          "on": 669180,
+          "off": 668223,
+          "on_sha256": "e989ca0c8ed56a47b2f269abaf18415f4517701a2afe6210e469f8bc2318100c",
+          "off_sha256": "8752083f42edd699d994b99250388d7f17e4f059990bebbe21df8d82c3cea93d",
+          "game_delta": 714,
+          "hud_delta": 243,
+          "other_67_exact": true,
+          "compiled": 69,
+          "native_groups": 3,
+          "original_legacy_raider_pass": true,
+          "original_active_ninja_missing_reproduced": true,
+          "independent_source_layout_views": 36,
+          "android_engine": "NOT_TESTED",
+          "legacy_q_f_overlap_pending": true
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
