@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 from contextlib import redirect_stdout
+import hashlib
 import importlib.util
 import io
 import json
@@ -147,6 +148,19 @@ class UnionBoundary(unittest.TestCase):
         result = verify.verify_core(self.current, self.prior, self.reports, self.context)
         self.assertEqual(len(result["current"]["sources"]), 69)
         self.assertEqual(len(result["archive_members"]), 75)
+        active = compose.REPO / "rc_fastlane"
+        selection = verify.data(active / "ACTIVE.json")
+        packet = active / "features/active_sky_routes"
+        sky = verify.data(packet / "source_lock.json")
+        self.assertEqual(sky["profile"], selection["active_profile"])
+        self.assertEqual(sky["source_commit"], selection["active_source_commit"])
+        for relative, route in sky["routes"].items():
+            with self.subTest(active_source=relative):
+                source = (packet / Path(relative).name).read_bytes()
+                blob = b"blob " + str(len(source)).encode() + b"\0" + source
+                self.assertEqual(hashlib.sha1(blob).hexdigest(), route["after"])
+                self.assertFalse(any(row["source"] == source for row in result["current"]["sources"].values()),
+                                 "ACTIVE rich51 geometry must stay outside the private companion")
 
     def test_hud_only_inverse_restores_current_rc_and_other68(self):
         parent_lock = compose.beast_parent_profile(before_guardian(self.lock))
