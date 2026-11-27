@@ -102,9 +102,11 @@ def source_contract(root, profile, input_lock):
     combat = profile["combat_visual_followup"]
     growth = profile["growth_musou_followup"]
     art = profile["art_polish_followup"]
+    mage = profile["mage_contact_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    art_parent_pins = current_pins | {name: row["parent"]["after"] for name, row in art["rows"].items()}
+    mage_parent_pins = current_pins | {name: row["parent"]["after"] for name, row in mage["rows"].items()}
+    art_parent_pins = mage_parent_pins | {name: row["parent"]["after"] for name, row in art["rows"].items()}
     growth_parent_pins = art_parent_pins | {name: row["parent"]["after"] for name, row in growth["rows"].items()}
     combat_parent_pins = growth_parent_pins | {
         name: row["parent"]["after"] for name, row in combat["rows"].items()}
@@ -123,6 +125,7 @@ def source_contract(root, profile, input_lock):
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(root / compose.MAGE_CONTACT_OFF / "sources") == mage_parent_pins
                    and native.source_snapshot(root / compose.ART_POLISH_OFF / "sources") == art_parent_pins
                    and native.source_snapshot(root / compose.GROWTH_MUSOU_OFF / "sources") == growth_parent_pins
                    and native.source_snapshot(root / compose.COMBAT_VISUAL_OFF / "sources") == combat_parent_pins
@@ -144,7 +147,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == art["repaired_place"]
+                   == mage["repaired_place"]
+                   and native.identity(native.read(root / compose.MAGE_CONTACT_OFF / compose.PLACE))
+                   == mage["parent_place"] == art["repaired_place"]
                    and native.identity(native.read(root / compose.ART_POLISH_OFF / compose.PLACE))
                    == art["parent_place"] == growth["repaired_place"]
                    and native.identity(native.read(root / compose.GROWTH_MUSOU_OFF / compose.PLACE))

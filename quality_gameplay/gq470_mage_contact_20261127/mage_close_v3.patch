@@ -1,0 +1,94 @@
+--- a/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau
++++ b/ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau
+@@ -735,7 +735,10 @@
+ 
+  -- Both hit APIs are SERVER-owned; neutral KO credit only comes from Humanoid.Died.
+  local count=0
+- if session.swarm then count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape) end
++ if session.swarm then
++  local wandBasic=stageBasic==true and root.Parent==p.Character and shape=="CRYSTAL"
++  count+=session.swarm.damageFromPlayer(p,neutralAt,range,neutralDamage,shape,wandBasic)
++ end
+  count+=hitBotHeroes(session,p,root,char,at,range,damage,shape)
+  if session.guardians then count+=session.guardians.damageFromPlayer(p,at,range,damage,shape,root,char) end
+  count+=hitHumanHeroes(session,p,root,char,at,range,damage,shape)
+--- a/ServerScriptService/EGGRUMBLE_SwarmCombat.luau
++++ b/ServerScriptService/EGGRUMBLE_SwarmCombat.luau
+@@ -584,21 +584,51 @@
+   if delta.Magnitude<=.01 then return true end
+   return workspace:Raycast(origin,delta,params)==nil
+  end
+- local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string):number
++ -- Ordinary wand contact has its own horizontal approach; the original impact circle keeps its aim and height.
++ local function closeWandTest(pose:CFrame?,center:Vector3,radius:number):((Vector3)->boolean)?
++  if not pose or radius~=5 then return nil end
++  local look=pose.LookVector
++  local length=math.sqrt(look.X*look.X+look.Z*look.Z)
++  if length<.01 then return nil end
++  local ux,uz=look.X/length,look.Z/length
++  local start=pose.Position
++  -- At this point a level radius-five circle already covers the full two-stud half-width.
++  -- The existing neutral-only weapon pickup adds at most 3.5 to the wand's 11-stud reach.
++  local limit=math.min((center-start).Magnitude,14.5)-math.sqrt(21)
++  return function(target:Vector3):boolean
++   if math.abs(target.Y-start.Y)>5 then return false end
++   local x,z=target.X-start.X,target.Z-start.Z
++   local forward=x*ux+z*uz
++   return forward>=1 and forward<=limit and math.abs(z*ux-x*uz)<=math.min(2,forward*.5)
++  end
++ end
++
++ local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model,shape:string,wandPose:CFrame?):number
+   if session.rules.phase~="ACTIVE" then return 0 end
+   local player=session.rules.castles[id]
+   if not player or not player.alive then return 0 end
++  local closeWand=closeWandTest(wandPose,at,radius)
+   local nearest={}
++  local approach=if closeWand then {} else nil
+   for m,h in pairs(live) do
+    if m.Parent and h.Health>0 and m.PrimaryPart and not charmedByModel[m] then
+     local delta=m.PrimaryPart.Position-at
+     local dis=math.sqrt(delta.X*delta.X+delta.Z*delta.Z)
+     if AttackGeometry.allowed(origin,at,m.PrimaryPart.Position,radius,shape) then
+      table.insert(nearest,{target=h,dist=dis})
+-    end
+-   end
+-  end
+-  table.sort(nearest,function(x,y)return x.dist<y.dist end)
++    elseif approach and closeWand and closeWand(m.PrimaryPart.Position) then
++     table.insert(approach,{target=h,dist=dis})
++    end
++   end
++  end
++  local function nearer(x,y)return x.dist<y.dist end
++  table.sort(nearest,nearer)
++  -- Keep original candidates first even when tilted; only remaining ray slots can reach approach targets.
++  if approach and #approach>0 and #nearest<MAX_LOS_RAYS_PER_ATTACK then
++   table.sort(approach,nearer)
++   local remaining=MAX_LOS_RAYS_PER_ATTACK-#nearest
++   table.move(approach,1,math.min(remaining,#approach),#nearest+1,nearest)
++  end
+   -- A blocked target never consumes a KO/HIT slot; guard CPU with a fixed ray budget.
+   local hits=0
+   local rays=0
+@@ -709,7 +739,7 @@
+   getBattleGrowthSnapshot=function(id:string):any
+    return battleGrowthSnapshot(kills[id] or 0)
+   end,
+-  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?):number
++  damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number,shape:string?,wandBasic:boolean?):number
+    if growthCurrentPlayer(tostring(player.UserId))~=player then return 0 end
+    local character=player.Character
+    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+@@ -722,8 +752,10 @@
+     then (comboById[tostring(player.UserId)] or 0) else 0
+    local bonus=if currentCombo>=60 then 1.12 elseif currentCombo>=20 then 1.06 else 1
+    local power=Musou.attackMultiplier(musouRound,musouContext(player,os.clock()),"NEUTRAL")
++   local wandPose=if wandBasic==true and shape=="CRYSTAL" and player:GetAttribute("EGGRUMBLE_Role")=="MAGE"
++    then root.CFrame else nil
+    return strike(tostring(player.UserId),at,radius,damage*bonus*power,
+-    root.Position+Vector3.new(0,1,0),character,shape or "CIRCLE")
++    root.Position+Vector3.new(0,1,0),character,shape or "CIRCLE",wandPose)
+   end,
+   damageFromBot=function(botId:string,at:Vector3):number
+    local actor=session.botActors and session.botActors[botId]
