@@ -41253,7 +41253,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Exact #471 FB020 author weapon/combo donor, mounted for selected ACTIVE rich51 MAGE only. Reuse original Game/Horde F authority, true avatar LOS, <=18 stud near support, <=6 distinct neutrals, 3 stages, no new Remote/player HP/datastore/castle behavior. Selected staff lifecycle and visual clipping. Existing warrior Q, other jobs, Private selected vector and all other 69 existing files unchanged.",
       "resources": [
@@ -41432,6 +41432,72 @@
       "actual_binding_lease": {
         "commit": "123019b7e60758da754104494b87dbf35499b546",
         "operation_id": "27e69aa4-aad3-496f-b7d9-eb42de7e9cfc"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1044#pullrequestreview-6092043778",
+        "review_id": 6092043778,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46047573026,
+        "active_job": 140670557446,
+        "active_executed_steps": 95,
+        "active_place_bytes": 700116,
+        "active_place_sha256": "4bc6a0b61fcc784c52de5cc5c9a5ddbefac0e16564cdc33b89484d942d6c604d",
+        "immediate_off_bytes": 687144,
+        "active_artifact": 15223397037,
+        "active_zip_bytes": 214258,
+        "active_zip_digest": "sha256:0413330d6a0551e8d236914ef4f99705502db0a21bcec2928dcdf7fa33d1668d",
+        "private_ci": 46047573079,
+        "private_job": 140670556614,
+        "private_steps": 48,
+        "private_artifact": 15222108798,
+        "private_zip_bytes": 26225168,
+        "private_zip_digest": "sha256:4ce78ef204569774c789c249e500def0ea3bcb70775c23f8d167ad714403401e",
+        "source_lock": "1c57c024f66300ef636a7e029d173ef90a247873c9e40e9f5f6fb1668b603949",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "7a60dab91bd558e21c36dadca82c22e861e7e775",
+        "operation_id": "e86ed4b5-3954-440c-a725-8082262fe8d5"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "236d26bb284d7653f4ed572236701acec8ecde6c",
+        "permitted_head": "fdc00d1c47796e6298088c0b08e0420298e32e05",
+        "permitted_tree": "e2c26254dd94690a8a76302118ce580d5eb85e3f",
+        "permitted_pr": 1044,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T18:44:22.857Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Exact #471 FB020 author weapon/combo donor, mounted for selected ACTIVE rich51 MAGE only. Reuse original Game/Horde F authority, true avatar LOS, <=18 stud near support, <=6 distinct neutrals, 3 stages, no new Remote/player HP/datastore/castle behavior. Selected staff lifecycle and visual clipping. Existing warrior Q, other jobs, Private selected vector and all other 69 existing files unchanged.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "7a60dab91bd558e21c36dadca82c22e861e7e775",
+          "owner": "e86ed4b5-3954-440c-a725-8082262fe8d5",
+          "review": 6092043778,
+          "trusted_queue_run": 46049097946,
+          "trusted_queue_job": 140675666067
+        }
       }
     }
   ],
