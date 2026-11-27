@@ -226,6 +226,18 @@ class UnionBoundary(unittest.TestCase):
         self.assertNotIn(touch_hud["after"], private_blobs)
         for name in ("touch-layout.luau","touch-ui.luau"):
             self.assertEqual(hashlib.sha256((touch_dir / name).read_bytes()).hexdigest(), touch["original"][name])
+        growth_dir = active / "features/active_role_growth"
+        growth = verify.data(growth_dir / "source_lock.json")
+        self.assertEqual(growth["profile"], selection["active_profile"])
+        routes = growth["routes"]
+        self.assertEqual(routes["client/HUD.client.luau"]["before"], touch_hud["after"])
+        self.assertEqual(routes["server/MusouHorde.luau"]["before"], hit["horde"])
+        self.assertEqual(routes["server/Game.server.luau"]["before"],
+                         wind["routes"]["server/Game.server.luau"]["after"])
+        author = (growth_dir / "TimePremiumRules.luau").read_bytes()
+        self.assertEqual(hashlib.sha1(b"blob " + str(len(author)).encode() + bytes([0]) + author).hexdigest(),
+                         growth["source_origin"]["natural_growth_blob"])
+        self.assertTrue(private_blobs.isdisjoint(route["after"] for route in routes.values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])

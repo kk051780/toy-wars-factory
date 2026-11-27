@@ -1,0 +1,36 @@
+{
+  "enabled": true,
+  "profile": "rich51",
+  "feature": "GQ219_WARRIOR_001_ACTIVE_GROWTH_V1",
+  "source_origin": {
+    "design": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7203941708",
+    "commit": "3b96ac3bc4284afa5d3907733f0d64b4c5470685",
+    "natural_growth_blob": "c4605187c23c959b420d06d27b40dea31f804ad3"
+  },
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "283033324b5f66ae29b0d683dce3a1d5d7b62af9",
+      "after": "c542462a642f4cfac8d04327986c71b982078305"
+    },
+    "server/MusouHorde.luau": {
+      "before": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38",
+      "after": "db96261d71c764cd666dde43e908704976d50afa"
+    },
+    "client/HUD.client.luau": {
+      "before": "abca5035f1bddbccde9bcd10f1a69e13c44189b6",
+      "after": "cf39a901e190d062b93b8f408a0760a7a2fd65bf"
+    },
+    "server/MatchRoleGrowth.luau": {
+      "before": null,
+      "after": "03eb350bf4bf6d08eec98ff93847dae4c76a88f3"
+    },
+    "server/TimePremiumRules.luau": {
+      "before": null,
+      "after": "c4605187c23c959b420d06d27b40dea31f804ad3"
+    }
+  },
+  "off_place": {
+    "bytes": 674623,
+    "sha256": "7f178413a5291c8f8cafe2cb9cdc728251f85b198483d0de588a78588230dc6d"
+  }
+}
