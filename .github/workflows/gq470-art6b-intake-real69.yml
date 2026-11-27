@@ -1,0 +1,152 @@
+name: GQ470 ART6B REAL69 crosslane source-composite A PREP (not RC)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_art6b_intake_real69_20261121/**'
+      - '.github/workflows/gq470-art6b-intake-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  art6b-source-compose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ROOT: /tmp/gq470-art6b
+      SCRIPT: quality_gameplay/gq470_art6b_intake_real69_20261121/compose_art6b.py
+      FORMAL: e80973c354f14a0d0088577f3cc1a875454f0f8f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify official+six immutable parent sources and compose
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$SCRIPT"
+          python3 -B "$SCRIPT" --self-test
+          CURRENT=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)
+          test "$CURRENT" = "$FORMAL" || { echo RED_OFFICIAL_HEAD_CHANGED; exit 1; }
+          mkdir -p "$ROOT/formal" "$ROOT/parents"
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir "$ROOT/formal"
+          python3 - <<'PY' > "$ROOT/parents.list"
+          import sys
+          sys.path.insert(0,'quality_gameplay/gq470_art6b_intake_real69_20261121')
+          from compose_art6b import PARENTS
+          for p in PARENTS: print(p.pr,p.head,p.run,p.artifact)
+          PY
+          test "$(wc -l < "$ROOT/parents.list")" -eq 6
+          while read -r PR HEAD RUN ARTIFACT; do
+            test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .head.sha)" = "$HEAD" || { echo "RED_PARENT_HEAD_MOVED_$PR"; exit 1; }
+            test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" --jq '.head_sha+" "+.conclusion')" = "$HEAD success" || { echo "RED_PARENT_NOT_GREEN_$PR"; exit 1; }
+            mkdir -p "$ROOT/parents/$PR"
+            gh run download "$RUN" --repo "$GITHUB_REPOSITORY" \
+              --name "$ARTIFACT" --dir "$ROOT/parents/$PR"
+            echo "ART6B_PINNED_PARENT_$PR $RUN"
+          done < "$ROOT/parents.list"
+          python3 -B "$SCRIPT" --base "$ROOT/formal" --artifacts "$ROOT/parents" \
+            --out "$ROOT/candidate"
+          echo ART6B_6_SOURCE_COMPOSITE_63_EXACT_NONFORMAL
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _pinned_luau
+          persist-credentials: false
+      - name: Compile actual selected 69 Luau ON +69 OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _pinned_luau -B "$ROOT/luau" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build "$ROOT/luau" --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,sys,subprocess
+          sys.path.insert(0,'quality_gameplay/gq470_art6b_intake_real69_20261121')
+          from compose_art6b import selected,bytes_by_route,delta
+          root=Path(os.environ['ROOT'])/'candidate'
+          off=root/'OFF69_ART6B_ORIGINAL'
+          delta(bytes_by_route(off),bytes_by_route(root))
+          for folder in (root,off):
+              paths=selected(folder)
+              assert len(paths)==69
+              for source in paths.values():
+                  subprocess.run([str(Path(os.environ['ROOT'])/'luau/luau-compile'),
+                                  '--text',str(source)],check=True,stdout=subprocess.DEVNULL)
+          print('ART6B_NATIVE_ON69_OFF69_6_CHANGED_63_EXACT_PASS')
+          PY
+      - name: Pinned Rojo 69-source real Place and original byte-exact inverse
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o "$ROOT/rojo.zip"
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $ROOT/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os
+          root=Path(os.environ['ROOT'])
+          with ZipFile(root/'rojo.zip') as z:
+              names=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(names)==1
+              binary=root/'rojo';binary.write_bytes(z.read(names[0]));binary.chmod(0o755)
+          PY
+          BASE="$ROOT/candidate"
+          "$ROOT/rojo" build "$BASE/EGGRUMBLE_REAL69.project.json" \
+            -o "$BASE/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          "$ROOT/rojo" build "$BASE/OFF69_ART6B_ORIGINAL/EGGRUMBLE_REAL69.project.json" \
+            -o "$ROOT/OFF69_REBUILT.rbxlx"
+          cmp "$ROOT/OFF69_REBUILT.rbxlx" "$BASE/OFF69_ART6B_ORIGINAL/EGGRUMBLE_REAL69_PRIVATE.rbxlx"
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$BASE/EGGRUMBLE_REAL69.project.json" \
+            --place "$BASE/EGGRUMBLE_REAL69_PRIVATE.rbxlx" --count 69
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project "$BASE/OFF69_ART6B_ORIGINAL/EGGRUMBLE_REAL69.project.json" \
+            --place "$ROOT/OFF69_REBUILT.rbxlx" --count 69
+          python3 -B "$SCRIPT" --seal "$BASE"
+          python3 -B "$SCRIPT" --verify "$BASE"
+      - name: Legacy source17/48 and B220 exact 6 selected source handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_nonloss_20261120/verify_real69.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py --self-test
+          python3 -B quality_gameplay/gq8_rc85_rc86_real69_feature_truth_20261120/audit_legacy48.py \
+            --base "$ROOT/candidate" --report "$ROOT/candidate/ART6B_LEGACY48_AUDIT.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,os
+          sys.path.insert(0,'quality_gameplay/gq8_rc85_rc86_real68_nonloss_20261120')
+          from verify_nonloss import project_scan
+          from quality_gameplay.gq8_rc85_rc86_real69_nonloss_20261120.verify_real69 import marker_check
+          root=Path(os.environ['ROOT'])/'candidate'
+          assert len(marker_check(project_scan(root,'EGGRUMBLE_REAL69.project.json')))==17
+          print('ART6B_17_FAMILIES_48_HISTORICAL_FLAGS_SOURCE_ONLY_PASS')
+          PY
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL" || { echo RED_STALE_FORMAL_RC; exit 1; }
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            test "$(git rev-parse HEAD)" = "$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")" || { echo RED_CURRENT_HEAD_DRIFT; exit 1; }
+          fi
+          python3 -B "$SCRIPT" --export-b "$ROOT/candidate"
+          python3 -B "$SCRIPT" --verify-b "$ROOT/candidate"
+          echo ART6B_B220_SELECTED_SIX_SOURCE_BYTES_ONLY_NOT_RC_NOT_ART_GO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ470-ART6B-REAL69-SELECTED-SOURCES-NOT-FORMAL
+          path: |
+            /tmp/gq470-art6b/candidate/EGGRUMBLE_REAL69.project.json
+            /tmp/gq470-art6b/candidate/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq470-art6b/candidate/EGGRUMBLE_REAL69_PRIVATE.rbxlx
+            /tmp/gq470-art6b/candidate/sources/**
+            /tmp/gq470-art6b/candidate/ART6B_LEGACY48_AUDIT.json
+            /tmp/gq470-art6b/candidate/B220_ART6B_SOURCE_ONLY_NOT_FORMAL/**
+            /tmp/gq470-art6b/OFF69_REBUILT.rbxlx
+          if-no-files-found: error
+          retention-days: 7
