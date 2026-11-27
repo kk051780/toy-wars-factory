@@ -38687,7 +38687,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Studio-only existing author #376 physically isolated team lobby, #396 team-rebalance move and existing bounded late spectator correction after engine spawn override. Active rich51 Game/V4TrainingBridge plus one exact authored LobbyDojoIsland; keep current Ready, #391 result/dead guard, #407 bot, #395 Score5, #1016 persistence, existing WCS/Twin/Realm and every Private source. No other places or device claims.",
       "resources": [
@@ -38850,6 +38850,72 @@
       "actual_binding_lease": {
         "commit": "e58af98c7b0c6b48f4aba9e2d0a730010d960871",
         "operation_id": "ec4c04f5-a06e-41b8-8d68-5eeada628ec3"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/376#pullrequestreview-6090226181",
+        "review_id": 6090226181,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46021870167,
+        "active_job": 140583259953,
+        "active_executed_steps": 95,
+        "active_place_bytes": 653907,
+        "active_place_sha256": "3e5ac7b22b388fcdb928a38c0f0cdd27c942fb80f34ff1d8b1c8c744d17d85d9",
+        "immediate_off_bytes": 646032,
+        "active_artifact": 15209195442,
+        "active_zip_bytes": 194282,
+        "active_zip_digest": "sha256:c68d2f8d282e107ec8f8854779d490c62322319497ed68ab02d7d6c307cbedf5",
+        "private_ci": 46021870102,
+        "private_job": 140583259497,
+        "private_steps": 48,
+        "private_artifact": 15209940416,
+        "private_zip_bytes": 25131224,
+        "private_zip_digest": "sha256:e3533a6acb6622eebb17ca63529f6d0703755b92a05f743040e46aa3397feee4",
+        "source_lock": "7a358c91b8ae773e8ed038fb3db0fa19841ce946c67b8d5f7497c16cf0c5c731",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "fe55831902ce803fa430f319e33a176e0f563c29",
+        "operation_id": "d6d45952-754f-439b-8809-3f59d826adc1"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "f14491be5ffe8a65681bf9329880609042d8e6b1",
+        "permitted_head": "8bdd16933e74bb16d323d78fd25f56967b28ee30",
+        "permitted_tree": "c9507a4c778b442c10b7612d452eeb531083d7be",
+        "permitted_pr": 376,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T15:38:32.411Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Existing #376 authored separated lobby and twelve dojo pads in active Studio rich51. Update existing safe team placement and one bounded spectator correction, retain original READY, Results, Score5, bots and persistence. Exactly known Game, V4TrainingBridge, new exact original module, other65 sources and companion preserved. Require distinct official push checks and artifacts.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "fe55831902ce803fa430f319e33a176e0f563c29",
+          "owner": "d6d45952-754f-439b-8809-3f59d826adc1",
+          "review": 6090226181,
+          "trusted_queue_run": 46023539016,
+          "trusted_queue_job": 140588973679
+        }
       }
     }
   ],
