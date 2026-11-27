@@ -41838,7 +41838,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Fixed #219 selected NINJA Q short Blink with 0.18s direction tell 5/7/9/11/13 studs, CD16/E30; server avatar/life/phase/role/pos controls, ground and seat guards, exact author Private movement sweep reuse, no collision bypass/iframe/damage. Preserve normal F, existing R Assassin Wind, other Q, PRIVATE and original map.",
       "resources": [
@@ -42031,6 +42031,72 @@
         "source_return": "fc7d0cdb0fd72d39f4d7d41fd55e9623933587a9",
         "failed_job": null,
         "reason": "Independent #1046 exact Native found held 55 degree movement and clamped 35 degree warning canceled all movement while charging 30E. Use current safe forward held bearing and refuse too-sideways before charge."
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1046#pullrequestreview-6092353086",
+        "review_id": 6092353086,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "active_ci": 46052571076,
+        "active_job": 140687241919,
+        "active_executed_steps": 95,
+        "active_place_bytes": 718470,
+        "active_place_sha256": "8668e2fb65b62b6f25865184bcbdeed36328df05a61dea43140b347804252d6a",
+        "immediate_off_bytes": 709077,
+        "active_artifact": 15224304907,
+        "active_zip_bytes": 222438,
+        "active_zip_digest": "sha256:6194a310ebadaaf2ea171042ade00ed49797c734496f547cc7608dde65b2b179",
+        "private_ci": 46052571065,
+        "private_job": 140687241961,
+        "private_steps": 48,
+        "private_artifact": 15225327268,
+        "private_zip_bytes": 26224907,
+        "private_zip_digest": "sha256:0fa684becb0a9783943e4ecfd47b9272350813af6ab19fea1ef0b1b05111753b",
+        "source_lock": "7d47a6a8f2ad263a9e2272ca5ea5b991f43d4530ad4c9906a8b905d18c5d167b",
+        "device_evidence": "NOT_TESTED_PER_V35"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "6d0a875345b64c790b2e4e5ae03f42bfe0bf24a2",
+        "operation_id": "ca0533e5-d4cd-4dc7-8aad-8c95d603c30a"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "63d6092d876325b16e540708d3ec992d8bd9540d",
+        "permitted_head": "de18cb1a2e3c3d1ab42dd2e1ba7d1547bea64db0",
+        "permitted_tree": "db391980f1224e82028e84a2e033c6218e154871",
+        "permitted_pr": 1046,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-27T19:24:46.503Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Fixed #219 selected NINJA Q short Blink with 0.18s direction tell 5/7/9/11/13 studs, CD16/E30; server avatar/life/phase/role/pos controls, ground and seat guards, exact author Private movement sweep reuse, no collision bypass/iframe/damage. Preserve normal F, existing R Assassin Wind, other Q, PRIVATE and original map.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Both required ACTIVE and PRIVATE same-head CI, distinct exact review and trusted ready queue under #1011 V3.5/#220",
+          "policy_updated_at": "2026-11-27T12:01:25Z",
+          "lease": "6d0a875345b64c790b2e4e5ae03f42bfe0bf24a2",
+          "owner": "ca0533e5-d4cd-4dc7-8aad-8c95d603c30a",
+          "review": 6092353086,
+          "trusted_queue_run": 46053959272,
+          "trusted_queue_job": 140691817306
+        }
       }
     }
   ],
