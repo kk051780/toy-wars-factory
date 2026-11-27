@@ -2566,7 +2566,7 @@
           "origin": "controller"
         }
       },
-      "source_head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
+      "source_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
       "prepared_candidate_head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
       "prepared_candidate_tree": "e346ed1ccaca7428a9e7096761f5f2b63ac6980c",
       "prepared_source_blobs": {
@@ -2586,10 +2586,10 @@
       },
       "actual_candidate_readback": {
         "pr": 1017,
-        "head": "ac7a35520f82ded4a8471bc3386c15199e5a5dec",
-        "tree": "51233be95fc02cd0fc7e4c239171d7286da2e1b7",
+        "head": "49959383095bca2de9c7bbe1f1deb52cee85a4c9",
+        "tree": "e346ed1ccaca7428a9e7096761f5f2b63ac6980c",
         "base": "cc6fed686214596eb717cc5827856311338999ad",
-        "source_lease": "73f989dc08e83d3a3c871d5678bd3184f608a501",
+        "source_lease": "2d623b7339c32c36503dbc401620d7d839d63485",
         "original_source_preserved": "547fd7d56ef0c1e0a688135e789df0f79e0358c6",
         "paths": 13
       },
@@ -2649,7 +2649,23 @@
           "work_branch": "coord/p0d-work-claims",
           "origin": "controller"
         }
-      }
+      },
+      "actual_repair_binding_lease": {
+        "ref": "76bb51fbc748396bd65287ddbfbdbd39f8ff51bd",
+        "blob": "948818efcc58874011fce81e013e11b9b553f60e",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "2cbdb524-5bfd-4552-9bfe-172dd5a2a09b",
+          "task_id": null,
+          "epoch": 788,
+          "acquired_at": "2026-11-27T01:28:49.082Z",
+          "expires_at": "2026-11-27T01:58:49.082Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "no_source_changes_after_fixed_head_without_new_scope": true
     },
     {
       "PREP_READY": false,
