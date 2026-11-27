@@ -42457,6 +42457,124 @@
           "trusted_queue_job": 140704394733
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ470-FB008-ACTIVE-CROWD-CAP-382-20261128",
+      "feature_id": "GQ470_FB008_ACTIVE_MINION_PER_PLAYER_CAP_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, scoped original PR reuse)",
+      "parent_issue": 470,
+      "source_issue": 382,
+      "integration_issue": 220,
+      "pr": 382,
+      "base_rc_sha": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+      "base_rc_tree": "26f4e02041b56a49ab9f25f0d67479bf4e546b8f",
+      "prep_branch": "feature/p0d-private71-five-art-composite-20261114",
+      "allowed_new_prs": 0,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Exact original #382 per-player ordinary neutral impact cap only in ACTIVE rich51 (allocation, guard and increment). One MusouHorde source +158 B, max two ordinary impacts per player per tick, 3 HP per hit, unchanged elite and next tick. Preserve 9 neutrals, routes, positions, damage authority, Game/HUD, PRIVATE69, no whole old #382 or overlapping #408 cohort import.",
+      "resources": [
+        "ACTIVE_RICH51_FB008_MUSOU_HORDE_PER_PLAYER_CAP"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_crowd_cap.py",
+        "rc_fastlane/features/active_crowd_cap/native_scene.luau",
+        "rc_fastlane/features/active_crowd_cap/source_lock.json",
+        "rc_fastlane/verify_active_crowd_cap_native.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/pull/382#issuecomment-6887359772",
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "6f0021b4-2873-47ff-818d-8f0343fa7d1f",
+      "issued_at": "2026-11-27T19:39:23.192Z",
+      "expires_at": "2026-11-27T21:39:23.192Z",
+      "actual_metadata_lease": {
+        "ref": "b73d090fbc99e9b91847b4a358116ce79ea287e9",
+        "blob": "f5fa0d49e6774f6ad26561fcb7023dc37e1080c9",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "6f0021b4-2873-47ff-818d-8f0343fa7d1f",
+          "task_id": null,
+          "epoch": 1025,
+          "acquired_at": "2026-11-27T19:39:09.944Z",
+          "expires_at": "2026-11-27T20:09:09.944Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "Authenticated current #1011 V3.5 December priorities, #218/#220. Scoped original PR reuse, not a formal writer grant.",
+      "source_grant": {
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "pr": 382,
+        "branch": "feature/p0d-private71-five-art-composite-20261114",
+        "old_pr_head": "1e9e7ea4a07582d9d2843f0af66bcdd5b086930c",
+        "old_base_ref": "rc/p0d-s1-kids-rc01",
+        "formal_parent": "f1a60110360ccd708aaaf8276695fd161c7869bb",
+        "tree": "c4ca4d255f1ff55b7be01749df6fccad27b4afaa",
+        "local_head": "46dbb5d0c9e91cae620dbbf358aaa83c6bc2d73b",
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "28eb588db5e647dd44d8fd864fd6dc9314d2922d",
+            "bytes": 257964
+          },
+          {
+            "path": "rc_fastlane/apply_active_crowd_cap.py",
+            "mode": "100644",
+            "blob": "eb66ec67aa044595b2be069be3268c20e8468d53",
+            "bytes": 3972
+          },
+          {
+            "path": "rc_fastlane/features/active_crowd_cap/native_scene.luau",
+            "mode": "100644",
+            "blob": "ec8308c54c467ba7d84c77444c3a50fdd1acbd6d",
+            "bytes": 2787
+          },
+          {
+            "path": "rc_fastlane/features/active_crowd_cap/source_lock.json",
+            "mode": "100644",
+            "blob": "933efd73075436cc94f2527e0f015992b5b7a3b8",
+            "bytes": 701
+          },
+          {
+            "path": "rc_fastlane/verify_active_crowd_cap_native.py",
+            "mode": "100644",
+            "blob": "a15dab4134db3e522a1bb70807949a4e1a04da18",
+            "bytes": 4348
+          }
+        ],
+        "expires_at": "2026-11-27T20:39:23.192Z",
+        "issued_from": {
+          "lease": "b73d090fbc99e9b91847b4a358116ce79ea287e9",
+          "owner": "6f0021b4-2873-47ff-818d-8f0343fa7d1f"
+        },
+        "local_qa": {
+          "place_bytes": 718628,
+          "place_sha256": "708c77549d59dadf24545e29fcc68883245489045a3c05ea1f66cabb207a4825",
+          "off_bytes": 718470,
+          "off_sha256": "8668e2fb65b62b6f25865184bcbdeed36328df05a61dea43140b347804252d6a",
+          "sources": 74,
+          "unchanged": 73,
+          "source_before_blob": "e84ee6429a19562a10d497e1c165b21ec0533069",
+          "source_after_blob": "c0a700509c950611d33651c20fca817ea9b324c0",
+          "author_adapter_blob": "cb35806584ec7a7683fefbe5081906f3a9d695ad",
+          "actual_selected_sole_and_dual_ticks": true,
+          "negative_mutants": 4,
+          "retained_blink_water_groups": 6,
+          "device": "NOT_TESTED_V3.5"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
