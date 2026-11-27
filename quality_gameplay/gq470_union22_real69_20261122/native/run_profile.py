@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "4799734cc3721ea6d65d21c867be637232725b26bd50cfaba5f33b6fa6d08e4b"
+INPUT_LOCK_SHA256 = "d11bac341ff37ab554399d32bfadd324411906f633e67380daa0730048b30f20"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -715,6 +715,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         host_parent = profile["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
         hud_parent = profile["fractional_hp_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"]
         water_chain_parent_pins = lock["sources"] | {
+            name: row["parent"]["after"] for name, row in profile["field_loadouts_followup"]["rows"].items()
+        } | {
             name: row["parent"]["after"] for name, row in profile["wing_warrior_followup"]["rows"].items()
         } | {
             name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
@@ -801,6 +803,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from fixed_cues import run as run_fixed_cues
         run_fixed_cues(root, output / "fixed_cues", binary, pin, context, profile,
                        compose, clean_environment())
+        from field_loadouts import FILES as field_loadout_files, PROCESS_COUNT as field_loadout_runs
+        from field_loadouts import run as run_field_loadouts
+        run_field_loadouts(root, output / "field_loadouts", binary, pin, context, profile,
+                           compose, clean_environment())
+        from first90_role import FILES as first90_role_files, PROCESS_COUNT as first90_role_runs
+        from first90_role import run as run_first90_roles
+        run_first90_roles(root, output / "first90_role", binary, pin, context, profile,
+                          compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -828,13 +838,18 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         portrait_files = sum(name.startswith("portrait/") for name in evidence)
         team_win_rule_files = sum(name.startswith("team_win_rule/") for name in evidence)
         hp_files = sum(name.startswith("fractional_hp/") for name in evidence)
-        current_stage_files = len(wing_warrior_files) + len(fixed_cue_files)
+        current_stage_files = (len(wing_warrior_files) + len(fixed_cue_files)
+                               + len(field_loadout_files) + len(first90_role_files))
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
                 + current_stage_files
                 and {name.removeprefix("wing_warrior/") for name in evidence
                      if name.startswith("wing_warrior/")} == wing_warrior_files
                 and {name.removeprefix("fixed_cues/") for name in evidence
                      if name.startswith("fixed_cues/")} == fixed_cue_files
+                and {name.removeprefix("field_loadouts/") for name in evidence
+                     if name.startswith("field_loadouts/")} == field_loadout_files
+                and {name.removeprefix("first90_role/") for name in evidence
+                     if name.startswith("first90_role/")} == first90_role_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -879,6 +894,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "ninja_s4": identity(read(output / "ninja_s4/receipt.json")),
                    "wing_warrior": identity(read(output / "wing_warrior/receipt.json")),
                    "fixed_cues": identity(read(output / "fixed_cues/receipt.json")),
+                   "field_loadouts": identity(read(output / "field_loadouts/receipt.json")),
+                   "first90_role": identity(read(output / "first90_role/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -887,7 +904,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "growth_ui_full_bodies_each": 31,
                                           "hud_client_runtime_executed_in_growth": True},
                    "native_process_count": 99 + projectile_runs + water_chain_runs + ninja_s4_runs
-                   + wing_warrior_runs + fixed_cue_runs,
+                   + wing_warrior_runs + fixed_cue_runs + field_loadout_runs + first90_role_runs,
                    "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
                    + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}

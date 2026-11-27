@@ -87,6 +87,8 @@ def profile_sources(root, lock, compose):
     final = root / compose.ART_POLISH_OFF / "sources"
     parent = root / compose.GROWTH_MUSOU_OFF / "sources"
     after = {name: row["after"] for name, row in lock["sources"].items()} | {
+        name: row["parent"]["after"] for name, row in lock["field_loadouts_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in lock["wing_warrior_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in lock["ninja_s4_followup"]["rows"].items()

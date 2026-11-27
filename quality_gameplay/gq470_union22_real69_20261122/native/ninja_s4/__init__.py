@@ -141,7 +141,9 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "NINJA_S4_PROFILE_SCOPE")
     later = profile["wing_warrior_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in later.items()}
+    newest = profile["field_loadouts_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in newest.items()}
+              | {name: row["parent"]["after"] for name, row in later.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     off_root = source_root.parent / compose.NINJA_S4_OFF / "sources"
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}

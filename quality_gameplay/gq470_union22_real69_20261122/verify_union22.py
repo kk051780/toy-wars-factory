@@ -510,7 +510,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 35 and len(lock["sources"]) - len(changed) == 34, "CHANGE_COUNT")
+    require(len(changed) == 36 and len(lock["sources"]) - len(changed) == 33, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -566,8 +566,18 @@ def verify_core(root, base, reports, context):
             and wing_warrior["ability_ids"] == ["MAGE-001", "MAGE-011", "MAGE-012", "MAGE-026",
                                               "MAGE-040", "WARRIOR-016", "WARRIOR-071"]
             and wing_warrior["combo_ids"] == ["COMBO-005", "COMBO-002"], "WING_WARRIOR_SCOPE")
+    field_loadouts = lock["field_loadouts_followup"]
+    require(set(field_loadouts["rows"]) == set(compose.FIELD_LOADOUTS_SOURCES)
+            and field_loadouts["ability_ids"] == ["BUILDER-018", "BUILDER-040", "BEAST-005", "TRAPPER-015",
+                                                 "WARRIOR-020", "WARRIOR-060"]
+            and field_loadouts["combo_ids"] == ["COMBO-013", "COMBO-001"]
+            and field_loadouts["feedback_id"] == "FB-004", "FIELD_LOADOUTS_SCOPE")
+    expected_field_loadouts_off, field_loadouts_off_lock, field_loadouts_off = verify_source_rollback(
+        root, root, lock, current, field_loadouts, field_loadouts["rows"], wing_warrior["repaired_place"],
+        compose.FIELD_LOADOUTS_OFF, compose.FIELD_LOADOUTS_OFF_ARCHIVE, "FIELD_LOADOUTS")
     expected_wing_warrior_off, wing_warrior_off_lock, wing_warrior_off = verify_source_rollback(
-        root, root, lock, current, wing_warrior, wing_warrior["rows"], ninja_s4["repaired_place"],
+        root, root / compose.FIELD_LOADOUTS_OFF, field_loadouts_off_lock, field_loadouts_off,
+        wing_warrior, wing_warrior["rows"], ninja_s4["repaired_place"],
         compose.WING_WARRIOR_OFF, compose.WING_WARRIOR_OFF_ARCHIVE, "WING_WARRIOR")
     expected_ninja_s4_off, ninja_s4_off_lock, ninja_s4_off = verify_source_rollback(
         root, root / compose.WING_WARRIOR_OFF, wing_warrior_off_lock, wing_warrior_off,
@@ -743,7 +753,7 @@ def verify_core(root, base, reports, context):
         "canonical_build": context["canonical_build"], "receipt_provenance": context["kind"],
         "official_build_head": context["official_build_head"],
         "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-        "selected_source_count": 69, "changed_source_count": 35, "unchanged_source_count": 34,
+        "selected_source_count": 69, "changed_source_count": 36, "unchanged_source_count": 33,
         "source_hashes": {r: v["sha256"] for r, v in current["sources"].items()},
         "source_classes": {r: v["class"] for r, v in current["sources"].items()},
         "private_place_bytes": lock["final_place"]["bytes"], "private_place_sha256": lock["final_place"]["sha256"],
@@ -808,6 +818,8 @@ def verify_core(root, base, reports, context):
         "ninja_s4_rollback_archive": digest(read(root / compose.NINJA_S4_OFF_ARCHIVE)),
         "wing_warrior_followup": wing_warrior,
         "wing_warrior_rollback_archive": digest(read(root / compose.WING_WARRIOR_OFF_ARCHIVE)),
+        "field_loadouts_followup": field_loadouts,
+        "field_loadouts_rollback_archive": digest(read(root / compose.FIELD_LOADOUTS_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -823,7 +835,7 @@ def verify_core(root, base, reports, context):
                 for name in expected_reuse), "CORE_COMPILE_REUSE_PRIOR_BR_BYTES")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 35 and core.get("unchanged_sources") == 34
+            and core.get("changed_sources") == 36 and core.get("unchanged_sources") == 33
             and type(core.get("compile_count")) is int and type(core.get("rojo_build_count")) is int
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
@@ -849,6 +861,7 @@ def verify_core(root, base, reports, context):
             and core.get("mage_water_chain_parent_place") == water_chain_off_lock["final_place"]
             and core.get("ninja_s4_parent_place") == ninja_s4_off_lock["final_place"]
             and core.get("wing_warrior_parent_place") == wing_warrior_off_lock["final_place"]
+            and core.get("field_loadouts_parent_place") == field_loadouts_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -935,6 +948,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.WING_WARRIOR_OFF + "/" + name: pin
                            for name, pin in expected_wing_warrior_off.items()})
     expected_stage[compose.WING_WARRIOR_OFF_ARCHIVE] = digest(read(root / compose.WING_WARRIOR_OFF_ARCHIVE))
+    expected_stage.update({compose.FIELD_LOADOUTS_OFF + "/" + name: pin
+                           for name, pin in expected_field_loadouts_off.items()})
+    expected_stage[compose.FIELD_LOADOUTS_OFF_ARCHIVE] = digest(read(root / compose.FIELD_LOADOUTS_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -987,6 +1003,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.NINJA_S4_SOURCES)
     expected_compile.update(str(Path(stage) / compose.WING_WARRIOR_OFF / "sources" / name)
                             for name in compose.WING_WARRIOR_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.FIELD_LOADOUTS_OFF / "sources" / name)
+                            for name in compose.FIELD_LOADOUTS_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -1012,7 +1030,7 @@ def verify_core(root, base, reports, context):
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
                                compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
                                compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF,
-                               compose.WING_WARRIOR_OFF)},
+                               compose.WING_WARRIOR_OFF, compose.FIELD_LOADOUTS_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -1052,7 +1070,9 @@ def verify_core(root, base, reports, context):
                         compose.NINJA_S4_OFF: [name for name in lock["sources"]
                                               if name in compose.NINJA_S4_SOURCES],
                         compose.WING_WARRIOR_OFF: [name for name in lock["sources"]
-                                                   if name in compose.WING_WARRIOR_SOURCES]}
+                                                   if name in compose.WING_WARRIOR_SOURCES],
+                        compose.FIELD_LOADOUTS_OFF: [name for name in lock["sources"]
+                                                     if name in compose.FIELD_LOADOUTS_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
                               if prefix != compose.OFF or p not in expected_reuse)
@@ -1682,6 +1702,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["field_loadouts_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["wing_warrior_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
@@ -2121,7 +2143,7 @@ def verify_native(native, root, lock, context):
     ninja_s4 = importlib.util.module_from_spec(ninja_s4_spec)
     ninja_s4_spec.loader.exec_module(ninja_s4)
     stage_native = {}
-    for name in ("wing_warrior", "fixed_cues"):
+    for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2394,6 +2416,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.TEAM_WIN_RULE_OFF_ARCHIVE, compose.FRACTIONAL_HP_OFF_ARCHIVE,
                             compose.MAGE_PROJECTILES_OFF_ARCHIVE, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE,
                             compose.NINJA_S4_OFF_ARCHIVE, compose.WING_WARRIOR_OFF_ARCHIVE,
+                            compose.FIELD_LOADOUTS_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2416,7 +2439,7 @@ def admit_delivery(root, base, reports, native, context):
             "candidate_build_head": context["build_head"], "official_build_head": context["official_build_head"],
             "receipt_provenance": context["kind"], "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
             "profile_lock": digest(profile_before), "verifier": digest(verifier_before),
-            "source_count": 69, "changed_sources": 35, "unchanged_sources": 34, "instances": 75,
+            "source_count": 69, "changed_sources": 36, "unchanged_sources": 33, "instances": 75,
             "current_place": verified["lock"]["final_place"], "inverse_place": verified["lock"]["prior_place"],
             "inverse_archive_extracted_members": len(verified["archive_members"]),
             "followup_repair": verified["lock"]["followup_repair"],
@@ -2522,6 +2545,9 @@ def admit_delivery(root, base, reports, native, context):
             "wing_warrior_followup": verified["lock"]["wing_warrior_followup"],
             "wing_warrior_inverse_place": verified["lock"]["wing_warrior_followup"]["parent_place"],
             "wing_warrior_inverse_archive": digest(read(root / compose.WING_WARRIOR_OFF_ARCHIVE)),
+            "field_loadouts_followup": verified["lock"]["field_loadouts_followup"],
+            "field_loadouts_inverse_place": verified["lock"]["field_loadouts_followup"]["parent_place"],
+            "field_loadouts_inverse_archive": digest(read(root / compose.FIELD_LOADOUTS_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2556,6 +2582,8 @@ def admit_delivery(root, base, reports, native, context):
             "ninja_s4": runtime["ninja_s4"],
             "wing_warrior": runtime["wing_warrior"],
             "fixed_cues": runtime["fixed_cues"],
+            "field_loadouts": runtime["field_loadouts"],
+            "first90_role": runtime["first90_role"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
