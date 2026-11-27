@@ -99,9 +99,12 @@ def source_contract(root, profile, input_lock):
     field = profile["field_prompt_followup"]
     neutral_names = profile["neutral_names_followup"]
     wall = profile["guardian_wall_followup"]
+    combat = profile["combat_visual_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    wall_parent_pins = current_pins | {rel: wall["rows"][rel]["parent"]["after"]}
+    combat_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in combat["rows"].items()}
+    wall_parent_pins = combat_parent_pins | {rel: wall["rows"][rel]["parent"]["after"]}
     neutral_parent_pins = wall_parent_pins | {
         name: row["parent"]["after"] for name, row in neutral_names["rows"].items()}
     field_parent_pins = neutral_parent_pins | {
@@ -116,6 +119,7 @@ def source_contract(root, profile, input_lock):
     item_parent = root / compose.ITEM_OFF / "sources"
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
+                   and native.source_snapshot(root / compose.COMBAT_VISUAL_OFF / "sources") == combat_parent_pins
                    and native.source_snapshot(wall_parent) == wall_parent_pins
                    and wall_parent_pins[rel] == repair["repaired_guardian"]
                    and native.source_snapshot(root / compose.NEUTRAL_NAMES_OFF / "sources") == neutral_parent_pins
@@ -134,7 +138,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == wall["repaired_place"]
+                   == combat["repaired_place"]
+                   and native.identity(native.read(root / compose.COMBAT_VISUAL_OFF / compose.PLACE))
+                   == combat["parent_place"] == wall["repaired_place"]
                    and native.identity(native.read(root / compose.GUARDIAN_WALL_OFF / compose.PLACE))
                    == wall["parent_place"] == neutral_names["repaired_place"]
                    and native.identity(native.read(root / compose.NEUTRAL_NAMES_OFF / compose.PLACE))

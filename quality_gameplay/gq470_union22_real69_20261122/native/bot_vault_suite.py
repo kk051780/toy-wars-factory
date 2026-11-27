@@ -29,6 +29,7 @@ import time
 HERE = Path(__file__).resolve().parent
 CASES_PIN = {"bytes": 71446, "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c"}
 TEMPLATE_PIN = {"bytes": 39006, "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"}
+BOT_OBJECTIVE_TAG_PIN = {"bytes": 20012, "sha256": "06e5197b826d1cd279d27ce019a92d9dcc5b9b651c6933587e69a6ecff5cdc23"}
 F46_COMMIT = "f46d879e28302a430029304f7f6a162aed66f103"
 F46_TREE = "2432c996fc9fa73680b5e2cfe172d36114fe3746"
 SCENARIO_IDS = (
@@ -133,8 +134,11 @@ def source_inputs(root, expected_profile, contract):
         raw = read(Path(root) / name)
         raw.decode("utf-8")
         require(identity(raw) == expected_profile[name], "FULL_BODY_PIN_MISMATCH")
-        if module["module"] in ("BotActors", "BotPathRouter"):
-            require(identity(raw) == module["historical_candidate"], "ORIGINAL_BOT_OR_ROUTER_REQUIRED")
+        if module["module"] == "BotActors":
+            require(identity(raw) in (module["historical_candidate"], BOT_OBJECTIVE_TAG_PIN),
+                    "EXACT_BOT_SOURCE_REQUIRED")
+        if module["module"] == "BotPathRouter":
+            require(identity(raw) == module["historical_candidate"], "ORIGINAL_ROUTER_REQUIRED")
         result[name] = raw
     return result
 

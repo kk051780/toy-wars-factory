@@ -19,14 +19,14 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "0ca99048bb71e7801ed0e3218fc36699d21b47080f0d90558171b6fbe415c9a0"
+INPUT_LOCK_SHA256 = "6788474e597054ff2387c0afa5934437774eae71ccc422c04352150f644bd4b5"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
 BOT_INPUTS = {
     "bot_vault_base.template.luau": {"bytes": 39006, "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"},
     "bot_vault_cases.json": {"bytes": 71446, "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c"},
-    "bot_vault_suite.py": {"bytes": 19989, "sha256": "2ef31a508b7923a02f7c328283957359a8a26d15bb50a24b4d5966bfd38b6512"},
+    "bot_vault_suite.py": {"bytes": 20273, "sha256": "e0f72127a01f9a6af8422a5d35d6f515f9a3f00eb75f43a2ef8624df1fb46c09"},
 }
 
 
@@ -150,9 +150,11 @@ def load_bot_vault_supplement(lock):
     }
     require(lock["bot_vault_supplement"] == expected, "BOT_SCENARIO_OR_PROFILE_BINDING")
     for module in modules:
-        if module["module"] in ("BotActors", "BotPathRouter"):
-            require(selected[module["relative_source_path"]] == module["historical_candidate"],
-                    "BOT_ORIGINAL_REPAIR_AND_ROUTER")
+        pinned = selected[module["relative_source_path"]]
+        if module["module"] == "BotActors":
+            require(pinned == adapter.BOT_OBJECTIVE_TAG_PIN, "BOT_EXACT_DISPLAY_SOURCE")
+        if module["module"] == "BotPathRouter":
+            require(pinned == module["historical_candidate"], "BOT_ORIGINAL_ROUTER")
     require(adapter.package_pins() == before and bot_input_snapshot(lock) == before,
             "BOT_HELPER_OR_INPUT_CHANGED_DURING_LOAD")
     return adapter, before
@@ -738,6 +740,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         run_foliage(root, output / "foliage_readability", binary, pin, context, compose.load_lock(), compose)
         from guardian_wall import run as run_guardian_wall
         run_guardian_wall(root, output / "guardian_wall", binary, pin, context, compose.load_lock(), compose)
+        from combat_visual_native import run as run_combat_visual
+        run_combat_visual(root, output / "combat_visual", binary, pin, context, compose.load_lock(), compose)
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -756,7 +760,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         require(built["binary_after_suites"] == pin, "BINARY_CHANGED_AFTER_SUITES")
         built["bot_vault_input_files"] = bot_before
         write_json(output / "build_receipt.json", built)
-        require(len(evidence_snapshot(output)) == 104, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
+        require(len(evidence_snapshot(output)) == 105, "NATIVE_OUTPUT_COUNT_BEFORE_AGGREGATE")
         receipt = {"schema": "UNION22_NATIVE_BOTH_SUITES_V3", "status": "PASS", "profile": "union22",
                    "suite_input_variants": {name: row["input_variant"] for name, row in lock["suites"].items()},
                    "original_combined_case_preserved_not_claimed_as_unchanged_pass": True,
@@ -777,13 +781,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "field_prompt": identity(read(output / "field_prompt/receipt.json")),
                    "foliage_readability": identity(read(output / "foliage_readability/receipt.json")),
                    "guardian_wall": identity(read(output / "guardian_wall/receipt.json")),
+                   "combat_visual": identity(read(output / "combat_visual/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
                                           "hud_policy_separate": True, "distinct_all_full_bodies": 31,
                                           "hud_client_runtime_executed": False},
-                   "native_process_count": 24,
-                   "native_evidence_file_count": 105,
+                   "native_process_count": 27,
+                   "native_evidence_file_count": 106,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
         write_json(output / "receipt.json", receipt)
         from run_guardian_diagnostic import run_from_profile

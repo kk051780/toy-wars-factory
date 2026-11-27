@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "325086d053c625a8f5dbc9b2bd62d2729ce1b33c72522d27d3cdc32f15f47694"
+LOCK_SHA256 = "d07496dfb90c44eed654fc0bd43f8fe28b5c65f282bfb802e59cf42852472666"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -75,6 +75,10 @@ NEUTRAL_NAMES_OFF = "off69_visual_readability_field_parent"
 NEUTRAL_NAMES_OFF_ARCHIVE = "OFF69_VISUAL_READABILITY_FIELD_PARENT_ROLLBACK.tar.gz"
 GUARDIAN_WALL_OFF = "off69_guardian_wall_visual_parent"
 GUARDIAN_WALL_OFF_ARCHIVE = "OFF69_GUARDIAN_WALL_VISUAL_PARENT_ROLLBACK.tar.gz"
+COMBAT_VISUAL_OFF = "off69_combat_visual_guardian_parent"
+COMBAT_VISUAL_OFF_ARCHIVE = "OFF69_COMBAT_VISUAL_GUARDIAN_PARENT_ROLLBACK.tar.gz"
+COMBAT_VISUAL_SOURCES = (BOT_SOURCE, "ServerScriptService/EGGRUMBLE_ImpactFeedback.luau",
+                         "ServerScriptService/EGGRUMBLE_NeutralStoneGiant.luau")
 SWARM_SOURCE = "ServerScriptService/EGGRUMBLE_SwarmCombat.luau"
 LOBBY_SOCIAL_SOURCE = "ServerScriptService/GQ8_LobbySocialPlaza.server.luau"
 FOLIAGE_LOD_SOURCE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau"
@@ -364,7 +368,7 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 28, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 29, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
@@ -433,6 +437,11 @@ def neutral_names_parent(on, lock):
 def guardian_wall_parent(on, lock):
     return paired_source_parent(on, lock, lock["guardian_wall_followup"], (GUARDIAN_SOURCE,),
                                 lock["neutral_names_followup"]["repaired_place"], "GUARDIAN_WALL")
+
+
+def combat_visual_parent(on, lock):
+    return paired_source_parent(on, lock, lock["combat_visual_followup"], COMBAT_VISUAL_SOURCES,
+                                lock["guardian_wall_followup"]["repaired_place"], "COMBAT_VISUAL")
 
 
 def castle_parent(on, lock):
@@ -602,7 +611,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    wall_off, wall_off_lock = guardian_wall_parent(on, lock)
+    combat_off, combat_off_lock = combat_visual_parent(on, lock)
+    wall_off, wall_off_lock = guardian_wall_parent(combat_off, combat_off_lock)
     neutral_off, neutral_off_lock = neutral_names_parent(wall_off, wall_off_lock)
     field_off, field_off_lock = field_prompt_parent(neutral_off, neutral_off_lock)
     role_off, role_off_lock = role_readability_parent(field_off, field_off_lock)
@@ -640,7 +650,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / ROLE_READABILITY_OFF, role_off, role_off_lock["final_place"], ROLE_READABILITY_SOURCES),
                   (stage / FIELD_PROMPT_OFF, field_off, field_off_lock["final_place"], VAULT_SOURCE),
                   (stage / NEUTRAL_NAMES_OFF, neutral_off, neutral_off_lock["final_place"], VISUAL_READABILITY_SOURCES),
-                  (stage / GUARDIAN_WALL_OFF, wall_off, wall_off_lock["final_place"], GUARDIAN_SOURCE))
+                  (stage / GUARDIAN_WALL_OFF, wall_off, wall_off_lock["final_place"], GUARDIAN_SOURCE),
+                  (stage / COMBAT_VISUAL_OFF, combat_off, combat_off_lock["final_place"], COMBAT_VISUAL_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -696,6 +707,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         neutral_names_archive_identity = identity(read_file(stage / NEUTRAL_NAMES_OFF_ARCHIVE))
         make_archive(stage / GUARDIAN_WALL_OFF, stage / GUARDIAN_WALL_OFF_ARCHIVE, GUARDIAN_WALL_OFF)
         wall_archive_identity = identity(read_file(stage / GUARDIAN_WALL_OFF_ARCHIVE))
+        make_archive(stage / COMBAT_VISUAL_OFF, stage / COMBAT_VISUAL_OFF_ARCHIVE, COMBAT_VISUAL_OFF)
+        combat_archive_identity = identity(read_file(stage / COMBAT_VISUAL_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -759,6 +772,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({GUARDIAN_WALL_OFF + "/" + PROJECT: lock["project"],
                                GUARDIAN_WALL_OFF + "/" + PLACE: wall_off_lock["final_place"],
                                GUARDIAN_WALL_OFF_ARCHIVE: wall_archive_identity})
+        expected_stage.update({COMBAT_VISUAL_OFF + "/sources/" + name: identity(raw) for name, raw in combat_off.items()})
+        expected_stage.update({COMBAT_VISUAL_OFF + "/" + PROJECT: lock["project"],
+                               COMBAT_VISUAL_OFF + "/" + PLACE: combat_off_lock["final_place"],
+                               COMBAT_VISUAL_OFF_ARCHIVE: combat_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -767,7 +784,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "execution_context": context,
             "receipt_provenance": context["kind"], "official_build_head": context["official_build_head"],
             "formal_rc_adoption_proven": context["kind"] == "OFFICIAL",
-            "selected_source_count": 69, "changed_source_count": 28, "unchanged_source_count": 41,
+            "selected_source_count": 69, "changed_source_count": 29, "unchanged_source_count": 40,
             "source_hashes": {row["route"]: row["after"]["sha256"] for row in lock["sources"].values()},
             "source_classes": {row["route"]: row["class"] for row in lock["sources"].values()},
             "private_place_bytes": lock["final_place"]["bytes"],
@@ -804,6 +821,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "neutral_names_rollback_archive": neutral_names_archive_identity,
             "guardian_wall_followup": lock["guardian_wall_followup"],
             "guardian_wall_rollback_archive": wall_archive_identity,
+            "combat_visual_followup": lock["combat_visual_followup"],
+            "combat_visual_rollback_archive": combat_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -815,8 +834,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 28, "unchanged_sources": 41,
-            "compile_count": 157, "rojo_build_count": 16, "instances": 75,
+            "source_count": 69, "changed_sources": 29, "unchanged_sources": 40,
+            "compile_count": 160, "rojo_build_count": 17, "instances": 75,
             "item_cleanup_only_parent_place": item_off_lock["final_place"],
             "empty_vault_only_parent_place": vault_off_lock["final_place"],
             "castle_release_stock_parent_place": castle_off_lock["final_place"],
@@ -827,6 +846,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "field_prompt_parent_place": field_off_lock["final_place"],
             "neutral_names_parent_place": neutral_off_lock["final_place"],
             "guardian_wall_parent_place": wall_off_lock["final_place"],
+            "combat_visual_parent_place": combat_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
