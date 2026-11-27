@@ -42751,6 +42751,176 @@
           "trusted_queue_job": 140713293286
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-MAGE-025-ACTIVE-LIGHTNING-CHAIN-20261128",
+      "feature_id": "GQ219_MAGE_025_ACTIVE_LIGHTNING_CHAIN_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "5386557c98ca600ccd77a2198ef279a93714c858",
+      "base_rc_tree": "ec8a7864aaed2516573f671f6aff398b37cb3273",
+      "prep_branch": "quality/gq219-active-mage-chain-025-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Fixed #219 MAGE-025 selected ACTIVE neutral chain: 1–5 distinct targets, each hop 4–8 studs, 20s independent cooldown and one 40E spend, 0.24s warning, real existing Horde HP/KO/LOS and safe new C/touch control. Keeps Water Q, staff F, all non-Mage roles and PRIVATE source unchanged. Stage sound/standalone lightning staff physical ART to be reviewed at the fixed milestone; no combo bundled.",
+      "resources": [
+        "ACTIVE_RICH51_MAGE_025_CHAIN_LIGHTNING_GQ219"
+      ],
+      "target_paths": [
+        ".github/workflows/p0d-rc-fastlane.yml",
+        "rc_fastlane/apply_active_mage_chain.py",
+        "rc_fastlane/features/active_mage_chain/MageChain.luau",
+        "rc_fastlane/features/active_mage_chain/game.luau",
+        "rc_fastlane/features/active_mage_chain/horde.luau",
+        "rc_fastlane/features/active_mage_chain/native_cases.luau",
+        "rc_fastlane/features/active_mage_chain/native_touch.luau",
+        "rc_fastlane/features/active_mage_chain/source_lock.json",
+        "rc_fastlane/verify_active_mage_chain_native.py",
+        "rc_fastlane/verify_active_mage_water_native.py",
+        "rc_fastlane/verify_active_touch_attack_native.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7204247109",
+      "protected_overlap": {
+        "issues": [
+          1045,
+          1044,
+          382
+        ],
+        "partition": "New Mage C input, only existing neutral authority and selected stage. Water, staff and Horde's existing behavior pinned and verified; no COMBO-004 in this scoped tree."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "13d5ebec-4431-4d06-a315-bcbfadbabd5d",
+      "issued_at": "2026-11-27T20:03:07.938Z",
+      "expires_at": "2026-11-27T22:03:07.938Z",
+      "actual_metadata_lease": {
+        "ref": "abd63dd9f7f2654691e403e557973c84c90aee1e",
+        "blob": "4915ed7c8c010b7bb7bda5d99c87096326e4ea77",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "13d5ebec-4431-4d06-a315-bcbfadbabd5d",
+          "task_id": null,
+          "epoch": 1032,
+          "acquired_at": "2026-11-27T20:02:55.445Z",
+          "expires_at": "2026-11-27T20:32:55.445Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V3.5, #218/#220 and linked #219 fixed design scope. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq219-active-mage-chain-025-20261128",
+        "formal_parent": "5386557c98ca600ccd77a2198ef279a93714c858",
+        "tree": "e43ec5ff44c38b1aecff71feeba027be6aef59df",
+        "local_head": "6178a5d27d510b5f0c1eb5fb9bd5d9de0260bcd4",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": ".github/workflows/p0d-rc-fastlane.yml",
+            "mode": "100644",
+            "blob": "de1dcd24cb457d6319ecf8d13861c9b4904366a2",
+            "bytes": 263055
+          },
+          {
+            "path": "rc_fastlane/apply_active_mage_chain.py",
+            "mode": "100644",
+            "blob": "1f4df1c6ece32412f1d4891f8862d033668db041",
+            "bytes": 11685
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_chain/MageChain.luau",
+            "mode": "100644",
+            "blob": "330c1b5653ea1f962f4792200c228806dba4565c",
+            "bytes": 1737
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_chain/game.luau",
+            "mode": "100644",
+            "blob": "6c7fcdda4cff8ff509e14eaf85c3206e0bfb46bb",
+            "bytes": 3863
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_chain/horde.luau",
+            "mode": "100644",
+            "blob": "dbf7f5889b68e307d27bb64cb1f446b152f0a07f",
+            "bytes": 1750
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_chain/native_cases.luau",
+            "mode": "100644",
+            "blob": "f550908b72142953a92e71bd6f25b38d6aaddb4d",
+            "bytes": 5454
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_chain/native_touch.luau",
+            "mode": "100644",
+            "blob": "9c12a39dddedb60ad9fafeab1fcebc670d2b5467",
+            "bytes": 1889
+          },
+          {
+            "path": "rc_fastlane/features/active_mage_chain/source_lock.json",
+            "mode": "100644",
+            "blob": "8e9aa5bf284bba8c5c58b291655b12b45880cae4",
+            "bytes": 1267
+          },
+          {
+            "path": "rc_fastlane/verify_active_mage_chain_native.py",
+            "mode": "100644",
+            "blob": "4a7fcc58447cdcdc5d13d391c49ccf19433fb6cd",
+            "bytes": 3213
+          },
+          {
+            "path": "rc_fastlane/verify_active_mage_water_native.py",
+            "mode": "100644",
+            "blob": "d3b3b00521211499f9545a6f14124f4a30d70713",
+            "bytes": 1998
+          },
+          {
+            "path": "rc_fastlane/verify_active_touch_attack_native.py",
+            "mode": "100644",
+            "blob": "e623ba04eeaa08b6266765bbd198fd804f861c16",
+            "bytes": 1213
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "11333311327787cf4c196ba3aa4c858042eb71af",
+            "bytes": 123127
+          }
+        ],
+        "expires_at": "2026-11-27T21:03:07.938Z",
+        "issued_from": {
+          "lease": "abd63dd9f7f2654691e403e557973c84c90aee1e",
+          "owner": "13d5ebec-4431-4d06-a315-bcbfadbabd5d"
+        },
+        "local_qa": {
+          "place_bytes": 729423,
+          "place_sha256": "ac26ad336fc5c3c54c367f68d979be3ac0aec14c24c8180e717e1cc7d426ed85",
+          "off_bytes": 718628,
+          "off_sha256": "708c77549d59dadf24545e29fcc68883245489045a3c05ea1f66cabb207a4825",
+          "native_chain_groups": 3,
+          "native_touch_groups": 1,
+          "retained_native_groups": 15,
+          "selected_sources": 75,
+          "unchanged_previous_sources": 70,
+          "existing_private_contract_core_pass": true,
+          "device": "NOT_TESTED_V3.5"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
