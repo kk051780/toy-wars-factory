@@ -822,6 +822,31 @@ jobs:
                             grep -F FB019_NATIVE_REAL_HUD_ACK_CUES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
                             grep -Fx ACTIVE_FB019_REAL_SEQUENCE_CASTLE_WIN_AND_MODE_NEGATIVES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
                             grep -Fx ACTIVE_FB019_HUD_BAD_PACKET_AND_EARLY_RESET_NEGATIVES_PASS /tmp/p0d_rc_out/ACTIVE_RICH51_FB019_NATIVE.log
+                            UNDEAD_CONFIG=rc_fastlane/features/active_undead_squad/source_lock.json
+                            if python3 -B -c 'import json,sys; sys.exit(not json.load(open(sys.argv[1]))["enabled"])' "$UNDEAD_CONFIG"; then
+                              UNDEAD_OFF=/tmp/p0d_rc_active_undead_off.rbxlx
+                              GAME_BEFORE_UNDEAD=/tmp/p0d_rc_active_before_undead.luau
+                              cp "$DIST/src/server/Game.server.luau" "$GAME_BEFORE_UNDEAD"
+                              /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o "$UNDEAD_OFF"
+                              python3 -B rc_fastlane/apply_active_undead_squad.py --profile "$PROFILE" --dist "$DIST" \
+                                --off-place "$UNDEAD_OFF" | tee /tmp/p0d_rc_out/ACTIVE_UNDEAD_SQUAD_OFF.log
+                              grep -F ACTIVE_UNDEAD_SQUAD_IMMEDIATE_OFF_EXACT /tmp/p0d_rc_out/ACTIVE_UNDEAD_SQUAD_OFF.log
+                              grep -Fx ACTIVE_UNDEAD_SQUAD_EXACT_GAME_AND_ORIGINAL_MODULE_PASS /tmp/p0d_rc_out/ACTIVE_UNDEAD_SQUAD_OFF.log
+                              for route in server/Game.server server/UndeadSquad; do
+                                /tmp/p0d_new_luau/luau-compile "$DIST/src/$route.luau" >/dev/null
+                              done
+                              python3 -B rc_fastlane/verify_active_undead_native.py --dist "$DIST" \
+                                --before-game "$GAME_BEFORE_UNDEAD" --out /tmp/p0d_active_undead_native.luau
+                              /tmp/p0d_new_luau/luau /tmp/p0d_active_undead_native-before.luau | tee /tmp/p0d_rc_out/ACTIVE_UNDEAD_BASELINE.log
+                              grep -Fx ACTIVE_UNDEAD_BASELINE_TWO_EFFECTS_NO_BODIES_PASS /tmp/p0d_rc_out/ACTIVE_UNDEAD_BASELINE.log
+                              if /tmp/p0d_new_luau/luau /tmp/p0d_active_undead_native-author.luau > /tmp/p0d_rc_out/ACTIVE_UNDEAD_EXPECTED_ORIGINAL.log 2>&1; then
+                                echo RED_ACTIVE_UNDEAD_ORIGINAL_NO_LONGER_REPRODUCES
+                                exit 1
+                              fi
+                              grep -F AUTHOR_CENTER_OVERLAP /tmp/p0d_rc_out/ACTIVE_UNDEAD_EXPECTED_ORIGINAL.log
+                              /tmp/p0d_new_luau/luau /tmp/p0d_active_undead_native-after.luau | tee /tmp/p0d_rc_out/ACTIVE_UNDEAD_NATIVE.log
+                              test "$(grep -c '^ACTIVE_UNDEAD_.*_PASS$' /tmp/p0d_rc_out/ACTIVE_UNDEAD_NATIVE.log)" -eq 7
+                            fi
                           fi
                         fi
                       fi
@@ -865,7 +890,10 @@ jobs:
           lobby_enabled=p=='rich51' and json.loads(lobby_lock.read_bytes())['enabled']
           hit_lock=pathlib.Path('rc_fastlane/features/active_confirmed_hit/source_lock.json')
           hit_enabled=p=='rich51' and json.loads(hit_lock.read_bytes())['enabled']
-          expected={'rich51':51+int(bots_enabled)+int(lobby_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          undead_lock=pathlib.Path('rc_fastlane/features/active_undead_squad/source_lock.json')
+          undead_enabled=p=='rich51' and json.loads(undead_lock.read_bytes())['enabled']
+          assert not undead_enabled or hit_enabled, 'UNDEAD_REQUIRES_EXACT_FB019_PARENT'
+          expected={'rich51':51+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           xml=ET.fromstring(target.read_bytes())
@@ -900,6 +928,7 @@ jobs:
           assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
           assert titles[('ModuleScript','SoloTeamBots')]==int(bots_enabled),('BOT_MODULE_COUNT',titles)
           assert titles[('ModuleScript','LobbyDojoIsland')]==int(lobby_enabled),('LOBBY_MODULE_COUNT',titles)
+          assert titles[('ModuleScript','UndeadSquad')]==int(undead_enabled),('UNDEAD_MODULE_COUNT',titles)
           if p=='rich51':
               active_receipt=json.loads((base/'RC_FEATURE_LOCK.json').read_bytes())
               assert ('rc_active_solo_bots' in active_receipt)==bots_enabled
@@ -907,6 +936,7 @@ jobs:
               assert ('rc_active_persistence_lifecycle' in active_receipt)==persistence_enabled
               assert ('rc_active_safe_lobby' in active_receipt)==lobby_enabled
               assert ('rc_active_confirmed_hit' in active_receipt)==hit_enabled
+              assert ('rc_active_undead_squad' in active_receipt)==undead_enabled
               if bots_enabled:
                   solo=active_receipt['rc_active_solo_bots']
                   assert lock['rc_active_solo_bots']==solo
@@ -944,8 +974,15 @@ jobs:
                       assert hit['routes']['server/Game.server.luau']['before']==final_game
                       assert lock['blobs']['server/MusouHorde.luau']==hit['horde']
                       for route, pins in hit['routes'].items():
-                          assert lock['blobs'][route]==pins['after']
+                          if route!='server/Game.server.luau' or not undead_enabled:
+                              assert lock['blobs'][route]==pins['after']
                       final_game=hit['routes']['server/Game.server.luau']['after']
+                  if undead_enabled:
+                      undead=active_receipt['rc_active_undead_squad']
+                      assert lock['rc_active_undead_squad']==undead and undead['feature']=='FB026_UNDEAD_SIEGE_ACTIVE_V1'
+                      assert undead['studio_only'] and undead['routes']['server/Game.server.luau']['before']==final_game
+                      final_game=undead['routes']['server/Game.server.luau']['after']
+                      assert lock['blobs']['server/UndeadSquad.luau']==undead['routes']['server/UndeadSquad.luau']['after']
                   assert lock['blobs']['server/Game.server.luau']==final_game
                   containers=[e for e in xml.iter('Item') if e.findtext("./Properties/string[@name='Name']")=='TrapRaidersS1']
                   bots=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
@@ -954,6 +991,9 @@ jobs:
                   lobby_modules=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
                                  if e.findtext("./Properties/string[@name='Name']")=='LobbyDojoIsland']
                   assert len(lobby_modules)==int(lobby_enabled),('LOBBY_ACTIVE_SERVER_ROUTE',len(lobby_modules))
+                  undead_modules=[e for root in containers for e in root.findall("Item[@class='ModuleScript']")
+                                  if e.findtext("./Properties/string[@name='Name']")=='UndeadSquad']
+                  assert len(undead_modules)==int(undead_enabled),('UNDEAD_ACTIVE_SERVER_ROUTE',len(undead_modules))
           if species_enabled:
               assert saved_beast_enabled and durable_enabled
               assert titles[('ModuleScript','ScoutSpeciesPolicy')]==1
@@ -1157,6 +1197,7 @@ jobs:
           if os.environ.get('ACTIVE_PERSISTENCE')=='true': overlay_ids.append('ACTIVE66_PERSISTENCE_LIFECYCLE_20261122')
           if lobby_enabled: overlay_ids.append('FB007_LOBBY_DOJO_PHYSICAL_V1')
           if hit_enabled: overlay_ids.append('FB019_ATTACK_RESPONSE_V1')
+          if undead_enabled: overlay_ids.append('FB026_UNDEAD_SIEGE_ACTIVE_V1')
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
@@ -1242,7 +1283,8 @@ jobs:
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
           bots_enabled=json.load(open('rc_fastlane/features/active_solo_bots/source_lock.json'))['enabled']
           lobby_enabled=json.load(open('rc_fastlane/features/active_safe_lobby/source_lock.json'))['enabled']
-          assert x['native_source_count']==64+int(bots_enabled)+int(lobby_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          undead_enabled=json.load(open('rc_fastlane/features/active_undead_squad/source_lock.json'))['enabled']
+          assert x['native_source_count']==64+int(bots_enabled)+int(lobby_enabled)+int(undead_enabled)+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY

@@ -1,0 +1,27 @@
+{
+  "enabled": true,
+  "profile": "rich51",
+  "feature": "FB026_UNDEAD_SIEGE_ACTIVE_V1",
+  "design_id": "P0D-015",
+  "source_origin": {
+    "pr": 479,
+    "commit": "331ac279bff58105aa393be5358af50fcedd46de",
+    "module_git_blob": "4d1e7012e8ab2cd5c40ba6e51db1d52bb2812341"
+  },
+  "adapter_sha256": "ae9e5e45e1c0cd8148a1a458efb162f01dcb6d9cabdd14906008713dd42d2598",
+  "routes": {
+    "server/Game.server.luau": {
+      "before": "1094da5339a2c9f63c512b89a91b01a7a7d1b32d",
+      "after": "12624ddc2e2583e2f0e471a5b947c7998ce484de"
+    },
+    "server/UndeadSquad.luau": {
+      "after": "9cdf26d4888f3668675b34b6206af54a4b2cc327"
+    }
+  },
+  "horde": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38",
+  "role_rules": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2",
+  "off_place": {
+    "bytes": 656824,
+    "sha256": "184498f6732783f8fcf954ee2d7bac150295008fe96132e90d768ce823005bd0"
+  }
+}

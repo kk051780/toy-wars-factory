@@ -200,6 +200,17 @@ class UnionBoundary(unittest.TestCase):
         self.assertEqual(hit["routes"]["client/HUD.client.luau"]["before"],
                          persistence["routes"]["client/HUD.client.luau"]["after"])
         self.assertTrue(private_blobs.isdisjoint(row["after"] for row in hit["routes"].values()))
+        undead_package = active / "features/active_undead_squad"
+        undead = verify.data(undead_package / "source_lock.json")
+        self.assertEqual(undead["profile"], selection["active_profile"])
+        self.assertEqual(undead["routes"]["server/Game.server.luau"]["before"],
+                         hit["routes"]["server/Game.server.luau"]["after"])
+        self.assertEqual(undead["horde"], hit["horde"])
+        original_actor = (undead_package / "UndeadSquad.luau").read_bytes()
+        header = b"blob " + str(len(original_actor)).encode() + bytes([0])
+        self.assertEqual(hashlib.sha1(header + original_actor).hexdigest(),
+                         undead["source_origin"]["module_git_blob"])
+        self.assertTrue(private_blobs.isdisjoint(row["after"] for row in undead["routes"].values()))
         packet = active / "features/active_sky_routes"
         sky = verify.data(packet / "source_lock.json")
         self.assertEqual(sky["profile"], selection["active_profile"])
