@@ -35357,18 +35357,18 @@
     {
       "claim_id": "P0D-GQ470-MAGE-CLOSE-CONTACT-V3-20261127",
       "feature_id": "GQ470_MAGE_CLOSE_BASIC_V3",
-      "state": "GRANTED",
+      "state": "SOURCE_WIP",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, transporting the existing Mage V3 PC result)",
       "parent_issue": 470,
       "source_issue": 1028,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1039,
       "base_rc_sha": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
       "base_rc_tree": "886863cbda0dbc132f27bb33ee83e6f6173b3274",
       "prep_branch": "quality/gq470-mage-close-basic-v3-20261127",
       "allowed_new_prs": 1,
-      "source_scope_granted": true,
+      "source_scope_granted": false,
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
@@ -35534,6 +35534,110 @@
           "lease": "8ac902f9a9fd164c226de7349e8194c8ff4505a8",
           "owner": "f6291d3c-c2ae-4082-a28b-e6e570cdca01"
         }
+      },
+      "source_head": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
+      "prepared_candidate_head": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
+      "prepared_candidate_tree": "ca766112c0e61d258940fab4d6d9235876d49278",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_mage_contact_20261127/cases.luau",
+          "mode": "100644",
+          "blob": "f823bc20b9224a0c8ba6d8c56125718bf8b0a70b",
+          "bytes": 6524
+        },
+        {
+          "path": "quality_gameplay/gq470_mage_contact_20261127/mage_close_v3.patch",
+          "mode": "100644",
+          "blob": "84991ab2e6780f2a27bf54aa101a950a86c1a8f9",
+          "bytes": 4977
+        },
+        {
+          "path": "quality_gameplay/gq470_mage_contact_20261127/priority.luau",
+          "mode": "100644",
+          "blob": "c99865b86db2366e5c74a2e8323f7a396d8ad329",
+          "bytes": 3231
+        },
+        {
+          "path": "quality_gameplay/gq470_mage_contact_20261127/role.luau",
+          "mode": "100644",
+          "blob": "57348f13ccdb17741f78afa765395fd16efb27bd",
+          "bytes": 4658
+        },
+        {
+          "path": "quality_gameplay/gq470_mage_contact_20261127/ties.luau",
+          "mode": "100644",
+          "blob": "1a3262714d6674c218313a99b3d8a8e685e2d76d",
+          "bytes": 3365
+        },
+        {
+          "path": "quality_gameplay/gq470_mage_contact_20261127/vectors.json",
+          "mode": "100644",
+          "blob": "6e2fdbf5d28761e5c99707a63e7862d6d8f4b744",
+          "bytes": 7544
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "7b13d98b0c7a75fcd7957562415fca4a8edab29b",
+          "bytes": 59034
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "4fc684a7b14d605689c3d9c2f4a185f624abc311",
+          "bytes": 35255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "ef0268772e30a81ec36f087c461053568e63a420",
+          "bytes": 6894
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "ea18c7c307310fb802c3af413fe9145dd6505040",
+          "bytes": 18903
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "ebcd6f091d502b611a9011fe12e0309184673e64",
+          "bytes": 50826
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "b1367e936aaee65607eb3fbf9480414b20b1adb2",
+          "bytes": 1391230
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "82dc65086129b075321ae6c8728f0f326b390034",
+          "bytes": 146768
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "46207f9635d0f6b644a55afa74bffdedeac8ba06",
+          "bytes": 106794
+        }
+      ],
+      "actual_candidate_readback": {
+        "head": "7ab9a1c8a5e532a947cb02ea29f60f4ed5db5daa",
+        "tree": "ca766112c0e61d258940fab4d6d9235876d49278",
+        "base": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "branch": "quality/gq470-mage-close-basic-v3-20261127",
+        "sourceLease": "dea18bfc04e5091bf7da324f1003304372ad4691",
+        "sourceOperation": "6a1c885a-86ef-4b4a-8b48-757f68a5c86c",
+        "pr": 1039,
+        "livePrBase": "7e78d489b4d6b7e0f33e788d37248101fc74ad36",
+        "sourceReturn": "11f945ad9218ba3de24e1e7629d74453a08bb81d"
+      },
+      "actual_binding_lease": {
+        "commit": "cfbcc9c9106b6faeb6a0e244ac8d1b17c55e1abe",
+        "operation_id": "a6dc076c-0b59-4ff2-9d14-7a61e1af9a79"
       }
     }
   ],
