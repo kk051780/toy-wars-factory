@@ -1,0 +1,137 @@
+name: GQ800 real neutral8 on Core36 + reversible OFF36
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_land_musou_charm_20261118/**'
+      - '.github/workflows/gq800-real-neutral8-core36.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-actor-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OFFICIAL_HEAD: f77b4d4393d9e9b19b65566413432a7a9f13962b
+      ROOT: quality_gameplay/gq8_land_musou_charm_20261118
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fail-closed original source-transform tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s "$ROOT" -p 'test_neutral8_composer.py'
+      - name: Pin one formal RC and same-HEAD selected Core36 artifact
+        id: official
+        run: |
+          set -euo pipefail
+          CURRENT="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$CURRENT" = "$OFFICIAL_HEAD" || { echo RED_FORMAL_RC_MOVED_REPLAN; exit 1; }
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow p0d-rc-eggrumble-v3-core36.yml \
+            --branch rc/p0d-s1-kids-rc01 --limit 80 \
+            --json databaseId,headSha,status,conclusion > /tmp/official.json
+          RUN="$(jq -r --arg sha "$OFFICIAL_HEAD" '[.[]|select(.headSha==$sha and .status=="completed" and .conclusion=="success")][0].databaseId // empty' /tmp/official.json)"
+          test -n "$RUN" || { echo RED_NO_SAMEHEAD_FORMAL_CORE36; exit 1; }
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"
+      - name: Download actual official Core36 Place and manifest
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/official36
+          gh run download "${{ steps.official.outputs.run }}" --repo "$GITHUB_REPOSITORY" \
+            --name P0D-EGGRUMBLE-V3-CORE36-CANONICAL-PRIVATE-STUDIO \
+            --dir artifacts/official36
+          PLACE="$(find artifacts/official36 -name EGGRUMBLE_V3_CORE36_PRIVATE_RC.rbxlx -print -quit)"
+          PROJ="$(find artifacts/official36 -name COMBINED36.project.json -print -quit)"
+          RECEIPT="$(find artifacts/official36 -name CORE36_RC_SELECTION_RECEIPT.json -print -quit)"
+          test -n "$PLACE" && test -s "$PLACE"
+          test -n "$PROJ" && test -s "$PROJ"
+          test -n "$RECEIPT" && test -s "$RECEIPT"
+          echo "PLACE=$PLACE" >> "$GITHUB_ENV"
+          echo "PROJ=$PROJ" >> "$GITHUB_ENV"
+          echo "RECEIPT=$RECEIPT" >> "$GITHUB_ENV"
+      - name: Compose real36 with only one original Swarm source changed
+        run: |
+          set -euo pipefail
+          python3 "$ROOT/compose_neutral8_core36.py" \
+            --place "$PLACE" --project "$PROJ" --receipt "$RECEIPT" \
+            --head "$OFFICIAL_HEAD" --out artifacts/gq800-real36
+          python3 - <<'PY'
+          import json
+          r=json.load(open("artifacts/gq800-real36/GQ800_NEUTRAL8_SOURCE_LOCK.json"))
+          c=[k for k,v in r["source_sha256"].items() if v["changed"]]
+          assert c==["ServerScriptService/EGGRUMBLE_SwarmCombat"],c
+          assert len(r["source_sha256"])==36 and r["new_server_game_or_ai_owner"]==0
+          assert r["formal_rc_written"] is False and r["faction_conversion_connected"] is False
+          print("GQ800_REAL35_EXACT_SWARM1_CHANGE_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq800_luau
+          persist-credentials: false
+      - name: Native compile original OFF36 and neutral8 ON36
+        run: |
+          set -euo pipefail
+          cmake -S _gq800_luau -B /tmp/gq800_visual -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq800_visual --target Luau.Compile.CLI --parallel 4
+          find artifacts/gq800-real36/ON36/sources artifacts/gq800-real36/OFF36/sources \
+            -name '*.luau' -print0 | while IFS= read -r -d '' f; do
+              /tmp/gq800_visual/luau-compile --text "$f" >/dev/null
+            done
+          echo GQ800_NATIVE_COMPILE_REAL72_PASS
+      - name: Exact Rojo Source and Class ON36/OFF36
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq800-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq800-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq800-rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              p=Path("/tmp/gq800-rojo")
+              p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/gq800-rojo build artifacts/gq800-real36/ON36/GQ800_NEUTRAL8_ON36.project.json -o artifacts/gq800-real36/NEUTRAL8_ON36.rbxlx
+          /tmp/gq800-rojo build artifacts/gq800-real36/OFF36/OFF36.project.json -o artifacts/gq800-real36/NEUTRAL8_OFF36.rbxlx
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/gq800-real36/ON36/GQ800_NEUTRAL8_ON36.project.json \
+            --place artifacts/gq800-real36/NEUTRAL8_ON36.rbxlx --count 36
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify \
+            --project artifacts/gq800-real36/OFF36/OFF36.project.json \
+            --place artifacts/gq800-real36/NEUTRAL8_OFF36.rbxlx --count 36
+          NOW="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq '.object.sha')"
+          test "$NOW" = "$OFFICIAL_HEAD" || { echo RED_RC_MOVED_NO_CAS; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,json,hashlib
+          root=Path("artifacts/gq800-real36");p=root/"NEUTRAL8_ON36.rbxlx"
+          r={"feature_id":"GQ800_NEUTRAL8_REAL_ACTOR_VISUAL_BRIDGE_20261118",
+             "candidate_sha":os.getenv("GITHUB_SHA"),"official_base":os.getenv("OFFICIAL_HEAD"),
+             "on_source_count":36,"unchanged_selected_sources":35,
+             "original_swarm_authority_count":1,"new_spawners":0,
+             "stage":"PREP_REAL_SOURCE_NOT_FORMAL_CAS",
+             "native_compile":"PASS","rojo_source_class":"PASS","rollback_off36":"PASS",
+             "place_bytes":p.stat().st_size,"place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+             "studio_2client":"NOT_TESTED","android_15min":"NOT_TESTED",
+             "art_fun_owner":"NO_GO","published":False}
+          (root/"GQ800_NEUTRAL8_CANDIDATE_RECEIPT.json").write_text(json.dumps(r,indent=2)+"\n")
+          print("GQ800_NEUTRAL8_SAMEHEAD_CANDIDATE_GREEN_NOT_OFFICIAL",r["place_bytes"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ800-NEUTRAL8-PRIVATE36-CANDIDATE-NOT-OFFICIAL
+          path: |
+            artifacts/gq800-real36/NEUTRAL8_ON36.rbxlx
+            artifacts/gq800-real36/NEUTRAL8_OFF36.rbxlx
+            artifacts/gq800-real36/GQ800_NEUTRAL8_SOURCE_LOCK.json
+            artifacts/gq800-real36/GQ800_NEUTRAL8_CANDIDATE_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error

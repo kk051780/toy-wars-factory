@@ -1,0 +1,52 @@
+name: GQ800 land-musou neutral-charm pure native gate
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq8_land_musou_charm_20261118/**'
+      - '.github/workflows/gq800-musou-neutral-charm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq800_luau
+          persist-credentials: false
+      - name: Build native Luau (pinned upstream)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _gq800_luau -B /tmp/gq800_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq800_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile and execute both actual policies with negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=quality_gameplay/gq8_land_musou_charm_20261118
+          for f in "$ROOT"/*.luau; do /tmp/gq800_native/luau-compile --text "$f" >/dev/null; done
+          /tmp/gq800_native/luau "$ROOT/test_neutral_finisher_native.luau" | tee /tmp/gq800_finish.log
+          /tmp/gq800_native/luau "$ROOT/test_curse_conversion_native.luau" | tee /tmp/gq800_charm.log
+          grep -q GQ800_FINISHER_NATIVE_ROLE7_SPECIES8_RECEIPT_GATES_PASS /tmp/gq800_finish.log
+          grep -q GQ800_CURSE_NATIVE_FRIENDLY_NEUTRAL_SESSION_LIMIT_TTL_PASS /tmp/gq800_charm.log
+      - name: Reject duplicate damage, Remote and publish authority
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("quality_gameplay/gq8_land_musou_charm_20261118")
+          code="\n".join(f.read_text() for f in root.glob("*Policy.luau"))
+          for forbidden in ("TakeDamage(", "Instance.new(", "DataStoreService", "SetAttribute(", "Humanoid.Health", "Players:GetPlayer"):
+              assert forbidden not in code, forbidden
+          assert "MAX_COMBINED=4" in code and "serverConfirmedHit" in code and "uniqueHitId" in code
+          print("GQ800_SINGLE_AUTHORITY_POLICY_ONLY_PASS")
+          PY
