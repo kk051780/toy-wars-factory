@@ -47,7 +47,7 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    ground_on = compose.cover_orders_parent(on, lock)
+    ground_on = compose.cover_orders_parent(*compose.mage_field_arcs_parent(on, lock))
     field_on = compose.return_convert_parent(*compose.ground_night_parent(*ground_on))
     water_on = compose.ninja_s4_parent(*compose.wing_warrior_parent(*compose.field_loadouts_parent(*field_on)))
     hp_on, hp_on_lock = compose.mage_projectile_parent(*compose.mage_water_chain_parent(*water_on))
@@ -64,6 +64,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["mage_field_arcs_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["cover_orders_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["ground_night_followup"]["rows"].items()
@@ -525,8 +527,10 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        ground_on, ground_lock = compose.cover_orders_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != ground_on[name]}, set(compose.COVER_ORDERS_SOURCES))
+        cover_on, cover_lock = compose.mage_field_arcs_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != cover_on[name]}, set(compose.MAGE_FIELD_ARCS_SOURCES))
+        ground_on, ground_lock = compose.cover_orders_parent(cover_on, cover_lock)
+        self.assertEqual({name for name in cover_on if cover_on[name] != ground_on[name]}, set(compose.COVER_ORDERS_SOURCES))
         return_on, return_lock = compose.ground_night_parent(ground_on, ground_lock)
         self.assertEqual({name for name in ground_on if ground_on[name] != return_on[name]},
                          set(compose.GROUND_NIGHT_SOURCES))
@@ -1828,7 +1832,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["cover_orders_followup"], self.lock["ground_night_followup"],
+        for followup in (self.lock["mage_field_arcs_followup"], self.lock["cover_orders_followup"],
+                         self.lock["ground_night_followup"],
                          self.lock["return_convert_followup"],
                          self.lock["field_loadouts_followup"],
                          self.lock["wing_warrior_followup"],
@@ -1902,7 +1907,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(return_convert["repaired_place"], ground_night["parent_place"])
         cover_orders = self.lock["cover_orders_followup"]
         self.assertEqual(ground_night["repaired_place"], cover_orders["parent_place"])
-        self.assertEqual(cover_orders["repaired_place"], self.lock["final_place"])
+        mage_field_arcs = self.lock["mage_field_arcs_followup"]
+        self.assertEqual(cover_orders["repaired_place"], mage_field_arcs["parent_place"])
+        self.assertEqual(mage_field_arcs["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(mage_field_arcs["rows"]), set(compose.MAGE_FIELD_ARCS_SOURCES))
         self.assertEqual(set(cover_orders["rows"]), set(compose.COVER_ORDERS_SOURCES))
         self.assertEqual(set(ground_night["rows"]), set(compose.GROUND_NIGHT_SOURCES))
         self.assertEqual(set(return_convert["rows"]), set(compose.RETURN_CONVERT_SOURCES))

@@ -100,7 +100,9 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "GROUND_NIGHT_PROFILE_SCOPE")
     cover_orders = profile["cover_orders_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in cover_orders.items()}
+    mage_field_arcs = profile["mage_field_arcs_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in mage_field_arcs.items()}
+              | {name: row["parent"]["after"] for name, row in cover_orders.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     off_root = source_root.parent / compose.GROUND_NIGHT_OFF / "sources"

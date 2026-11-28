@@ -587,8 +587,18 @@ def verify_core(root, base, reports, context):
             and cover_orders["ability_ids"] == ["BUILDER-026", "BUILDER-048", "BUILDER-066", "BUILDER-072",
                                                "BEAST-091", "BEAST-092", "BEAST-093"]
             and cover_orders["result_feedback"] == "FB-003", "COVER_ORDERS_SCOPE")
+    mage_field_arcs = lock["mage_field_arcs_followup"]
+    require(set(mage_field_arcs["rows"]) == set(compose.MAGE_FIELD_ARCS_SOURCES)
+            and mage_field_arcs["ability_ids"] == [
+                "MAGE-005", "MAGE-009", "MAGE-015", "MAGE-047", "MAGE-073", "MAGE-078",
+                "MAGE-079", "MAGE-083", "BEAST-020", "BEAST-095"]
+            and mage_field_arcs["combo_ids"] == ["COMBO-017"], "MAGE_FIELD_ARCS_SCOPE")
+    expected_mage_field_arcs_off, mage_field_arcs_off_lock, mage_field_arcs_off = verify_source_rollback(
+        root, root, lock, current, mage_field_arcs, mage_field_arcs["rows"], cover_orders["repaired_place"],
+        compose.MAGE_FIELD_ARCS_OFF, compose.MAGE_FIELD_ARCS_OFF_ARCHIVE, "MAGE_FIELD_ARCS")
     expected_cover_orders_off, cover_orders_off_lock, cover_orders_off = verify_source_rollback(
-        root, root, lock, current, cover_orders, cover_orders["rows"], ground_night["repaired_place"],
+        root, root / compose.MAGE_FIELD_ARCS_OFF, mage_field_arcs_off_lock, mage_field_arcs_off,
+        cover_orders, cover_orders["rows"], ground_night["repaired_place"],
         compose.COVER_ORDERS_OFF, compose.COVER_ORDERS_OFF_ARCHIVE, "COVER_ORDERS")
     expected_ground_night_off, ground_night_off_lock, ground_night_off = verify_source_rollback(
         root, root / compose.COVER_ORDERS_OFF, cover_orders_off_lock, cover_orders_off,
@@ -853,6 +863,8 @@ def verify_core(root, base, reports, context):
         "ground_night_rollback_archive": digest(read(root / compose.GROUND_NIGHT_OFF_ARCHIVE)),
         "cover_orders_followup": cover_orders,
         "cover_orders_rollback_archive": digest(read(root / compose.COVER_ORDERS_OFF_ARCHIVE)),
+        "mage_field_arcs_followup": mage_field_arcs,
+        "mage_field_arcs_rollback_archive": digest(read(root / compose.MAGE_FIELD_ARCS_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -898,6 +910,7 @@ def verify_core(root, base, reports, context):
             and core.get("return_convert_parent_place") == return_convert_off_lock["final_place"]
             and core.get("ground_night_parent_place") == ground_night_off_lock["final_place"]
             and core.get("cover_orders_parent_place") == cover_orders_off_lock["final_place"]
+            and core.get("mage_field_arcs_parent_place") == mage_field_arcs_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -996,6 +1009,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.COVER_ORDERS_OFF + "/" + name: pin
                            for name, pin in expected_cover_orders_off.items()})
     expected_stage[compose.COVER_ORDERS_OFF_ARCHIVE] = digest(read(root / compose.COVER_ORDERS_OFF_ARCHIVE))
+    expected_stage.update({compose.MAGE_FIELD_ARCS_OFF + "/" + name: pin
+                           for name, pin in expected_mage_field_arcs_off.items()})
+    expected_stage[compose.MAGE_FIELD_ARCS_OFF_ARCHIVE] = digest(read(root / compose.MAGE_FIELD_ARCS_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1056,6 +1072,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.GROUND_NIGHT_SOURCES)
     expected_compile.update(str(Path(stage) / compose.COVER_ORDERS_OFF / "sources" / name)
                             for name in compose.COVER_ORDERS_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.MAGE_FIELD_ARCS_OFF / "sources" / name)
+                            for name in compose.MAGE_FIELD_ARCS_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -1082,7 +1100,7 @@ def verify_core(root, base, reports, context):
                                compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
                                compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF,
                                compose.WING_WARRIOR_OFF, compose.FIELD_LOADOUTS_OFF, compose.RETURN_CONVERT_OFF,
-                               compose.GROUND_NIGHT_OFF, compose.COVER_ORDERS_OFF)},
+                               compose.GROUND_NIGHT_OFF, compose.COVER_ORDERS_OFF, compose.MAGE_FIELD_ARCS_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -1130,7 +1148,9 @@ def verify_core(root, base, reports, context):
                         compose.GROUND_NIGHT_OFF: [name for name in lock["sources"]
                                                     if name in compose.GROUND_NIGHT_SOURCES],
                         compose.COVER_ORDERS_OFF: [name for name in lock["sources"]
-                                                    if name in compose.COVER_ORDERS_SOURCES]}
+                                                    if name in compose.COVER_ORDERS_SOURCES],
+                        compose.MAGE_FIELD_ARCS_OFF: [name for name in lock["sources"]
+                                                    if name in compose.MAGE_FIELD_ARCS_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
                               if prefix != compose.OFF or p not in expected_reuse)
@@ -1760,6 +1780,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["mage_field_arcs_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["cover_orders_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["ground_night_followup"]["rows"].items()
@@ -2208,7 +2230,7 @@ def verify_native(native, root, lock, context):
     ninja_s4_spec.loader.exec_module(ninja_s4)
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
-                 "cover_orders"):
+                 "cover_orders", "mage_field_arcs"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2483,6 +2505,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.NINJA_S4_OFF_ARCHIVE, compose.WING_WARRIOR_OFF_ARCHIVE,
                             compose.FIELD_LOADOUTS_OFF_ARCHIVE, compose.RETURN_CONVERT_OFF_ARCHIVE,
                             compose.GROUND_NIGHT_OFF_ARCHIVE, compose.COVER_ORDERS_OFF_ARCHIVE,
+                            compose.MAGE_FIELD_ARCS_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2623,6 +2646,9 @@ def admit_delivery(root, base, reports, native, context):
             "cover_orders_followup": verified["lock"]["cover_orders_followup"],
             "cover_orders_inverse_place": verified["lock"]["cover_orders_followup"]["parent_place"],
             "cover_orders_inverse_archive": digest(read(root / compose.COVER_ORDERS_OFF_ARCHIVE)),
+            "mage_field_arcs_followup": verified["lock"]["mage_field_arcs_followup"],
+            "mage_field_arcs_inverse_place": verified["lock"]["mage_field_arcs_followup"]["parent_place"],
+            "mage_field_arcs_inverse_archive": digest(read(root / compose.MAGE_FIELD_ARCS_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2662,6 +2688,7 @@ def admit_delivery(root, base, reports, native, context):
             "return_convert": runtime["return_convert"],
             "ground_night": runtime["ground_night"],
             "cover_orders": runtime["cover_orders"],
+            "mage_field_arcs": runtime["mage_field_arcs"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

@@ -107,7 +107,9 @@ def _prepare(source_root, profile, compose):
                  "RETURN_CONVERT_PROFILE_SCOPE")
     latest = profile["ground_night_followup"]["rows"]
     cover_orders = profile["cover_orders_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in cover_orders.items()}
+    mage_field_arcs = profile["mage_field_arcs_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in mage_field_arcs.items()}
+              | {name: row["parent"]["after"] for name, row in cover_orders.items()}
               | {name: row["parent"]["after"] for name, row in latest.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
