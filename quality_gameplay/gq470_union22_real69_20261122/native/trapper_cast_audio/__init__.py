@@ -165,7 +165,9 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
     output.mkdir()
     for name, raw in prepared[0].items():
         (output / name).write_bytes(raw)
-    for case in EXPECTED:
+    from case_batch import run_cases
+
+    def run_case(case):
         _binary(binary, binary_pin, compose)
         result = subprocess.run([str(binary.resolve()), *_args(case, binary)[1:]], cwd=output.parent,
                                 capture_output=True, env=environment, timeout=110)
@@ -173,6 +175,7 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
         (output / f"{case}.stderr.log").write_bytes(result.stderr)
         (output / f"{case}.status.txt").write_bytes(f"{result.returncode}\n".encode("ascii"))
         compose.need(result.returncode == 0, "TRAPPER_CAST_AUDIO_EXIT:" + case)
+    run_cases(EXPECTED, run_case)
     for mode, case in cast_cues.CASES.items():
         _binary(binary, binary_pin, compose)
         result = subprocess.run([str(binary.resolve()), f"{OUTPUT_NAME}/{case}.luau"], cwd=output.parent,

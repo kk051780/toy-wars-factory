@@ -93,12 +93,13 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] == before[name] for name, row in changed.items())
                  and {name for name in after if after[name] != before[name]} == scope, "ZOMBIE_FORMATION_CAMERA_PROFILE_SCOPE")
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
+    on_root = source_root.parent / compose.NAVIGATION_ENTRY_SKY_OFF / "sources" if index else source_root
     off_root = source_root.parent / compose.ZOMBIE_FORMATION_CAMERA_OFF / "sources"
 
     generated = {name: common._program(common._sources(root, pins[name], compose), routes, template, corpus, compose)
-                 for name, root in ((ON_PROGRAM, source_root), (OFF_PROGRAM, off_root))}
+                 for name, root in ((ON_PROGRAM, on_root), (OFF_PROGRAM, off_root))}
     for mode, case in camera_rebind.CASES.items():
-        root = source_root if mode == "ON" else off_root
+        root = on_root if mode == "ON" else off_root
         generated[case + ".luau"] = camera_rebind.program(root, mode)
     fixtures["camera_rebind"] = camera_rebind.FIXTURE_PINS
     return generated, pins, fixtures
@@ -163,7 +164,9 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
     output.mkdir()
     for name, raw in prepared[0].items():
         (output / name).write_bytes(raw)
-    for case in EXPECTED:
+    from case_batch import run_cases
+
+    def run_case(case):
         _binary(binary, binary_pin, compose)
         result = subprocess.run([str(binary.resolve()), *_args(case, binary)[1:]], cwd=output.parent,
                                 capture_output=True, env=environment, timeout=110)
@@ -171,6 +174,7 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
         (output / f"{case}.stderr.log").write_bytes(result.stderr)
         (output / f"{case}.status.txt").write_bytes(f"{result.returncode}\n".encode("ascii"))
         compose.need(result.returncode == 0, "ZOMBIE_FORMATION_CAMERA_EXIT:" + case)
+    run_cases(EXPECTED, run_case)
     for mode, case in camera_rebind.CASES.items():
         _binary(binary, binary_pin, compose)
         result = subprocess.run([str(binary.resolve()), f"{OUTPUT_NAME}/{case}.luau"], cwd=output.parent,

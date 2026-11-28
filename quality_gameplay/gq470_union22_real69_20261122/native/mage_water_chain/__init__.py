@@ -50,6 +50,16 @@ def _sources(root, pins, compose):
 
 def _program(bodies, routes, fixture, cases, compose):
     hud = bodies[HUD]
+    if "CommonGuideView.render(" in hud:
+        first = "-- COMMON-011/020. One private line"
+        last = "-- End COMMON route presentation."
+        fixture_render = " local function render()\n local char=player.Character\n"
+        compose.need(hud.count(first) == hud.count(last) == cases.count(fixture_render) == 1
+                     and hud.index(first) < hud.index(last), "MAGE_WATER_CHAIN_REAL_GUIDE_SCOPE")
+        # The selected render now calls this real earlier local. Give the
+        # partial HUD harness the same declaration before its extracted render.
+        guide = hud[hud.index(first):hud.index(last)]
+        cases = cases.replace(fixture_render, guide + fixture_render, 1)
     cuts = {
         "__HUD_DRAWER__": ('local skillUse=button("SelectedSkillUse"',
                           "-- GQ8_RC85_RC86_FB019_LOCAL_ATTACK_SWING_REAL69_20261120"),

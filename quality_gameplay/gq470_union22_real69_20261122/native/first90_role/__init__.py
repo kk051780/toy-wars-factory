@@ -28,12 +28,16 @@ MARKERS = (
 
 
 def prepare(root, profile, compose):
-    new = compose.read_file(root / ROUTE)
+    late_stage = profile.get("navigation_entry_sky_followup")
+    # Replay the original guide after its last historical change, with its original loop.
+    selected = root.parent / compose.NAVIGATION_ENTRY_SKY_OFF / "sources" if late_stage else root
+    expected = late_stage["rows"][ROUTE]["parent"]["after"] if late_stage else profile["sources"][ROUTE]["after"]
+    new = compose.read_file(selected / ROUTE)
     previous = compose.read_file(root.parent / compose.FIELD_LOADOUTS_OFF / "sources" / ROUTE)
     cases = compose.read_file(HERE / "cases.luau")
     pins = {name: compose.identity(raw) for name, raw in
             (("selected", new), ("previous", previous), ("case", cases))}
-    compose.need(pins["selected"] == profile["sources"][ROUTE]["after"]
+    compose.need(pins["selected"] == expected
                  and pins["previous"] == profile["field_loadouts_followup"]["rows"][ROUTE]["parent"]["after"]
                  and pins["case"]["sha256"] == CASE_PIN, "FIRST90_ROLE_SOURCE_PINS")
     compose.need(new.count(END) == previous.count(END) == new.count(START) == 1

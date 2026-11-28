@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "25435d008090fbd1af4480a0bad76cf26633e2872542e1c79f4c752e13c48d2f"
+LOCK_SHA256 = "0de00658b96216d24d9c954d287725f4fac311fc33087e59bdc244f4d910cf8d"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -207,8 +207,31 @@ ZOMBIE_FORMATION_CAMERA_SOURCES = (
     "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ProceduralSkills.client.luau",
 )
+NAVIGATION_ENTRY_SKY_OFF = "off69_navigation_entry_parent"
+NAVIGATION_ENTRY_SKY_OFF_ARCHIVE = "OFF69_NAVIGATION_ENTRY_SKY_ROLLBACK.tar.gz"
+NAVIGATION_ENTRY_SKY_SOURCES = (
+    VAULT_SOURCE,
+    "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
+)
+MOBILITY_CRESTS_OFF = "off69_mobility_crests_parent"
+MOBILITY_CRESTS_OFF_ARCHIVE = "OFF69_MOBILITY_CRESTS_ROLLBACK.tar.gz"
+MOBILITY_CRESTS_SOURCES = (
+    VAULT_SOURCE,
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+)
+COMMON_HEALING_OFF = "off69_common_healing_parent"
+COMMON_HEALING_OFF_ARCHIVE = "OFF69_COMMON_HEALING_ROLLBACK.tar.gz"
+COMMON_HEALING_SOURCES = (
+    VAULT_SOURCE, "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+)
 RECENT_TRIAL_STAGES = (
-    "zombie_formation_camera_followup", "trapper_cast_audio_followup", "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
+    "common_healing_followup", "mobility_crests_followup", "navigation_entry_sky_followup", "zombie_formation_camera_followup", "trapper_cast_audio_followup", "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
     "eclipse_sweep_followup", "mage_field_arcs_followup",
     "cover_orders_followup", "ground_night_followup", "return_convert_followup",
     "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
@@ -733,6 +756,21 @@ def zombie_formation_camera_parent(on, lock):
                                 lock["trapper_cast_audio_followup"]["repaired_place"], "ZOMBIE_FORMATION_CAMERA")
 
 
+def navigation_entry_sky_parent(on, lock):
+    return paired_source_parent(on, lock, lock["navigation_entry_sky_followup"], NAVIGATION_ENTRY_SKY_SOURCES,
+                                lock["zombie_formation_camera_followup"]["repaired_place"], "NAVIGATION_ENTRY_SKY")
+
+
+def mobility_crests_parent(on, lock):
+    return paired_source_parent(on, lock, lock["mobility_crests_followup"], MOBILITY_CRESTS_SOURCES,
+                                lock["navigation_entry_sky_followup"]["repaired_place"], "MOBILITY_CRESTS")
+
+
+def common_healing_parent(on, lock):
+    return paired_source_parent(on, lock, lock["common_healing_followup"], COMMON_HEALING_SOURCES,
+                                lock["mobility_crests_followup"]["repaired_place"], "COMMON_HEALING")
+
+
 def trial_sources_before(lock, followup):
     """Return the exact selected source vector of a recent stage's physical parent."""
     pins = {name: row["after"] for name, row in lock["sources"].items()}
@@ -910,7 +948,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    zombie_formation_camera_off, zombie_formation_camera_off_lock = zombie_formation_camera_parent(on, lock)
+    common_healing_off, common_healing_off_lock = common_healing_parent(on, lock)
+    mobility_crests_off, mobility_crests_off_lock = mobility_crests_parent(common_healing_off, common_healing_off_lock)
+    navigation_entry_sky_off, navigation_entry_sky_off_lock = navigation_entry_sky_parent(mobility_crests_off, mobility_crests_off_lock)
+    zombie_formation_camera_off, zombie_formation_camera_off_lock = zombie_formation_camera_parent(navigation_entry_sky_off, navigation_entry_sky_off_lock)
     trapper_cast_audio_off, trapper_cast_audio_off_lock = trapper_cast_audio_parent(zombie_formation_camera_off, zombie_formation_camera_off_lock)
     warrior_field_horde_off, warrior_field_horde_off_lock = warrior_field_horde_parent(trapper_cast_audio_off, trapper_cast_audio_off_lock)
     ninja_steps_objectives_off, ninja_steps_objectives_off_lock = ninja_steps_objectives_parent(warrior_field_horde_off, warrior_field_horde_off_lock)
@@ -1028,7 +1069,13 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / TRAPPER_CAST_AUDIO_OFF, trapper_cast_audio_off,
                    trapper_cast_audio_off_lock["final_place"], TRAPPER_CAST_AUDIO_SOURCES),
                   (stage / ZOMBIE_FORMATION_CAMERA_OFF, zombie_formation_camera_off,
-                   zombie_formation_camera_off_lock["final_place"], ZOMBIE_FORMATION_CAMERA_SOURCES))
+                   zombie_formation_camera_off_lock["final_place"], ZOMBIE_FORMATION_CAMERA_SOURCES),
+                  (stage / NAVIGATION_ENTRY_SKY_OFF, navigation_entry_sky_off,
+                   navigation_entry_sky_off_lock["final_place"], NAVIGATION_ENTRY_SKY_SOURCES),
+                  (stage / MOBILITY_CRESTS_OFF, mobility_crests_off,
+                   mobility_crests_off_lock["final_place"], MOBILITY_CRESTS_SOURCES),
+                  (stage / COMMON_HEALING_OFF, common_healing_off,
+                   common_healing_off_lock["final_place"], COMMON_HEALING_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -1148,6 +1195,12 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         trapper_cast_audio_archive_identity = identity(read_file(stage / TRAPPER_CAST_AUDIO_OFF_ARCHIVE))
         make_archive(stage / ZOMBIE_FORMATION_CAMERA_OFF, stage / ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE, ZOMBIE_FORMATION_CAMERA_OFF)
         zombie_formation_camera_archive_identity = identity(read_file(stage / ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE))
+        make_archive(stage / NAVIGATION_ENTRY_SKY_OFF, stage / NAVIGATION_ENTRY_SKY_OFF_ARCHIVE, NAVIGATION_ENTRY_SKY_OFF)
+        navigation_entry_sky_archive_identity = identity(read_file(stage / NAVIGATION_ENTRY_SKY_OFF_ARCHIVE))
+        make_archive(stage / MOBILITY_CRESTS_OFF, stage / MOBILITY_CRESTS_OFF_ARCHIVE, MOBILITY_CRESTS_OFF)
+        mobility_crests_archive_identity = identity(read_file(stage / MOBILITY_CRESTS_OFF_ARCHIVE))
+        make_archive(stage / COMMON_HEALING_OFF, stage / COMMON_HEALING_OFF_ARCHIVE, COMMON_HEALING_OFF)
+        common_healing_archive_identity = identity(read_file(stage / COMMON_HEALING_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1352,6 +1405,21 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({ZOMBIE_FORMATION_CAMERA_OFF + "/" + PROJECT: lock["project"],
                                ZOMBIE_FORMATION_CAMERA_OFF + "/" + PLACE: zombie_formation_camera_off_lock["final_place"],
                                ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE: zombie_formation_camera_archive_identity})
+        expected_stage.update({NAVIGATION_ENTRY_SKY_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in navigation_entry_sky_off.items()})
+        expected_stage.update({NAVIGATION_ENTRY_SKY_OFF + "/" + PROJECT: lock["project"],
+                               NAVIGATION_ENTRY_SKY_OFF + "/" + PLACE: navigation_entry_sky_off_lock["final_place"],
+                               NAVIGATION_ENTRY_SKY_OFF_ARCHIVE: navigation_entry_sky_archive_identity})
+        expected_stage.update({MOBILITY_CRESTS_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in mobility_crests_off.items()})
+        expected_stage.update({MOBILITY_CRESTS_OFF + "/" + PROJECT: lock["project"],
+                               MOBILITY_CRESTS_OFF + "/" + PLACE: mobility_crests_off_lock["final_place"],
+                               MOBILITY_CRESTS_OFF_ARCHIVE: mobility_crests_archive_identity})
+        expected_stage.update({COMMON_HEALING_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in common_healing_off.items()})
+        expected_stage.update({COMMON_HEALING_OFF + "/" + PROJECT: lock["project"],
+                               COMMON_HEALING_OFF + "/" + PLACE: common_healing_off_lock["final_place"],
+                               COMMON_HEALING_OFF_ARCHIVE: common_healing_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1455,6 +1523,12 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "trapper_cast_audio_rollback_archive": trapper_cast_audio_archive_identity,
             "zombie_formation_camera_followup": lock["zombie_formation_camera_followup"],
             "zombie_formation_camera_rollback_archive": zombie_formation_camera_archive_identity,
+            "navigation_entry_sky_followup": lock["navigation_entry_sky_followup"],
+            "navigation_entry_sky_rollback_archive": navigation_entry_sky_archive_identity,
+            "mobility_crests_followup": lock["mobility_crests_followup"],
+            "mobility_crests_rollback_archive": mobility_crests_archive_identity,
+            "common_healing_followup": lock["common_healing_followup"],
+            "common_healing_rollback_archive": common_healing_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1508,6 +1582,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "warrior_field_horde_parent_place": warrior_field_horde_off_lock["final_place"],
             "trapper_cast_audio_parent_place": trapper_cast_audio_off_lock["final_place"],
             "zombie_formation_camera_parent_place": zombie_formation_camera_off_lock["final_place"],
+            "navigation_entry_sky_parent_place": navigation_entry_sky_off_lock["final_place"],
+            "mobility_crests_parent_place": mobility_crests_off_lock["final_place"],
+            "common_healing_parent_place": common_healing_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
