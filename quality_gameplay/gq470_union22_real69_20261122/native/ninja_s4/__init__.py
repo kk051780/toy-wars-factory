@@ -142,7 +142,9 @@ def _prepare(source_root, profile, compose):
                  "NINJA_S4_PROFILE_SCOPE")
     later = profile["wing_warrior_followup"]["rows"]
     newest = profile["field_loadouts_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in newest.items()}
+    return_stage = profile["return_convert_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in return_stage.items()}
+              | {name: row["parent"]["after"] for name, row in newest.items()}
               | {name: row["parent"]["after"] for name, row in later.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     off_root = source_root.parent / compose.NINJA_S4_OFF / "sources"

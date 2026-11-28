@@ -49,7 +49,9 @@ FILES = {ON_PROGRAM, OFF_PROGRAM, "receipt.json"} | {
 def _template(raw, compose):
     edits = (
         ("local fixturePrint=print", "local fixturePrint=print;math.randomseed(12345)"),
-        ("-- MAGE_RUNTIME_CASES\n", "Vector3.zero=Vector3.new(0,0,0)\n-- MAGE_RUNTIME_CASES\n"),
+        # The legacy Gravity kit's C is restored by the later follow-up's public rollback switch.
+        ("-- MAGE_RUNTIME_CASES\n", "Vector3.zero=Vector3.new(0,0,0)\n"
+         "workspace:SetAttribute('P0D_ENABLE_PRIVATE_TRAPPER_RETURN',false)\n-- MAGE_RUNTIME_CASES\n"),
         ("local function ready(label)\n local count=#capturedSessions\n"
          " trigger(player,scenes:FindFirstChild('ROLE_MAGE'),'職業選択')\n",
          "local function ready(label,role)\n local count=#capturedSessions\n"
@@ -110,7 +112,9 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == profile["sources"][name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "FIELD_LOADOUTS_PROFILE_SCOPE")
-    before = after | {name: row["parent"]["after"] for name, row in changed.items()}
+    later = profile["return_convert_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in later.items()}
+              | {name: row["parent"]["after"] for name, row in changed.items()})
     off_root = source_root.parent / compose.FIELD_LOADOUTS_OFF / "sources"
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     corpus = "\n".join(cases)
