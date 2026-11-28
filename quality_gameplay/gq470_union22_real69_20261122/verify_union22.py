@@ -634,8 +634,24 @@ def verify_core(root, base, reports, context):
     require(set(warrior_field_horde["rows"]) == set(compose.WARRIOR_FIELD_HORDE_SOURCES)
             and warrior_field_horde["ability_ids"] == ['WARRIOR-004', 'WARRIOR-006', 'WARRIOR-009', 'WARRIOR-013', 'WARRIOR-014', 'WARRIOR-017']
             and warrior_field_horde["horde_source"] == "PR-951" and warrior_field_horde["horde_species"] == 8, "WARRIOR_FIELD_HORDE_SCOPE")
+    trapper_cast_audio = lock["trapper_cast_audio_followup"]
+    require(set(trapper_cast_audio["rows"]) == set(compose.TRAPPER_CAST_AUDIO_SOURCES)
+            and trapper_cast_audio["ability_ids"] == ['TRAPPER-001', 'TRAPPER-003', 'TRAPPER-004', 'TRAPPER-007', 'TRAPPER-008', 'TRAPPER-009']
+            and trapper_cast_audio["additional_cast_cues"] == 18, "TRAPPER_CAST_AUDIO_SCOPE")
+    zombie_formation_camera = lock["zombie_formation_camera_followup"]
+    require(set(zombie_formation_camera["rows"]) == set(compose.ZOMBIE_FORMATION_CAMERA_SOURCES)
+            and zombie_formation_camera["ability_ids"] == ['ZOMBIE-020']
+            and zombie_formation_camera["combo_ids"] == ["COMBO-020"] and zombie_formation_camera["camera_source"] == "PR-981", "ZOMBIE_FORMATION_CAMERA_SCOPE")
+    expected_zombie_formation_camera_off, zombie_formation_camera_off_lock, zombie_formation_camera_off = verify_source_rollback(
+        root, root, lock, current, zombie_formation_camera, zombie_formation_camera["rows"], trapper_cast_audio["repaired_place"],
+        compose.ZOMBIE_FORMATION_CAMERA_OFF, compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE, "ZOMBIE_FORMATION_CAMERA")
+    expected_trapper_cast_audio_off, trapper_cast_audio_off_lock, trapper_cast_audio_off = verify_source_rollback(
+        root, root / compose.ZOMBIE_FORMATION_CAMERA_OFF, zombie_formation_camera_off_lock, zombie_formation_camera_off,
+        trapper_cast_audio, trapper_cast_audio["rows"], warrior_field_horde["repaired_place"],
+        compose.TRAPPER_CAST_AUDIO_OFF, compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE, "TRAPPER_CAST_AUDIO")
     expected_warrior_field_horde_off, warrior_field_horde_off_lock, warrior_field_horde_off = verify_source_rollback(
-        root, root, lock, current, warrior_field_horde, warrior_field_horde["rows"], ninja_steps_objectives["repaired_place"],
+        root, root / compose.TRAPPER_CAST_AUDIO_OFF, trapper_cast_audio_off_lock, trapper_cast_audio_off,
+        warrior_field_horde, warrior_field_horde["rows"], ninja_steps_objectives["repaired_place"],
         compose.WARRIOR_FIELD_HORDE_OFF, compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE, "WARRIOR_FIELD_HORDE")
     expected_ninja_steps_objectives_off, ninja_steps_objectives_off_lock, ninja_steps_objectives_off = verify_source_rollback(
         root, root / compose.WARRIOR_FIELD_HORDE_OFF, warrior_field_horde_off_lock, warrior_field_horde_off,
@@ -950,6 +966,10 @@ def verify_core(root, base, reports, context):
         "ninja_steps_objectives_rollback_archive": digest(read(root / compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE)),
         "warrior_field_horde_followup": warrior_field_horde,
         "warrior_field_horde_rollback_archive": digest(read(root / compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE)),
+        "trapper_cast_audio_followup": trapper_cast_audio,
+        "trapper_cast_audio_rollback_archive": digest(read(root / compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE)),
+        "zombie_formation_camera_followup": zombie_formation_camera,
+        "zombie_formation_camera_rollback_archive": digest(read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -1003,6 +1023,8 @@ def verify_core(root, base, reports, context):
             and core.get("spring_mist_forest_parent_place") == spring_mist_forest_off_lock["final_place"]
             and core.get("ninja_steps_objectives_parent_place") == ninja_steps_objectives_off_lock["final_place"]
             and core.get("warrior_field_horde_parent_place") == warrior_field_horde_off_lock["final_place"]
+            and core.get("trapper_cast_audio_parent_place") == trapper_cast_audio_off_lock["final_place"]
+            and core.get("zombie_formation_camera_parent_place") == zombie_formation_camera_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1125,6 +1147,12 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.WARRIOR_FIELD_HORDE_OFF + "/" + name: pin
                            for name, pin in expected_warrior_field_horde_off.items()})
     expected_stage[compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE] = digest(read(root / compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE))
+    expected_stage.update({compose.TRAPPER_CAST_AUDIO_OFF + "/" + name: pin
+                           for name, pin in expected_trapper_cast_audio_off.items()})
+    expected_stage[compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE] = digest(read(root / compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE))
+    expected_stage.update({compose.ZOMBIE_FORMATION_CAMERA_OFF + "/" + name: pin
+                           for name, pin in expected_zombie_formation_camera_off.items()})
+    expected_stage[compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE] = digest(read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1206,7 +1234,11 @@ def verify_core(root, base, reports, context):
                         compose.NINJA_STEPS_OBJECTIVES_OFF: [name for name in lock["sources"]
                                                              if name in compose.NINJA_STEPS_OBJECTIVES_SOURCES],
                         compose.WARRIOR_FIELD_HORDE_OFF: [name for name in lock["sources"]
-                                                            if name in compose.WARRIOR_FIELD_HORDE_SOURCES]}
+                                                            if name in compose.WARRIOR_FIELD_HORDE_SOURCES],
+                        compose.TRAPPER_CAST_AUDIO_OFF: [name for name in lock["sources"]
+                                                            if name in compose.TRAPPER_CAST_AUDIO_SOURCES],
+                        compose.ZOMBIE_FORMATION_CAMERA_OFF: [name for name in lock["sources"]
+                                                            if name in compose.ZOMBIE_FORMATION_CAMERA_SOURCES]}
     # The independently verified payload must contain exactly these build stages.
     # Derive the three command checks from one ordered verifier-owned source map.
     expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
@@ -2290,7 +2322,7 @@ def verify_native(native, root, lock, context):
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
                  "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
-                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde"):
+                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2570,6 +2602,8 @@ def admit_delivery(root, base, reports, native, context):
                             compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE, compose.SPRING_MIST_FOREST_OFF_ARCHIVE,
                             compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE,
                             compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE,
+                            compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE,
+                            compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2734,6 +2768,12 @@ def admit_delivery(root, base, reports, native, context):
             "warrior_field_horde_followup": verified["lock"]["warrior_field_horde_followup"],
             "warrior_field_horde_inverse_place": verified["lock"]["warrior_field_horde_followup"]["parent_place"],
             "warrior_field_horde_inverse_archive": digest(read(root / compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE)),
+            "trapper_cast_audio_followup": verified["lock"]["trapper_cast_audio_followup"],
+            "trapper_cast_audio_inverse_place": verified["lock"]["trapper_cast_audio_followup"]["parent_place"],
+            "trapper_cast_audio_inverse_archive": digest(read(root / compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE)),
+            "zombie_formation_camera_followup": verified["lock"]["zombie_formation_camera_followup"],
+            "zombie_formation_camera_inverse_place": verified["lock"]["zombie_formation_camera_followup"]["parent_place"],
+            "zombie_formation_camera_inverse_archive": digest(read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2781,6 +2821,8 @@ def admit_delivery(root, base, reports, native, context):
             "spring_mist_forest": runtime["spring_mist_forest"],
             "ninja_steps_objectives": runtime["ninja_steps_objectives"],
             "warrior_field_horde": runtime["warrior_field_horde"],
+            "trapper_cast_audio": runtime["trapper_cast_audio"],
+            "zombie_formation_camera": runtime["zombie_formation_camera"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "b76da2302a4a7ab29a0e2df8085f171b0f716a087676ea4937298003f23b2b93"
+INPUT_LOCK_SHA256 = "627a509191562985866183b5308a330b44bf0669ea425a071e5247d9f1b51b84"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -844,6 +844,14 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from warrior_field_horde import run as run_warrior_field_horde
         run_warrior_field_horde(root, output / "warrior_field_horde", binary, pin, context, profile,
                                    compose, clean_environment())
+        from trapper_cast_audio import FILES as trapper_cast_audio_files, PROCESS_COUNT as trapper_cast_audio_runs
+        from trapper_cast_audio import run as run_trapper_cast_audio
+        run_trapper_cast_audio(root, output / "trapper_cast_audio", binary, pin, context, profile,
+                                   compose, clean_environment())
+        from zombie_formation_camera import FILES as zombie_formation_camera_files, PROCESS_COUNT as zombie_formation_camera_runs
+        from zombie_formation_camera import run as run_zombie_formation_camera
+        run_zombie_formation_camera(root, output / "zombie_formation_camera", binary, pin, context, profile,
+                                   compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -876,7 +884,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                + len(ground_night_files) + len(cover_orders_files) + len(mage_field_arcs_files)
                                + len(eclipse_sweep_files) + len(builder_forms_files) + len(footing_wards_files)
                                + len(ninja_beast_castle_files) + len(spring_mist_forest_files)
-                               + len(ninja_steps_objectives_files) + len(warrior_field_horde_files))
+                               + len(ninja_steps_objectives_files) + len(warrior_field_horde_files) + len(trapper_cast_audio_files) + len(zombie_formation_camera_files))
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
                 + current_stage_files
                 and {name.removeprefix("wing_warrior/") for name in evidence
@@ -909,6 +917,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                      if name.startswith("ninja_steps_objectives/")} == ninja_steps_objectives_files
                 and {name.removeprefix("warrior_field_horde/") for name in evidence
                      if name.startswith("warrior_field_horde/")} == warrior_field_horde_files
+                and {name.removeprefix("trapper_cast_audio/") for name in evidence
+                     if name.startswith("trapper_cast_audio/")} == trapper_cast_audio_files
+                and {name.removeprefix("zombie_formation_camera/") for name in evidence
+                     if name.startswith("zombie_formation_camera/")} == zombie_formation_camera_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -966,6 +978,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "spring_mist_forest": identity(read(output / "spring_mist_forest/receipt.json")),
                    "ninja_steps_objectives": identity(read(output / "ninja_steps_objectives/receipt.json")),
                    "warrior_field_horde": identity(read(output / "warrior_field_horde/receipt.json")),
+                   "trapper_cast_audio": identity(read(output / "trapper_cast_audio/receipt.json")),
+                   "zombie_formation_camera": identity(read(output / "zombie_formation_camera/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -977,7 +991,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    + wing_warrior_runs + fixed_cue_runs + field_loadout_runs
                    + first90_role_runs + return_convert_runs + ground_night_runs + cover_orders_runs
                    + mage_field_arcs_runs + eclipse_sweep_runs + builder_forms_runs + footing_wards_runs
-                   + ninja_beast_castle_runs + spring_mist_forest_runs + ninja_steps_objectives_runs + warrior_field_horde_runs,
+                   + ninja_beast_castle_runs + spring_mist_forest_runs + ninja_steps_objectives_runs + warrior_field_horde_runs + trapper_cast_audio_runs + zombie_formation_camera_runs,
                    "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
                    + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}

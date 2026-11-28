@@ -126,6 +126,8 @@ def source_contract(root, profile, input_lock):
     spring_mist_forest = profile["spring_mist_forest_followup"]
     ninja_steps_objectives = profile["ninja_steps_objectives_followup"]
     warrior_field_horde = profile["warrior_field_horde_followup"]
+    trapper_cast_audio = profile["trapper_cast_audio_followup"]
+    zombie_formation_camera = profile["zombie_formation_camera_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
     builder_forms_parent_pins = compose.trial_sources_before(profile, "builder_forms_followup")
@@ -134,6 +136,8 @@ def source_contract(root, profile, input_lock):
     spring_mist_forest_parent_pins = compose.trial_sources_before(profile, "spring_mist_forest_followup")
     ninja_steps_objectives_parent_pins = compose.trial_sources_before(profile, "ninja_steps_objectives_followup")
     warrior_field_horde_parent_pins = compose.trial_sources_before(profile, "warrior_field_horde_followup")
+    trapper_cast_audio_parent_pins = compose.trial_sources_before(profile, "trapper_cast_audio_followup")
+    zombie_formation_camera_parent_pins = compose.trial_sources_before(profile, "zombie_formation_camera_followup")
     eclipse_sweep_parent_pins = builder_forms_parent_pins | {
         name: row["parent"]["after"] for name, row in eclipse_sweep["rows"].items()}
     mage_field_arcs_parent_pins = eclipse_sweep_parent_pins | {
@@ -202,6 +206,10 @@ def source_contract(root, profile, input_lock):
                    == ninja_steps_objectives_parent_pins
                    and native.source_snapshot(root / compose.WARRIOR_FIELD_HORDE_OFF / "sources")
                    == warrior_field_horde_parent_pins
+                   and native.source_snapshot(root / compose.TRAPPER_CAST_AUDIO_OFF / "sources")
+                   == trapper_cast_audio_parent_pins
+                   and native.source_snapshot(root / compose.ZOMBIE_FORMATION_CAMERA_OFF / "sources")
+                   == zombie_formation_camera_parent_pins
                    and native.source_snapshot(root / compose.FIELD_LOADOUTS_OFF / "sources") == field_loadouts_parent_pins
                    and native.source_snapshot(root / compose.WING_WARRIOR_OFF / "sources") == wing_warrior_parent_pins
                    and native.source_snapshot(root / compose.NINJA_S4_OFF / "sources") == ninja_s4_parent_pins
@@ -238,7 +246,11 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == warrior_field_horde["repaired_place"]
+                   == zombie_formation_camera["repaired_place"]
+                   and native.identity(native.read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF / compose.PLACE))
+                   == zombie_formation_camera["parent_place"] == trapper_cast_audio["repaired_place"]
+                   and native.identity(native.read(root / compose.TRAPPER_CAST_AUDIO_OFF / compose.PLACE))
+                   == trapper_cast_audio["parent_place"] == warrior_field_horde["repaired_place"]
                    and native.identity(native.read(root / compose.WARRIOR_FIELD_HORDE_OFF / compose.PLACE))
                    == warrior_field_horde["parent_place"] == ninja_steps_objectives["repaired_place"]
                    and native.identity(native.read(root / compose.NINJA_STEPS_OBJECTIVES_OFF / compose.PLACE))
