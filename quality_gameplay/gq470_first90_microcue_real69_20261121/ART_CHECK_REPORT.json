@@ -1,0 +1,394 @@
+{
+  "schema": "GQ470_REAL69_FIRST90_MICROCUE_ART_CHECK_REPORT_V1",
+  "feature_id": "GQ470_FB015_FIRST90_MICROCUE_VISUAL_20261121",
+  "source_profile": "REAL69_PRIVATE_COMPANION",
+  "formal_branch": "rc/p0d-s1-kids-rc01",
+  "formal_head_observed": "e80973c354f14a0d0088577f3cc1a875454f0f8f",
+  "candidate_source_ci": {
+    "workflow_run": 44817869866,
+    "verified_head": "3178d3e0920fe4a96fc8b777d3c382e0a1067a6a",
+    "conclusion": "SUCCESS_SOURCE_ONLY",
+    "verified_selected_sources": 69,
+    "changed_routes": 1,
+    "unmodified_routes_byte_exact": 68,
+    "source_sha256_before": "cd346ca76f8c215219a7c31e0795b3e113a146eaab9c003cd5559eaf46919d5d",
+    "source_sha256_after": "e4df1543fb9f660bfe634ce3b060db50f9ebddbb52e6b87a68530bffd026438b",
+    "native_compile_on": 69,
+    "native_compile_off": 69,
+    "rojo_on_off": "PASS",
+    "original_place_rollback": "BYTE_EXACT_PASS",
+    "candidate_place_sha256": null,
+    "candidate_place_bytes": null,
+    "official_rc_adopted": false
+  },
+  "static_visual_delta": {
+    "local_hints_only": true,
+    "billboard_before_px": [
+      210,
+      43
+    ],
+    "billboard_after_px": [
+      184,
+      36
+    ],
+    "billboard_area_before_px2": 9030,
+    "billboard_area_after_px2": 6624,
+    "nominal_gui_rect_area_reduction_percent": 26.6,
+    "world_offset_y_before": 4.3,
+    "world_offset_y_after": 3.65,
+    "bg_transparency_before": 0.26,
+    "bg_transparency_after": 0.42,
+    "cue_visible_seconds": 4.5,
+    "reminder_after_seconds": 24,
+    "max_lifetime_seconds": 90,
+    "always_on_top": false,
+    "max_distance_studs": 32,
+    "new_gui_instances": 0,
+    "new_parts": 0,
+    "new_remote_writers": 0,
+    "per_frame_render_callback_additions": 0,
+    "interpretation": "UI rectangle dimensions only, not measured viewport obstruction, visual quality or FPS"
+  },
+  "visual_evidence_gate": {
+    "status": "MISSING",
+    "before_after_same_camera_scenes": 8,
+    "device_profiles": 2,
+    "required_captures": 32,
+    "real_png_captures_received": 0,
+    "capture_environment": "Studio Play scene-specific PC and real Android, same FOV/camera/time/weather; no fabricated screenshots",
+    "shots": [
+      {
+        "scene": "lobby",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/lobby.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "lobby",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/lobby.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "lobby",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/lobby.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "lobby",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/lobby.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "field_wide",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/field_wide.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "field_wide",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/field_wide.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "field_wide",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/field_wide.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "field_wide",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/field_wide.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "castle",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/castle.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "castle",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/castle.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "castle",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/castle.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "castle",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/castle.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "sea",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/sea.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "sea",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/sea.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "sea",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/sea.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "sea",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/sea.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "forest",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/forest.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "forest",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/forest.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "forest",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/forest.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "forest",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/forest.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "neutral",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/neutral.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "neutral",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/neutral.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "neutral",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/neutral.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "neutral",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/neutral.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "beast",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/beast.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "beast",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/beast.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "beast",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/beast.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "beast",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/beast.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "combat",
+        "device": "pc",
+        "version": "before",
+        "file": "before/pc/combat.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "combat",
+        "device": "pc",
+        "version": "after",
+        "file": "after/pc/combat.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "combat",
+        "device": "android",
+        "version": "before",
+        "file": "before/android/combat.png",
+        "status": "MISSING"
+      },
+      {
+        "scene": "combat",
+        "device": "android",
+        "version": "after",
+        "file": "after/android/combat.png",
+        "status": "MISSING"
+      }
+    ]
+  },
+  "human_art_gate": {
+    "status": "NOT_TESTED",
+    "score_scale": [
+      1,
+      5
+    ],
+    "pc_target_min": 4.5,
+    "android_target_min": 4,
+    "ratings": {
+      "terrain": {
+        "pc": null,
+        "android": null
+      },
+      "castle": {
+        "pc": null,
+        "android": null
+      },
+      "sea": {
+        "pc": null,
+        "android": null
+      },
+      "forest": {
+        "pc": null,
+        "android": null
+      },
+      "neutral": {
+        "pc": null,
+        "android": null
+      },
+      "beast": {
+        "pc": null,
+        "android": null
+      },
+      "roles": {
+        "pc": null,
+        "android": null
+      },
+      "combat": {
+        "pc": null,
+        "android": null
+      },
+      "lobby": {
+        "pc": null,
+        "android": null
+      },
+      "atmosphere": {
+        "pc": null,
+        "android": null
+      }
+    },
+    "independent_reviewer": null,
+    "critical_blockers": []
+  },
+  "runtime_gate": {
+    "studio_solo": "NOT_TESTED",
+    "studio_2client": "NOT_TESTED",
+    "android_15min": "NOT_TESTED",
+    "lowend_android_median_fps": null,
+    "lowend_android_p10_fps": null,
+    "lowend_android_heat_drop_fraction": null,
+    "first3min_kid_fun": null,
+    "owner_accepted": false
+  },
+  "first90_focus_checks": [
+    {
+      "elapsed_s": 2,
+      "expectation": "選択前の案内が短時間表示され操作を覆わない"
+    },
+    {
+      "elapsed_s": 8,
+      "expectation": "4.5秒経過後は案内が消える"
+    },
+    {
+      "elapsed_s": 24,
+      "expectation": "役職・モード未選択の場合だけ短いリマインド"
+    },
+    {
+      "elapsed_s": 22,
+      "expectation": "役職・モード選択済みの場合、STEP1=22秒の卵/城目標キューが4.5秒だけ見える"
+    },
+    {
+      "elapsed_s": 48,
+      "expectation": "役職・モード選択済みの場合、STEP2=48秒の帰還目標キューが4.5秒だけ見える"
+    },
+    {
+      "elapsed_s": 90,
+      "expectation": "案内が確実に破棄され常駐しない"
+    },
+    {
+      "elapsed_s": null,
+      "expectation": "死亡/リスポーン時に旧頭部へ案内が残らない"
+    },
+    {
+      "elapsed_s": null,
+      "expectation": "Androidの攻撃・ジャンプ・移動タップが案内で遮られない"
+    }
+  ],
+  "decisions": {
+    "source_gate": "PASS_SOURCE_ONLY_ON_PINNED_3178D3",
+    "visual_evidence": "NO_GO",
+    "human_art": "NO_GO",
+    "android": "NO_GO",
+    "kid_fun": "NO_GO",
+    "product": "NO_GO",
+    "owner_accepted": 0,
+    "adoption": "CONDITIONALLY_DEFER_TO_AUTHENTICATED_B_AFTER_P0"
+  },
+  "notes": "Counts are independent. No screenshot, FPS, beauty score or human approval is inferred from code or source CI."
+}
