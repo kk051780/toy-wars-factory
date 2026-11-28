@@ -27544,7 +27544,7 @@
       "source_branch_created": false,
       "base_rc_sha": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
       "source_head_before": null,
-      "source_head": null,
+      "source_head": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
       "candidate_head": null,
       "candidate_pr_status": "NOT_CREATED",
       "resources": [
@@ -28040,7 +28040,7 @@
         }
       },
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_UPDATE",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CONTINUATION",
         "branch": "quality/gq805-shop-lifecycle-82f2beb2-20261123",
         "formal_parent": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
         "expected_draft_head": "26f1d760e32e8de55fff6f0f5378979d62d245ce",
@@ -28165,6 +28165,121 @@
           "studio": "NOT_TESTED",
           "source_paths": 2
         }
+      },
+      "prepared_candidate_head": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+      "prepared_candidate_tree": "ab81c5b792381790263f04adaf260a3b06023dec",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "63bc6bb47c5680cd64554a5b6fe4d45d8ba40a9f",
+          "bytes": 109789
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "0cb85019e6850b664b416bbe9e2f5980dc12a684",
+          "bytes": 35262
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/common_healing/__init__.py",
+          "mode": "100644",
+          "blob": "5d6757cd9aeb8f526ce5ef127bcc9fc688a8beda",
+          "bytes": 11881
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "eb43e6f2e0cc2e9c8bcbb29c01416f4fed537ad3",
+          "bytes": 33459
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "c9d398ecf26d3e1846c2457c6048e25ab4e7e8fa",
+          "bytes": 69575
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/RESULT_LOCK.json",
+          "mode": "100644",
+          "blob": "2aec0e58faeb25f1352145ebb251bdc16e9d941b",
+          "bytes": 5455
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/__init__.py",
+          "mode": "100644",
+          "blob": "2f76ce365d10072d37a84b5dc4b43b1289ad6f19",
+          "bytes": 11589
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/compatibility_cases.luau",
+          "mode": "100644",
+          "blob": "8a726c61b5ca7e4be4f11a1998aa8f68b8fbe100",
+          "bytes": 2487
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/external_destroy.luau",
+          "mode": "100644",
+          "blob": "92133e4b304236e8e278f73f22b238d91bee1ec8",
+          "bytes": 3318
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/independent_cases.luau",
+          "mode": "100644",
+          "blob": "ff643b91f3c011355b795fb47d1066cdde6f7b24",
+          "bytes": 2776
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/original38.luau",
+          "mode": "100644",
+          "blob": "b8e81bbe7f451bffd211fa9b041a66f931840c37",
+          "bytes": 27582
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/residual_cases.luau",
+          "mode": "100644",
+          "blob": "4343e198757eb2e63cba61afbff1dfc4166a4fed",
+          "bytes": 1206
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/shop_lifecycle/strict_close_cases.luau",
+          "mode": "100644",
+          "blob": "80f117c7c461145ba07c2dde1aae88f899ddbeac",
+          "bytes": 2134
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "153a0bf018fa21c861aaec954c2aeaac712cc183",
+          "bytes": 24809447
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "dcd9a07537f50f75f96833eb8085cfdc181707d4",
+          "bytes": 210755
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "58f232d7e9e3d8ab51c9499de57d94e495b330b0",
+          "bytes": 148144
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1029,
+        "exact_head": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+        "exact_tree": "ab81c5b792381790263f04adaf260a3b06023dec",
+        "exact_parent": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+        "previous_candidate": null,
+        "preserved_author_parent": "26f1d760e32e8de55fff6f0f5378979d62d245ce",
+        "source_lease": "4767d913b7b71a6f47945f52a600dd2c9abf3631",
+        "source_lease_return": "d32284f89ea6e1df33d3659813302ae6fccbc7a6",
+        "prepared_at": "2026-11-28T06:17:46.259Z"
+      },
+      "actual_binding_lease": {
+        "commit": "5981183d7d15257824d55cd0045898b0b73b1b19",
+        "operation_id": "cfa7bac1-bd4c-4a6a-a915-7c87159b88c4"
       }
     },
     {
@@ -51618,7 +51733,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-ROUTE-MOBILITY-HEALING-20261128",
       "feature_id": "GQ219_PRIVATE_ROUTE_MOBILITY_HEALING_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 910,
@@ -51632,7 +51747,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Six implementable common utilities (011/020, 001/003, 016/019), delayed real deployment First90, egg-deposit guidance, originally authored distant cloud pennants and ally crests. Exactly seven selected REAL69 routes, each of the three stages physically reversible. No new entitlement or payment.",
       "resources": [
@@ -52186,7 +52301,7 @@
         "operation_id": "f1867729-05f8-4ee4-a08e-bdd2618c9e9f"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "774d462c74d724b4370c315f1b896ed049012905",
         "permitted_head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
@@ -52217,7 +52332,28 @@
           "review": 6096182093,
           "trusted_queue_run": 46114543643,
           "trusted_queue_job": 140885315113
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "2778f2bff5289f0ad814969806e7e236ceb01591",
+        "writer_return": "c73751d5054fd24134fa8d252a15ec6e759e6771",
+        "adopted_head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+        "adopted_at": "2026-11-28T06:02:01.656Z"
+      },
+      "actual_official_rc": {
+        "head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+        "previous": "774d462c74d724b4370c315f1b896ed049012905",
+        "tree": "23b8426629fdd5116d5d9db6bed156d5b5c2a7c4",
+        "private_ci": 46114738799,
+        "private_job": 140885898516,
+        "private_ci_steps": 48,
+        "private_artifact": 15251427391,
+        "private_zip_bytes": 74177234,
+        "private_zip_sha256": "e962123750f867152f9aa9ea7421d410d7f46325d0e08e6d1c8c7c4bfa06d27e",
+        "private_place_bytes": 1580946,
+        "private_place_sha256": "292e932ff94f03383bbbcf903736f740a7d5ed24dc63621f1b958961dfc5f46e",
+        "off_bytes": 1530645,
+        "source_lock_sha256": "0de00658b96216d24d9c954d287725f4fac311fc33087e59bdc244f4d910cf8d",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7235200283"
       }
     }
   ],
