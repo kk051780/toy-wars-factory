@@ -626,8 +626,24 @@ def verify_core(root, base, reports, context):
                 "ZOMBIE-041", "ZOMBIE-044", "ZOMBIE-087"]
             and spring_mist_forest["combo_ids"] == ["COMBO-015"]
             and spring_mist_forest["forest_source"] == "PR-421", "SPRING_MIST_FOREST_SCOPE")
+    ninja_steps_objectives = lock["ninja_steps_objectives_followup"]
+    require(set(ninja_steps_objectives["rows"]) == set(compose.NINJA_STEPS_OBJECTIVES_SOURCES)
+            and ninja_steps_objectives["ability_ids"] == ["NINJA-032", "NINJA-033", "NINJA-034", "NINJA-036"]
+            and ninja_steps_objectives["minimap_source"] == "PR-960", "NINJA_STEPS_OBJECTIVES_SCOPE")
+    warrior_field_horde = lock["warrior_field_horde_followup"]
+    require(set(warrior_field_horde["rows"]) == set(compose.WARRIOR_FIELD_HORDE_SOURCES)
+            and warrior_field_horde["ability_ids"] == ['WARRIOR-004', 'WARRIOR-006', 'WARRIOR-009', 'WARRIOR-013', 'WARRIOR-014', 'WARRIOR-017']
+            and warrior_field_horde["horde_source"] == "PR-951" and warrior_field_horde["horde_species"] == 8, "WARRIOR_FIELD_HORDE_SCOPE")
+    expected_warrior_field_horde_off, warrior_field_horde_off_lock, warrior_field_horde_off = verify_source_rollback(
+        root, root, lock, current, warrior_field_horde, warrior_field_horde["rows"], ninja_steps_objectives["repaired_place"],
+        compose.WARRIOR_FIELD_HORDE_OFF, compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE, "WARRIOR_FIELD_HORDE")
+    expected_ninja_steps_objectives_off, ninja_steps_objectives_off_lock, ninja_steps_objectives_off = verify_source_rollback(
+        root, root / compose.WARRIOR_FIELD_HORDE_OFF, warrior_field_horde_off_lock, warrior_field_horde_off,
+        ninja_steps_objectives, ninja_steps_objectives["rows"], spring_mist_forest["repaired_place"],
+        compose.NINJA_STEPS_OBJECTIVES_OFF, compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE, "NINJA_STEPS_OBJECTIVES")
     expected_spring_mist_forest_off, spring_mist_forest_off_lock, spring_mist_forest_off = verify_source_rollback(
-        root, root, lock, current, spring_mist_forest, spring_mist_forest["rows"],
+        root, root / compose.NINJA_STEPS_OBJECTIVES_OFF, ninja_steps_objectives_off_lock, ninja_steps_objectives_off,
+        spring_mist_forest, spring_mist_forest["rows"],
         ninja_beast_castle["repaired_place"], compose.SPRING_MIST_FOREST_OFF,
         compose.SPRING_MIST_FOREST_OFF_ARCHIVE, "SPRING_MIST_FOREST")
     expected_ninja_beast_castle_off, ninja_beast_castle_off_lock, ninja_beast_castle_off = verify_source_rollback(
@@ -930,6 +946,10 @@ def verify_core(root, base, reports, context):
         "ninja_beast_castle_rollback_archive": digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE)),
         "spring_mist_forest_followup": spring_mist_forest,
         "spring_mist_forest_rollback_archive": digest(read(root / compose.SPRING_MIST_FOREST_OFF_ARCHIVE)),
+        "ninja_steps_objectives_followup": ninja_steps_objectives,
+        "ninja_steps_objectives_rollback_archive": digest(read(root / compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE)),
+        "warrior_field_horde_followup": warrior_field_horde,
+        "warrior_field_horde_rollback_archive": digest(read(root / compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -981,6 +1001,8 @@ def verify_core(root, base, reports, context):
             and core.get("footing_wards_parent_place") == footing_wards_off_lock["final_place"]
             and core.get("ninja_beast_castle_parent_place") == ninja_beast_castle_off_lock["final_place"]
             and core.get("spring_mist_forest_parent_place") == spring_mist_forest_off_lock["final_place"]
+            and core.get("ninja_steps_objectives_parent_place") == ninja_steps_objectives_off_lock["final_place"]
+            and core.get("warrior_field_horde_parent_place") == warrior_field_horde_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1097,6 +1119,12 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.SPRING_MIST_FOREST_OFF + "/" + name: pin
                            for name, pin in expected_spring_mist_forest_off.items()})
     expected_stage[compose.SPRING_MIST_FOREST_OFF_ARCHIVE] = digest(read(root / compose.SPRING_MIST_FOREST_OFF_ARCHIVE))
+    expected_stage.update({compose.NINJA_STEPS_OBJECTIVES_OFF + "/" + name: pin
+                           for name, pin in expected_ninja_steps_objectives_off.items()})
+    expected_stage[compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE] = digest(read(root / compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE))
+    expected_stage.update({compose.WARRIOR_FIELD_HORDE_OFF + "/" + name: pin
+                           for name, pin in expected_warrior_field_horde_off.items()})
+    expected_stage[compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE] = digest(read(root / compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1174,7 +1202,11 @@ def verify_core(root, base, reports, context):
                         compose.NINJA_BEAST_CASTLE_OFF: [name for name in lock["sources"]
                                                         if name in compose.NINJA_BEAST_CASTLE_SOURCES],
                         compose.SPRING_MIST_FOREST_OFF: [name for name in lock["sources"]
-                                                        if name in compose.SPRING_MIST_FOREST_SOURCES]}
+                                                        if name in compose.SPRING_MIST_FOREST_SOURCES],
+                        compose.NINJA_STEPS_OBJECTIVES_OFF: [name for name in lock["sources"]
+                                                             if name in compose.NINJA_STEPS_OBJECTIVES_SOURCES],
+                        compose.WARRIOR_FIELD_HORDE_OFF: [name for name in lock["sources"]
+                                                            if name in compose.WARRIOR_FIELD_HORDE_SOURCES]}
     # The independently verified payload must contain exactly these build stages.
     # Derive the three command checks from one ordered verifier-owned source map.
     expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
@@ -2258,7 +2290,7 @@ def verify_native(native, root, lock, context):
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
                  "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
-                 "ninja_beast_castle", "spring_mist_forest"):
+                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2536,6 +2568,8 @@ def admit_delivery(root, base, reports, native, context):
                             compose.MAGE_FIELD_ARCS_OFF_ARCHIVE, compose.ECLIPSE_SWEEP_OFF_ARCHIVE,
                             compose.BUILDER_FORMS_OFF_ARCHIVE, compose.FOOTING_WARDS_OFF_ARCHIVE,
                             compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE, compose.SPRING_MIST_FOREST_OFF_ARCHIVE,
+                            compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE,
+                            compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2694,6 +2728,12 @@ def admit_delivery(root, base, reports, native, context):
             "spring_mist_forest_followup": verified["lock"]["spring_mist_forest_followup"],
             "spring_mist_forest_inverse_place": verified["lock"]["spring_mist_forest_followup"]["parent_place"],
             "spring_mist_forest_inverse_archive": digest(read(root / compose.SPRING_MIST_FOREST_OFF_ARCHIVE)),
+            "ninja_steps_objectives_followup": verified["lock"]["ninja_steps_objectives_followup"],
+            "ninja_steps_objectives_inverse_place": verified["lock"]["ninja_steps_objectives_followup"]["parent_place"],
+            "ninja_steps_objectives_inverse_archive": digest(read(root / compose.NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE)),
+            "warrior_field_horde_followup": verified["lock"]["warrior_field_horde_followup"],
+            "warrior_field_horde_inverse_place": verified["lock"]["warrior_field_horde_followup"]["parent_place"],
+            "warrior_field_horde_inverse_archive": digest(read(root / compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2739,6 +2779,8 @@ def admit_delivery(root, base, reports, native, context):
             "footing_wards": runtime["footing_wards"],
             "ninja_beast_castle": runtime["ninja_beast_castle"],
             "spring_mist_forest": runtime["spring_mist_forest"],
+            "ninja_steps_objectives": runtime["ninja_steps_objectives"],
+            "warrior_field_horde": runtime["warrior_field_horde"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

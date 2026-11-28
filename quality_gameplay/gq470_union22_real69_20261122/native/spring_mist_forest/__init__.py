@@ -127,10 +127,11 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] == before[name] for name, row in changed.items())
                  and {name for name in after if after[name] != before[name]} == scope, "SPRING_MIST_FOREST_PROFILE_SCOPE")
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
+    on_root = source_root.parent / compose.NINJA_STEPS_OBJECTIVES_OFF / "sources" if index else source_root
     off_root = source_root.parent / compose.SPRING_MIST_FOREST_OFF / "sources"
 
     generated = {}
-    for name, art_name, root in ((ON_PROGRAM, ART_ON_PROGRAM, source_root),
+    for name, art_name, root in ((ON_PROGRAM, ART_ON_PROGRAM, on_root),
                                  (OFF_PROGRAM, ART_OFF_PROGRAM, off_root)):
         bodies = common._sources(root, pins[name], compose)
         generated[name] = common._program(bodies, routes, template, game_cases, compose)

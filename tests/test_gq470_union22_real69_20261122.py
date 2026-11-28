@@ -47,7 +47,9 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    ninja_on = compose.spring_mist_forest_parent(on, lock)
+    warrior_parent = compose.warrior_field_horde_parent(on, lock)
+    spring_on = compose.ninja_steps_objectives_parent(*warrior_parent)
+    ninja_on = compose.spring_mist_forest_parent(*spring_on)
     footing_on = compose.ninja_beast_castle_parent(*ninja_on)
     builder_on = compose.footing_wards_parent(*footing_on)
     mage_on = compose.eclipse_sweep_parent(*compose.builder_forms_parent(*builder_on))
@@ -68,6 +70,10 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["warrior_field_horde_followup"]["rows"].items()
+        } | {
+            name: row["parent"] for name, row in lock["ninja_steps_objectives_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["spring_mist_forest_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["ninja_beast_castle_followup"]["rows"].items()
@@ -541,8 +547,18 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        ninja_on, ninja_lock = compose.spring_mist_forest_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != ninja_on[name]},
+        warrior_parent, warrior_lock = compose.warrior_field_horde_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != warrior_parent[name]},
+                         set(compose.WARRIOR_FIELD_HORDE_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "warrior_field_horde_followup"),
+                         {name: compose.identity(raw) for name, raw in warrior_parent.items()})
+        spring_on, spring_lock = compose.ninja_steps_objectives_parent(warrior_parent, warrior_lock)
+        self.assertEqual({name for name in warrior_parent if warrior_parent[name] != spring_on[name]},
+                         set(compose.NINJA_STEPS_OBJECTIVES_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "ninja_steps_objectives_followup"),
+                         {name: compose.identity(raw) for name, raw in spring_on.items()})
+        ninja_on, ninja_lock = compose.spring_mist_forest_parent(spring_on, spring_lock)
+        self.assertEqual({name for name in spring_on if spring_on[name] != ninja_on[name]},
                          set(compose.SPRING_MIST_FOREST_SOURCES))
         self.assertEqual(compose.trial_sources_before(self.lock, "spring_mist_forest_followup"),
                          {name: compose.identity(raw) for name, raw in ninja_on.items()})
@@ -1869,7 +1885,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["spring_mist_forest_followup"], self.lock["ninja_beast_castle_followup"],
+        for followup in (self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
+                         self.lock["ninja_beast_castle_followup"],
                          self.lock["footing_wards_followup"],
                          self.lock["builder_forms_followup"],
                          self.lock["eclipse_sweep_followup"],
@@ -1961,7 +1978,13 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(footing_wards["repaired_place"], ninja_beast_castle["parent_place"])
         spring_mist_forest = self.lock["spring_mist_forest_followup"]
         self.assertEqual(ninja_beast_castle["repaired_place"], spring_mist_forest["parent_place"])
-        self.assertEqual(spring_mist_forest["repaired_place"], self.lock["final_place"])
+        ninja_steps_objectives = self.lock["ninja_steps_objectives_followup"]
+        self.assertEqual(spring_mist_forest["repaired_place"], ninja_steps_objectives["parent_place"])
+        warrior_field_horde = self.lock["warrior_field_horde_followup"]
+        self.assertEqual(ninja_steps_objectives["repaired_place"], warrior_field_horde["parent_place"])
+        self.assertEqual(warrior_field_horde["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(warrior_field_horde["rows"]), set(compose.WARRIOR_FIELD_HORDE_SOURCES))
+        self.assertEqual(set(ninja_steps_objectives["rows"]), set(compose.NINJA_STEPS_OBJECTIVES_SOURCES))
         self.assertEqual(set(spring_mist_forest["rows"]), set(compose.SPRING_MIST_FOREST_SOURCES))
         self.assertEqual(set(ninja_beast_castle["rows"]), set(compose.NINJA_BEAST_CASTLE_SOURCES))
         self.assertEqual(set(footing_wards["rows"]), set(compose.FOOTING_WARDS_SOURCES))

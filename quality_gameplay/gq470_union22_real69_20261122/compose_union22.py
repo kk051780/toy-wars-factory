@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "77008c9c9489e73c205fb159156c99d545e922a628349b822ebebb684f066d15"
+LOCK_SHA256 = "a5612f7bec18de823fbe8cfb53072d2c7946b165d5748df59c615d4addb7dc34"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -175,8 +175,21 @@ SPRING_MIST_FOREST_SOURCES = (
     "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
     "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
 )
+NINJA_STEPS_OBJECTIVES_OFF = "off69_ninja_steps_parent"
+NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE = "OFF69_NINJA_STEPS_SPRING_MIST_PARENT_ROLLBACK.tar.gz"
+NINJA_STEPS_OBJECTIVES_SOURCES = (
+    VAULT_SOURCE, "ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau", "ServerScriptService/EGGRUMBLE_MapIntelBridge.server.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_HudIntelRuntime.client.luau",
+)
+WARRIOR_FIELD_HORDE_OFF = "off69_warrior_horde_parent"
+WARRIOR_FIELD_HORDE_OFF_ARCHIVE = "OFF69_WARRIOR_FIELD_HORDE_ROLLBACK.tar.gz"
+WARRIOR_FIELD_HORDE_SOURCES = (
+    VAULT_SOURCE, "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "ServerScriptService/EGGRUMBLE_SwarmCombat.luau",
+)
 RECENT_TRIAL_STAGES = (
-    "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
+    "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
     "eclipse_sweep_followup", "mage_field_arcs_followup",
     "cover_orders_followup", "ground_night_followup", "return_convert_followup",
     "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
@@ -681,6 +694,16 @@ def spring_mist_forest_parent(on, lock):
                                 lock["ninja_beast_castle_followup"]["repaired_place"], "SPRING_MIST_FOREST")
 
 
+def ninja_steps_objectives_parent(on, lock):
+    return paired_source_parent(on, lock, lock["ninja_steps_objectives_followup"], NINJA_STEPS_OBJECTIVES_SOURCES,
+                                lock["spring_mist_forest_followup"]["repaired_place"], "NINJA_STEPS_OBJECTIVES")
+
+
+def warrior_field_horde_parent(on, lock):
+    return paired_source_parent(on, lock, lock["warrior_field_horde_followup"], WARRIOR_FIELD_HORDE_SOURCES,
+                                lock["ninja_steps_objectives_followup"]["repaired_place"], "WARRIOR_FIELD_HORDE")
+
+
 def trial_sources_before(lock, followup):
     """Return the exact selected source vector of a recent stage's physical parent."""
     pins = {name: row["after"] for name, row in lock["sources"].items()}
@@ -858,7 +881,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    spring_mist_forest_off, spring_mist_forest_off_lock = spring_mist_forest_parent(on, lock)
+    warrior_field_horde_off, warrior_field_horde_off_lock = warrior_field_horde_parent(on, lock)
+    ninja_steps_objectives_off, ninja_steps_objectives_off_lock = ninja_steps_objectives_parent(warrior_field_horde_off, warrior_field_horde_off_lock)
+    spring_mist_forest_off, spring_mist_forest_off_lock = spring_mist_forest_parent(ninja_steps_objectives_off, ninja_steps_objectives_off_lock)
     ninja_beast_castle_off, ninja_beast_castle_off_lock = ninja_beast_castle_parent(spring_mist_forest_off,
                                                                                  spring_mist_forest_off_lock)
     footing_wards_off, footing_wards_off_lock = footing_wards_parent(ninja_beast_castle_off,
@@ -964,7 +989,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / NINJA_BEAST_CASTLE_OFF, ninja_beast_castle_off,
                    ninja_beast_castle_off_lock["final_place"], NINJA_BEAST_CASTLE_SOURCES),
                   (stage / SPRING_MIST_FOREST_OFF, spring_mist_forest_off,
-                   spring_mist_forest_off_lock["final_place"], SPRING_MIST_FOREST_SOURCES))
+                   spring_mist_forest_off_lock["final_place"], SPRING_MIST_FOREST_SOURCES),
+                  (stage / NINJA_STEPS_OBJECTIVES_OFF, ninja_steps_objectives_off,
+                   ninja_steps_objectives_off_lock["final_place"], NINJA_STEPS_OBJECTIVES_SOURCES),
+                  (stage / WARRIOR_FIELD_HORDE_OFF, warrior_field_horde_off,
+                   warrior_field_horde_off_lock["final_place"], WARRIOR_FIELD_HORDE_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -1076,6 +1105,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         ninja_beast_castle_archive_identity = identity(read_file(stage / NINJA_BEAST_CASTLE_OFF_ARCHIVE))
         make_archive(stage / SPRING_MIST_FOREST_OFF, stage / SPRING_MIST_FOREST_OFF_ARCHIVE, SPRING_MIST_FOREST_OFF)
         spring_mist_forest_archive_identity = identity(read_file(stage / SPRING_MIST_FOREST_OFF_ARCHIVE))
+        make_archive(stage / NINJA_STEPS_OBJECTIVES_OFF, stage / NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE, NINJA_STEPS_OBJECTIVES_OFF)
+        ninja_steps_objectives_archive_identity = identity(read_file(stage / NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE))
+        make_archive(stage / WARRIOR_FIELD_HORDE_OFF, stage / WARRIOR_FIELD_HORDE_OFF_ARCHIVE, WARRIOR_FIELD_HORDE_OFF)
+        warrior_field_horde_archive_identity = identity(read_file(stage / WARRIOR_FIELD_HORDE_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1260,6 +1293,16 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({SPRING_MIST_FOREST_OFF + "/" + PROJECT: lock["project"],
                                SPRING_MIST_FOREST_OFF + "/" + PLACE: spring_mist_forest_off_lock["final_place"],
                                SPRING_MIST_FOREST_OFF_ARCHIVE: spring_mist_forest_archive_identity})
+        expected_stage.update({NINJA_STEPS_OBJECTIVES_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in ninja_steps_objectives_off.items()})
+        expected_stage.update({NINJA_STEPS_OBJECTIVES_OFF + "/" + PROJECT: lock["project"],
+                               NINJA_STEPS_OBJECTIVES_OFF + "/" + PLACE: ninja_steps_objectives_off_lock["final_place"],
+                               NINJA_STEPS_OBJECTIVES_OFF_ARCHIVE: ninja_steps_objectives_archive_identity})
+        expected_stage.update({WARRIOR_FIELD_HORDE_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in warrior_field_horde_off.items()})
+        expected_stage.update({WARRIOR_FIELD_HORDE_OFF + "/" + PROJECT: lock["project"],
+                               WARRIOR_FIELD_HORDE_OFF + "/" + PLACE: warrior_field_horde_off_lock["final_place"],
+                               WARRIOR_FIELD_HORDE_OFF_ARCHIVE: warrior_field_horde_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1355,6 +1398,10 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "ninja_beast_castle_rollback_archive": ninja_beast_castle_archive_identity,
             "spring_mist_forest_followup": lock["spring_mist_forest_followup"],
             "spring_mist_forest_rollback_archive": spring_mist_forest_archive_identity,
+            "ninja_steps_objectives_followup": lock["ninja_steps_objectives_followup"],
+            "ninja_steps_objectives_rollback_archive": ninja_steps_objectives_archive_identity,
+            "warrior_field_horde_followup": lock["warrior_field_horde_followup"],
+            "warrior_field_horde_rollback_archive": warrior_field_horde_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1404,6 +1451,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "footing_wards_parent_place": footing_wards_off_lock["final_place"],
             "ninja_beast_castle_parent_place": ninja_beast_castle_off_lock["final_place"],
             "spring_mist_forest_parent_place": spring_mist_forest_off_lock["final_place"],
+            "ninja_steps_objectives_parent_place": ninja_steps_objectives_off_lock["final_place"],
+            "warrior_field_horde_parent_place": warrior_field_horde_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
