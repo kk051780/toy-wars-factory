@@ -79,11 +79,19 @@ def collect(root, folder, binary_pin, context, lock, compose, execute=None):
             snapshots[arm] = {route: expected[route] for route in compose.MAGE_CONTACT_SOURCES}
             cases = workloads(inputs, arm)
             compose.need(len(cases) == 19 and set(vectors[arm]) == set(cases), "MAGE_CONTACT_EXACT_CASES")
+            # Assemble sequentially: the historical adapter is not assumed thread-safe.
+            # Only isolated CLI processes and their distinct evidence files run in pairs.
+            prepared = {}
             for name, (case, prefix) in cases.items():
                 body = (b"local patched=false\n" if before else b"local patched=true\n") + case
                 program, _, bodies = adapter.server_program(frozen, historical, parts | {"MAGE": body},
                                                               helpers, selected, arm, case_section="MAGE")
                 compose.need(len(bodies) == 28, "MAGE_CONTACT_FULL_NATIVE_BODIES")
+                prepared[name] = (program, prefix, len(bodies))
+            observed = {}
+
+            def collect_case(name):
+                program, prefix, body_count = prepared[name]
                 key = f"{arm}_{name}"
                 stdout, stderr = folder / (key + ".stdout"), folder / (key + ".stderr")
                 if execute is not None:
@@ -97,9 +105,22 @@ def collect(root, folder, binary_pin, context, lock, compose, execute=None):
                 tagged = [line.decode() for line in raw.splitlines() if line.startswith(prefix)]
                 compose.need(compose.read_file(stderr) == b"" and tagged == vectors[arm][name],
                              "MAGE_CONTACT_EXACT_VECTOR:" + key)
-                files.update({stdout.name, stderr.name})
-                records[key] = {"program": compose.identity(program), "stdout": compose.identity(raw),
-                                "cases": tagged, "full_bodies": len(bodies)}
+                observed[name] = ({stdout.name, stderr.name}, {
+                    "program": compose.identity(program), "stdout": compose.identity(raw),
+                    "cases": tagged, "full_bodies": body_count})
+
+            if execute is not None:
+                from case_batch import run_cases
+                run_cases(cases, collect_case)
+            else:
+                # Independent observer regenerates programs and reads actual logs.
+                for name in cases:
+                    collect_case(name)
+            # Keep receipt order independent of child completion order.
+            for name in cases:
+                evidence, record = observed[name]
+                files.update(evidence)
+                records[f"{arm}_{name}"] = record
             compose.need(source_snapshot(selected) == expected, "MAGE_CONTACT_SOURCE_CHANGED")
         adapter.revalidate_historical_inputs(profile["historical_inputs"], history, orig_pins)
     return {"status": "PASS", "binary": binary_pin, "context": context, "source_pins": snapshots,

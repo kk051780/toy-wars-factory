@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "28407565dc5d96a30dcfda86874c3ffd47854d9d82608f5dd6977f8ab5a45906"
+LOCK_SHA256 = "fb170b57d4941b0d0bc551ca08094d45f0c92367e0d5868294cefde2720e6a1f"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -157,8 +157,17 @@ BUILDER_FORMS_SOURCES = tuple(name for name in ECLIPSE_SWEEP_SOURCES
 FOOTING_WARDS_OFF = "off69_footing_wards_builder_forms_parent"
 FOOTING_WARDS_OFF_ARCHIVE = "OFF69_FOOTING_WARDS_BUILDER_FORMS_PARENT_ROLLBACK.tar.gz"
 FOOTING_WARDS_SOURCES = (*ECLIPSE_SWEEP_SOURCES, GUARDIAN_SOURCE)
+NINJA_BEAST_CASTLE_OFF = "off69_ninja_beast_castle_footing_wards_parent"
+NINJA_BEAST_CASTLE_OFF_ARCHIVE = "OFF69_NINJA_BEAST_CASTLE_FOOTING_WARDS_PARENT_ROLLBACK.tar.gz"
+NINJA_BEAST_CASTLE_SOURCES = (
+    VAULT_SOURCE,
+    "ServerScriptService/EGGRUMBLE_InteractionGuard.luau",
+    "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+)
 RECENT_TRIAL_STAGES = (
-    "footing_wards_followup", "builder_forms_followup", "eclipse_sweep_followup", "mage_field_arcs_followup",
+    "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
+    "eclipse_sweep_followup", "mage_field_arcs_followup",
     "cover_orders_followup", "ground_night_followup", "return_convert_followup",
     "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
     "mage_water_chain_followup", "mage_projectile_followup",
@@ -652,6 +661,11 @@ def footing_wards_parent(on, lock):
                                 lock["builder_forms_followup"]["repaired_place"], "FOOTING_WARDS")
 
 
+def ninja_beast_castle_parent(on, lock):
+    return paired_source_parent(on, lock, lock["ninja_beast_castle_followup"], NINJA_BEAST_CASTLE_SOURCES,
+                                lock["footing_wards_followup"]["repaired_place"], "NINJA_BEAST_CASTLE")
+
+
 def trial_sources_before(lock, followup):
     """Return the exact selected source vector of a recent stage's physical parent."""
     pins = {name: row["after"] for name, row in lock["sources"].items()}
@@ -829,7 +843,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    footing_wards_off, footing_wards_off_lock = footing_wards_parent(on, lock)
+    ninja_beast_castle_off, ninja_beast_castle_off_lock = ninja_beast_castle_parent(on, lock)
+    footing_wards_off, footing_wards_off_lock = footing_wards_parent(ninja_beast_castle_off,
+                                                                     ninja_beast_castle_off_lock)
     builder_forms_off, builder_forms_off_lock = builder_forms_parent(footing_wards_off, footing_wards_off_lock)
     eclipse_sweep_off, eclipse_sweep_off_lock = eclipse_sweep_parent(builder_forms_off, builder_forms_off_lock)
     mage_field_arcs_off, mage_field_arcs_off_lock = mage_field_arcs_parent(eclipse_sweep_off, eclipse_sweep_off_lock)
@@ -927,7 +943,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / BUILDER_FORMS_OFF, builder_forms_off, builder_forms_off_lock["final_place"],
                    BUILDER_FORMS_SOURCES),
                   (stage / FOOTING_WARDS_OFF, footing_wards_off, footing_wards_off_lock["final_place"],
-                   FOOTING_WARDS_SOURCES))
+                   FOOTING_WARDS_SOURCES),
+                  (stage / NINJA_BEAST_CASTLE_OFF, ninja_beast_castle_off,
+                   ninja_beast_castle_off_lock["final_place"], NINJA_BEAST_CASTLE_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -1035,6 +1053,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         builder_forms_archive_identity = identity(read_file(stage / BUILDER_FORMS_OFF_ARCHIVE))
         make_archive(stage / FOOTING_WARDS_OFF, stage / FOOTING_WARDS_OFF_ARCHIVE, FOOTING_WARDS_OFF)
         footing_wards_archive_identity = identity(read_file(stage / FOOTING_WARDS_OFF_ARCHIVE))
+        make_archive(stage / NINJA_BEAST_CASTLE_OFF, stage / NINJA_BEAST_CASTLE_OFF_ARCHIVE, NINJA_BEAST_CASTLE_OFF)
+        ninja_beast_castle_archive_identity = identity(read_file(stage / NINJA_BEAST_CASTLE_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1209,6 +1229,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({FOOTING_WARDS_OFF + "/" + PROJECT: lock["project"],
                                FOOTING_WARDS_OFF + "/" + PLACE: footing_wards_off_lock["final_place"],
                                FOOTING_WARDS_OFF_ARCHIVE: footing_wards_archive_identity})
+        expected_stage.update({NINJA_BEAST_CASTLE_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in ninja_beast_castle_off.items()})
+        expected_stage.update({NINJA_BEAST_CASTLE_OFF + "/" + PROJECT: lock["project"],
+                               NINJA_BEAST_CASTLE_OFF + "/" + PLACE: ninja_beast_castle_off_lock["final_place"],
+                               NINJA_BEAST_CASTLE_OFF_ARCHIVE: ninja_beast_castle_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1300,6 +1325,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "builder_forms_rollback_archive": builder_forms_archive_identity,
             "footing_wards_followup": lock["footing_wards_followup"],
             "footing_wards_rollback_archive": footing_wards_archive_identity,
+            "ninja_beast_castle_followup": lock["ninja_beast_castle_followup"],
+            "ninja_beast_castle_rollback_archive": ninja_beast_castle_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1347,6 +1374,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "eclipse_sweep_parent_place": eclipse_sweep_off_lock["final_place"],
             "builder_forms_parent_place": builder_forms_off_lock["final_place"],
             "footing_wards_parent_place": footing_wards_off_lock["final_place"],
+            "ninja_beast_castle_parent_place": ninja_beast_castle_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

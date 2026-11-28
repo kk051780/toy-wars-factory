@@ -9,8 +9,10 @@ FIXTURE = Path(__file__).with_name("foliage_native_cases.py")
 
 
 def source_paths(root, compose):
+    # The contract pins the foliage follow-up body, before castle approach was added.
+    # The current full client is also exercised by the castle approach suite.
     return {"official": root.parent / compose.NEUTRAL_NAMES_OFF / "sources" / compose.FOLIAGE_LOD_SOURCE,
-            "candidate": root / compose.FOLIAGE_LOD_SOURCE}
+            "candidate": root.parent / compose.NINJA_BEAST_CASTLE_OFF / "sources" / compose.FOLIAGE_LOD_SOURCE}
 
 
 def check(root, output, native, context, profile, compose):
