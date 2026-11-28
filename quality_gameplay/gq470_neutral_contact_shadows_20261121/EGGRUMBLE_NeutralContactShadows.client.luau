@@ -1,0 +1,211 @@
+--!strict
+-- GQ470_FB015_NEUTRAL_CONTACT_SHADOWS_REAL69_20261121
+-- LOCAL ART ONLY: low-glare ground contacts for truly replicated neutral NPCs.
+-- Does not touch server HP/KO/movement/egg/score/remote/Store or player visibility.
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+
+local PLAYER = Players.LocalPlayer
+local TOUCH = UserInputService.TouchEnabled
+local MAX_SHADOWS = if TOUCH then 6 else 10
+-- Keep the visual cap, but skip airborne/non-grounded neighbours within
+-- a separate constant raycast-probe budget.
+local MAX_GROUND_PROBES = MAX_SHADOWS * 2
+local MAX_DISTANCE = if TOUCH then 55 else 72
+local UPDATE_SECONDS = if TOUCH then 0.95 else 0.75
+local RESCAN_SECONDS = 3.8
+local MIN_GROUND_NORMAL = 0.72
+local SHADOW_TRANSPARENCY = 0.73
+-- Shadows dissolve over the last 30% of the existing LOD range, avoiding
+-- a dark disc abruptly vanishing when an NPC crosses the draw boundary.
+local FADE_START_RATIO = 0.70
+local FEATURE_OFF = "EGGRUMBLE_NeutralContactShadowsOff"
+local REDUCED_EFFECTS = "EGGRUMBLE_ReducedEffects"
+local SPECIES_ATTRIBUTE = "EGGRUMBLE_NeutralSpecies"
+
+local folder = Instance.new("Folder")
+folder.Name = "EGGRUMBLE_LocalNeutralContactShadows"
+folder.Parent = Workspace
+
+local active: {[Model]: Part} = {}
+local discovered: {Model} = {}
+local lastScan = -math.huge
+local running = true
+
+local function clearAll()
+    for model, disc in pairs(active) do
+        active[model] = nil
+        disc:Destroy()
+    end
+end
+
+local function effectsDisabled(): boolean
+    return PLAYER:GetAttribute(REDUCED_EFFECTS) == true
+        or PLAYER:GetAttribute(FEATURE_OFF) == true
+end
+
+local function rescan()
+    table.clear(discovered)
+    for _, descendant in ipairs(Workspace:GetDescendants()) do
+        if descendant:IsA("Model") then
+            local species = descendant:GetAttribute(SPECIES_ATTRIBUTE)
+            if typeof(species) == "string" and #species > 0
+                and descendant:FindFirstChild("HumanoidRootPart")
+                and descendant:FindFirstChildOfClass("Humanoid") then
+                table.insert(discovered, descendant)
+            end
+        end
+    end
+end
+
+-- GQ470_NEUTRAL_DISTANCE_FADE_V1: only one cheap scalar update for each
+-- existing visual; no new geometry, raycasts, or per-frame listeners.
+local function distanceFadeTransparency(distance: number): number
+    local fadeStart = MAX_DISTANCE * FADE_START_RATIO
+    local alpha = math.clamp((distance - fadeStart) / (MAX_DISTANCE - fadeStart), 0, 1)
+    return SHADOW_TRANSPARENCY + (1 - SHADOW_TRANSPARENCY) * alpha
+end
+
+local function newDisc(): Part
+    local disc = Instance.new("Part")
+    disc.Name = "MatteContactDisc"
+    disc.Shape = Enum.PartType.Cylinder
+    disc.Material = Enum.Material.SmoothPlastic
+    disc.Color = Color3.fromRGB(21, 30, 43)
+    disc.Transparency = SHADOW_TRANSPARENCY
+    disc.Anchored = true
+    disc.CanCollide = false
+    disc.CanTouch = false
+    disc.CanQuery = false
+    disc.CastShadow = false
+    disc.Parent = folder
+    return disc
+end
+
+local function contact(model: Model, root: BasePart): RaycastResult?
+    local ray = RaycastParams.new()
+    ray.FilterType = Enum.RaycastFilterType.Exclude
+    ray.FilterDescendantsInstances = {model, folder, PLAYER.Character}
+    ray.IgnoreWater = false
+    ray.RespectCanCollide = true
+    local hit = Workspace:Raycast(root.Position + Vector3.new(0, 0.4, 0),
+        Vector3.new(0, -8, 0), ray)
+    if not hit or hit.Normal.Y < MIN_GROUND_NORMAL
+        or hit.Material == Enum.Material.Water or not hit.Instance.CanCollide then
+        return nil
+    end
+    local groundModel = hit.Instance:FindFirstAncestorOfClass("Model")
+    if groundModel and groundModel:GetAttribute(SPECIES_ATTRIBUTE) ~= nil then
+        return nil
+    end
+    return hit
+end
+
+local function tick()
+    if not running or not script:IsDescendantOf(game) then
+        clearAll()
+        return
+    end
+    if effectsDisabled() then
+        clearAll()
+        task.delay(UPDATE_SECONDS, tick)
+        return
+    end
+    local camera = Workspace.CurrentCamera
+    if not camera then
+        clearAll()
+        task.delay(UPDATE_SECONDS, tick)
+        return
+    end
+    local now = os.clock()
+    if now - lastScan > RESCAN_SECONDS then
+        rescan()
+        lastScan = now
+    end
+
+    local nearby: {{model: Model, root: BasePart, distance: number}} = {}
+    for _, model in ipairs(discovered) do
+        if model:IsDescendantOf(Workspace) then
+            local root = model:FindFirstChild("HumanoidRootPart")
+            local humanoid = model:FindFirstChildOfClass("Humanoid")
+            if root and root:IsA("BasePart") and humanoid and humanoid.Health > 0 then
+                local distance = (camera.CFrame.Position - root.Position).Magnitude
+                if distance <= MAX_DISTANCE then
+                    table.insert(nearby, {model = model, root = root, distance = distance})
+                end
+            end
+        end
+    end
+    table.sort(nearby, function(a, b) return a.distance < b.distance end)
+    -- GQ470_CONTACT_SHADOW_HARD_PART_BUDGET_V2:
+    -- Decide the full surviving set BEFORE allocating new Parts. Otherwise,
+    -- replacing ten old shadows with ten new shadows briefly doubles the budget.
+    local chosen: {{model: Model, root: BasePart, hit: RaycastResult, distance: number}} = {}
+    local selected: {[Model]: boolean} = {}
+    -- GQ470_GROUNDED_CONTACT_BACKFILL_V3: failed ground probes do not
+    -- consume one of six/ten slots; <=12 Touch / <=20 PC probes per tick.
+    local limit = math.min(MAX_GROUND_PROBES, #nearby)
+    for i = 1, limit do
+        if #chosen >= MAX_SHADOWS then
+            break
+        end
+        local entry = nearby[i]
+        local hit = contact(entry.model, entry.root)
+        if hit then
+            selected[entry.model] = true
+            table.insert(chosen, {model = entry.model, root = entry.root, hit = hit, distance = entry.distance})
+        end
+    end
+    -- Phase 1: reclaim stale discs; phase 2: allocate only needed replacements.
+    for model, disc in pairs(active) do
+        if not selected[model] then
+            active[model] = nil
+            disc:Destroy()
+        end
+    end
+    for _, entry in ipairs(chosen) do
+        local disc = active[entry.model]
+        if not disc then
+            disc = newDisc()
+            active[entry.model] = disc
+        end
+        disc.Transparency = distanceFadeTransparency(entry.distance)
+        local radius = math.clamp(math.max(entry.root.Size.X, entry.root.Size.Z) * 1.28, 1.3, 3.0)
+        disc.Size = Vector3.new(0.055, radius, radius)
+        -- A cylinder is thin along its local X axis. Align that axis with the
+        -- true solid-ground normal so the matte footprint hugs slopes, not a
+        -- horizontal plane that intersects or floats above the ground.
+        -- Normal.Y >= 0.72 makes world Z cross Normal safely non-degenerate.
+        local groundNormal = entry.hit.Normal
+        local tangent = Vector3.new(0, 0, 1):Cross(groundNormal).Unit
+        disc.CFrame = CFrame.fromMatrix(
+            entry.hit.Position + groundNormal * 0.035, groundNormal, tangent)
+    end
+    task.delay(UPDATE_SECONDS, tick)
+end
+
+-- Attribute listeners belong to this LocalScript, not the long-lived Player.
+-- Explicitly disconnect them during Studio reload/script destruction.
+local featureOffConnection: RBXScriptConnection? = nil
+local reducedEffectsConnection: RBXScriptConnection? = nil
+featureOffConnection = PLAYER:GetAttributeChangedSignal(FEATURE_OFF):Connect(function()
+    if effectsDisabled() then clearAll() end
+end)
+reducedEffectsConnection = PLAYER:GetAttributeChangedSignal(REDUCED_EFFECTS):Connect(function()
+    if effectsDisabled() then clearAll() end
+end)
+script.Destroying:Connect(function()
+    running = false
+    if featureOffConnection then
+        featureOffConnection:Disconnect()
+        featureOffConnection = nil
+    end
+    if reducedEffectsConnection then
+        reducedEffectsConnection:Disconnect()
+        reducedEffectsConnection = nil
+    end
+    clearAll()
+    folder:Destroy()
+end)
+task.defer(tick)
