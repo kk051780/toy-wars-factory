@@ -47,7 +47,9 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    warrior_parent = compose.warrior_field_horde_parent(on, lock)
+    formation_parent = compose.zombie_formation_camera_parent(on, lock)
+    trapper_parent = compose.trapper_cast_audio_parent(*formation_parent)
+    warrior_parent = compose.warrior_field_horde_parent(*trapper_parent)
     spring_on = compose.ninja_steps_objectives_parent(*warrior_parent)
     ninja_on = compose.spring_mist_forest_parent(*spring_on)
     footing_on = compose.ninja_beast_castle_parent(*ninja_on)
@@ -70,6 +72,10 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["zombie_formation_camera_followup"]["rows"].items()
+        } | {
+            name: row["parent"] for name, row in lock["trapper_cast_audio_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["warrior_field_horde_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["ninja_steps_objectives_followup"]["rows"].items()
@@ -547,8 +553,18 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        warrior_parent, warrior_lock = compose.warrior_field_horde_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != warrior_parent[name]},
+        formation_parent, formation_lock = compose.zombie_formation_camera_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != formation_parent[name]},
+                         set(compose.ZOMBIE_FORMATION_CAMERA_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "zombie_formation_camera_followup"),
+                         {name: compose.identity(raw) for name, raw in formation_parent.items()})
+        trapper_parent, trapper_lock = compose.trapper_cast_audio_parent(formation_parent, formation_lock)
+        self.assertEqual({name for name in formation_parent if formation_parent[name] != trapper_parent[name]},
+                         set(compose.TRAPPER_CAST_AUDIO_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "trapper_cast_audio_followup"),
+                         {name: compose.identity(raw) for name, raw in trapper_parent.items()})
+        warrior_parent, warrior_lock = compose.warrior_field_horde_parent(trapper_parent, trapper_lock)
+        self.assertEqual({name for name in trapper_parent if trapper_parent[name] != warrior_parent[name]},
                          set(compose.WARRIOR_FIELD_HORDE_SOURCES))
         self.assertEqual(compose.trial_sources_before(self.lock, "warrior_field_horde_followup"),
                          {name: compose.identity(raw) for name, raw in warrior_parent.items()})
@@ -1885,7 +1901,7 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
+        for followup in (self.lock["zombie_formation_camera_followup"], self.lock["trapper_cast_audio_followup"], self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
                          self.lock["ninja_beast_castle_followup"],
                          self.lock["footing_wards_followup"],
                          self.lock["builder_forms_followup"],
@@ -1982,7 +1998,13 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(spring_mist_forest["repaired_place"], ninja_steps_objectives["parent_place"])
         warrior_field_horde = self.lock["warrior_field_horde_followup"]
         self.assertEqual(ninja_steps_objectives["repaired_place"], warrior_field_horde["parent_place"])
-        self.assertEqual(warrior_field_horde["repaired_place"], self.lock["final_place"])
+        trapper_cast_audio = self.lock["trapper_cast_audio_followup"]
+        self.assertEqual(warrior_field_horde["repaired_place"], trapper_cast_audio["parent_place"])
+        zombie_formation_camera = self.lock["zombie_formation_camera_followup"]
+        self.assertEqual(trapper_cast_audio["repaired_place"], zombie_formation_camera["parent_place"])
+        self.assertEqual(zombie_formation_camera["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(zombie_formation_camera["rows"]), set(compose.ZOMBIE_FORMATION_CAMERA_SOURCES))
+        self.assertEqual(set(trapper_cast_audio["rows"]), set(compose.TRAPPER_CAST_AUDIO_SOURCES))
         self.assertEqual(set(warrior_field_horde["rows"]), set(compose.WARRIOR_FIELD_HORDE_SOURCES))
         self.assertEqual(set(ninja_steps_objectives["rows"]), set(compose.NINJA_STEPS_OBJECTIVES_SOURCES))
         self.assertEqual(set(spring_mist_forest["rows"]), set(compose.SPRING_MIST_FOREST_SOURCES))
