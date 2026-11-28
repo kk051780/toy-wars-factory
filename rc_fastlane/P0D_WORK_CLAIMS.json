@@ -48657,7 +48657,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-BUILDER-FORMS-ZOMBIE-RUNES-20261128",
       "feature_id": "GQ219_PRIVATE_BUILDER_FORMS_ZOMBIE_RUNES_FB004_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -48671,7 +48671,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Real Builder form switch Armor/Drive/Glide plus existing barrier COMBO014, six exact Zombie marks and actual curse hits, real First90 selected kits. PRIVATE REAL69 only.",
       "resources": [
@@ -49109,7 +49109,7 @@
         "operation_id": "3ae013dd-b5b1-4e3a-b4cd-24c3c9fe327d"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "6dc5c06593606fae8e5c73b398a0fd197d280155",
         "permitted_head": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
@@ -49140,7 +49140,38 @@
           "review": 6095239859,
           "trusted_queue_run": 46099499804,
           "trusted_queue_job": 140838479732
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "4b5f4b9f2df8930ae44f6b0a9e5f7fd057dd8b96",
+        "writer_return": "fdd9e7030efa5117cbed892ab293a75d8041d852",
+        "adopted_head": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
+        "adopted_at": "2026-11-28T02:48:55.300Z"
+      },
+      "actual_official_rc": {
+        "head": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
+        "previous": "6dc5c06593606fae8e5c73b398a0fd197d280155",
+        "tree": "2ef3fe8c2fbee708f68fd6a1fa01964fabce6d4c",
+        "active_baseline_head": "6dc5c06593606fae8e5c73b398a0fd197d280155",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_place_bytes": 729423,
+        "active_zip_bytes": 227522,
+        "active_artifact": 15229761144,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46099887655,
+        "private_job": 140839699834,
+        "private_steps": 48,
+        "private_artifact": 15245237892,
+        "private_zip_bytes": 46695052,
+        "private_zip_digest": "sha256:a19d955c2cfebb6c324c0364830c4bb041c9be68ba193f2e0e737b2a896ca440",
+        "private_place_bytes": 1338979,
+        "private_place_sha256": "193fa3914c3f33147166686faf3b5bcad17b17e02f7e3fa3c5f2a0d24c72ef0e",
+        "private_off_place_bytes": 1298370,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7232732866",
+        "device_evidence": "NOT_TESTED_PER_V42",
+        "independent_context": "/root/p0_offer_review26",
+        "trial_profile": "PRIVATE_COMPANION REAL69_UNION22",
+        "trial_entry": "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
       }
     },
     {
@@ -49151,7 +49182,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1061,
       "base_rc_sha": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
       "base_rc_tree": "2ef3fe8c2fbee708f68fd6a1fa01964fabce6d4c",
       "prep_branch": "quality/gq219-private-footing-wards-reversal-20261128",
@@ -49220,7 +49251,7 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-footing-wards-reversal-20261128",
         "formal_parent": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
         "tree": "3d0de70ef6cbb264a14fd12eed8b4a9d246bc785",
@@ -49327,6 +49358,104 @@
           "existing_bot_full_body_scenarios": 9,
           "device": "NOT_TESTED_V4.2"
         }
+      },
+      "source_head": "56747f29b4efda431f8cd923c39b488c04b04d32",
+      "prepared_candidate_head": "56747f29b4efda431f8cd923c39b488c04b04d32",
+      "prepared_candidate_tree": "3d0de70ef6cbb264a14fd12eed8b4a9d246bc785",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "9fcfef3da29455183030ad8ce1237c59ccb60a81",
+          "bytes": 90099
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "c4bc54d213570932bc89c8a7c86df39b1e1f635e",
+          "bytes": 35260
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/builder_forms/__init__.py",
+          "mode": "100644",
+          "blob": "03bac8aed4fded4c9c9d2ef377d4cab82be5e55f",
+          "bytes": 10915
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/__init__.py",
+          "mode": "100644",
+          "blob": "5f09f72ebcdd56c3f027ac7754005255c3fce73a",
+          "bytes": 13355
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/footing_cases.luau",
+          "mode": "100644",
+          "blob": "571483649c247d57c75cb2dcf5b9d9914b8a6071",
+          "bytes": 10854
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/mage_ward_cases.luau",
+          "mode": "100644",
+          "blob": "5b07818dc63936209fbecdd72211d151d1b3a892",
+          "bytes": 13615
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/reversal_cases.luau",
+          "mode": "100644",
+          "blob": "7c81f23764e870cfddb8529f6f4bc1940443fcec",
+          "bytes": 11266
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/zombie_waves_cases.luau",
+          "mode": "100644",
+          "blob": "ba23ab4c3044d6661bd965b40acdd9b01251faf5",
+          "bytes": 6819
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "2d55a4f7334e5041f21e4bc86180741e923c6c18",
+          "bytes": 28210
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "ca0f40808539d1400debd19bde9f87678cb4480a",
+          "bytes": 62670
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "b8b48b75281f67aa11797a38b26f2d9eb468f4fd",
+          "bytes": 11722283
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "21f0503bd37cbd995571ebf5b0b6105c3e0d6080",
+          "bytes": 195929
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "68d5e8dffd52bfeb5296d17ca12d1f8afcac2908",
+          "bytes": 138458
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1061,
+        "exact_head": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "exact_tree": "3d0de70ef6cbb264a14fd12eed8b4a9d246bc785",
+        "exact_parent": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "f960de721413aa073166d5355bf2ea709650d2e4",
+        "source_lease_return": "108bcebcfe034df8a448f11f498b6eec18ce4d9a",
+        "prepared_at": "2026-11-28T03:00:59.717Z"
+      },
+      "actual_binding_lease": {
+        "commit": "24554d3dbc0e7618f48d85d9dac08fa12b492db8",
+        "operation_id": "a87b50e0-cebf-4ff0-81f7-6150661776d8"
       }
     }
   ],
