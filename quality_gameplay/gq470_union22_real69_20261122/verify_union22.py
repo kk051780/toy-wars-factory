@@ -577,8 +577,17 @@ def verify_core(root, base, reports, context):
             and return_convert["ability_ids"] == ["TRAPPER-036", "ZOMBIE-035", "ZOMBIE-040"]
             and return_convert["combo_ids"] == ["COMBO-010", "COMBO-019"]
             and return_convert["tooltip_feedback"] == "FB-004", "RETURN_CONVERT_SCOPE")
+    ground_night = lock["ground_night_followup"]
+    require(set(ground_night["rows"]) == set(compose.GROUND_NIGHT_SOURCES)
+            and ground_night["ability_ids"] == ["MAGE-006", "MAGE-022", "MAGE-058", "MAGE-069", "NINJA-025", "NINJA-060"]
+            and ground_night["combo_ids"] == ["COMBO-009"]
+            and ground_night["additional_cast_cues"] == 20, "GROUND_NIGHT_SCOPE")
+    expected_ground_night_off, ground_night_off_lock, ground_night_off = verify_source_rollback(
+        root, root, lock, current, ground_night, ground_night["rows"], return_convert["repaired_place"],
+        compose.GROUND_NIGHT_OFF, compose.GROUND_NIGHT_OFF_ARCHIVE, "GROUND_NIGHT")
     expected_return_convert_off, return_convert_off_lock, return_convert_off = verify_source_rollback(
-        root, root, lock, current, return_convert, return_convert["rows"], field_loadouts["repaired_place"],
+        root, root / compose.GROUND_NIGHT_OFF, ground_night_off_lock, ground_night_off,
+        return_convert, return_convert["rows"], field_loadouts["repaired_place"],
         compose.RETURN_CONVERT_OFF, compose.RETURN_CONVERT_OFF_ARCHIVE, "RETURN_CONVERT")
     expected_field_loadouts_off, field_loadouts_off_lock, field_loadouts_off = verify_source_rollback(
         root, root / compose.RETURN_CONVERT_OFF, return_convert_off_lock, return_convert_off,
@@ -831,6 +840,8 @@ def verify_core(root, base, reports, context):
         "field_loadouts_rollback_archive": digest(read(root / compose.FIELD_LOADOUTS_OFF_ARCHIVE)),
         "return_convert_followup": return_convert,
         "return_convert_rollback_archive": digest(read(root / compose.RETURN_CONVERT_OFF_ARCHIVE)),
+        "ground_night_followup": ground_night,
+        "ground_night_rollback_archive": digest(read(root / compose.GROUND_NIGHT_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -874,6 +885,7 @@ def verify_core(root, base, reports, context):
             and core.get("wing_warrior_parent_place") == wing_warrior_off_lock["final_place"]
             and core.get("field_loadouts_parent_place") == field_loadouts_off_lock["final_place"]
             and core.get("return_convert_parent_place") == return_convert_off_lock["final_place"]
+            and core.get("ground_night_parent_place") == ground_night_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -966,6 +978,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.RETURN_CONVERT_OFF + "/" + name: pin
                            for name, pin in expected_return_convert_off.items()})
     expected_stage[compose.RETURN_CONVERT_OFF_ARCHIVE] = digest(read(root / compose.RETURN_CONVERT_OFF_ARCHIVE))
+    expected_stage.update({compose.GROUND_NIGHT_OFF + "/" + name: pin
+                           for name, pin in expected_ground_night_off.items()})
+    expected_stage[compose.GROUND_NIGHT_OFF_ARCHIVE] = digest(read(root / compose.GROUND_NIGHT_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1022,6 +1037,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.FIELD_LOADOUTS_SOURCES)
     expected_compile.update(str(Path(stage) / compose.RETURN_CONVERT_OFF / "sources" / name)
                             for name in compose.RETURN_CONVERT_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.GROUND_NIGHT_OFF / "sources" / name)
+                            for name in compose.GROUND_NIGHT_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -1047,7 +1064,8 @@ def verify_core(root, base, reports, context):
                                compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
                                compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
                                compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF,
-                               compose.WING_WARRIOR_OFF, compose.FIELD_LOADOUTS_OFF, compose.RETURN_CONVERT_OFF)},
+                               compose.WING_WARRIOR_OFF, compose.FIELD_LOADOUTS_OFF, compose.RETURN_CONVERT_OFF,
+                               compose.GROUND_NIGHT_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -1091,7 +1109,9 @@ def verify_core(root, base, reports, context):
                         compose.FIELD_LOADOUTS_OFF: [name for name in lock["sources"]
                                                      if name in compose.FIELD_LOADOUTS_SOURCES],
                         compose.RETURN_CONVERT_OFF: [name for name in lock["sources"]
-                                                     if name in compose.RETURN_CONVERT_SOURCES]}
+                                                     if name in compose.RETURN_CONVERT_SOURCES],
+                        compose.GROUND_NIGHT_OFF: [name for name in lock["sources"]
+                                                    if name in compose.GROUND_NIGHT_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
                               if prefix != compose.OFF or p not in expected_reuse)
@@ -1721,6 +1741,8 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
     guardian_context_pins = input_pins["sources"] | {
+        name: row["parent"]["after"] for name, row in profile["ground_night_followup"]["rows"].items()
+    } | {
         name: row["parent"]["after"] for name, row in profile["return_convert_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["field_loadouts_followup"]["rows"].items()
@@ -2164,7 +2186,7 @@ def verify_native(native, root, lock, context):
     ninja_s4 = importlib.util.module_from_spec(ninja_s4_spec)
     ninja_s4_spec.loader.exec_module(ninja_s4)
     stage_native = {}
-    for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert"):
+    for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2438,6 +2460,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.MAGE_PROJECTILES_OFF_ARCHIVE, compose.MAGE_WATER_CHAIN_OFF_ARCHIVE,
                             compose.NINJA_S4_OFF_ARCHIVE, compose.WING_WARRIOR_OFF_ARCHIVE,
                             compose.FIELD_LOADOUTS_OFF_ARCHIVE, compose.RETURN_CONVERT_OFF_ARCHIVE,
+                            compose.GROUND_NIGHT_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2572,6 +2595,9 @@ def admit_delivery(root, base, reports, native, context):
             "return_convert_followup": verified["lock"]["return_convert_followup"],
             "return_convert_inverse_place": verified["lock"]["return_convert_followup"]["parent_place"],
             "return_convert_inverse_archive": digest(read(root / compose.RETURN_CONVERT_OFF_ARCHIVE)),
+            "ground_night_followup": verified["lock"]["ground_night_followup"],
+            "ground_night_inverse_place": verified["lock"]["ground_night_followup"]["parent_place"],
+            "ground_night_inverse_archive": digest(read(root / compose.GROUND_NIGHT_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2609,6 +2635,7 @@ def admit_delivery(root, base, reports, native, context):
             "field_loadouts": runtime["field_loadouts"],
             "first90_role": runtime["first90_role"],
             "return_convert": runtime["return_convert"],
+            "ground_night": runtime["ground_night"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

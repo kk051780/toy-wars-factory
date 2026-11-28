@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "06e34ea84e9e7d935bc06a5a0e803c21970122b61da509c353649e9652401947"
+LOCK_SHA256 = "7b61b49f25241c5a6d0f7a078466160c79d064f1bfb25417a046794e67c48f6d"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -137,6 +137,10 @@ RETURN_CONVERT_SOURCES = (
     *MAGE_CONTACT_SOURCES, VAULT_SOURCE, "ServerScriptService/EGGRUMBLE_CurseConversionPolicy.luau",
     "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau",
 )
+GROUND_NIGHT_OFF = "off69_ground_night_return_convert_parent"
+GROUND_NIGHT_OFF_ARCHIVE = "OFF69_GROUND_NIGHT_RETURN_CONVERT_PARENT_ROLLBACK.tar.gz"
+GROUND_NIGHT_SOURCES = (*FIELD_LOADOUTS_SOURCES,
+                        "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau")
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -596,6 +600,11 @@ def return_convert_parent(on, lock):
                                 lock["field_loadouts_followup"]["repaired_place"], "RETURN_CONVERT")
 
 
+def ground_night_parent(on, lock):
+    return paired_source_parent(on, lock, lock["ground_night_followup"], GROUND_NIGHT_SOURCES,
+                                lock["return_convert_followup"]["repaired_place"], "GROUND_NIGHT")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -763,7 +772,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    return_convert_off, return_convert_off_lock = return_convert_parent(on, lock)
+    ground_night_off, ground_night_off_lock = ground_night_parent(on, lock)
+    return_convert_off, return_convert_off_lock = return_convert_parent(ground_night_off, ground_night_off_lock)
     field_loadouts_off, field_loadouts_off_lock = field_loadouts_parent(return_convert_off, return_convert_off_lock)
     wing_warrior_off, wing_warrior_off_lock = wing_warrior_parent(field_loadouts_off, field_loadouts_off_lock)
     ninja_s4_off, ninja_s4_off_lock = ninja_s4_parent(wing_warrior_off, wing_warrior_off_lock)
@@ -843,7 +853,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / FIELD_LOADOUTS_OFF, field_loadouts_off, field_loadouts_off_lock["final_place"],
                    FIELD_LOADOUTS_SOURCES),
                   (stage / RETURN_CONVERT_OFF, return_convert_off, return_convert_off_lock["final_place"],
-                   RETURN_CONVERT_SOURCES))
+                   RETURN_CONVERT_SOURCES),
+                  (stage / GROUND_NIGHT_OFF, ground_night_off, ground_night_off_lock["final_place"],
+                   GROUND_NIGHT_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -939,6 +951,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         field_loadouts_archive_identity = identity(read_file(stage / FIELD_LOADOUTS_OFF_ARCHIVE))
         make_archive(stage / RETURN_CONVERT_OFF, stage / RETURN_CONVERT_OFF_ARCHIVE, RETURN_CONVERT_OFF)
         return_convert_archive_identity = identity(read_file(stage / RETURN_CONVERT_OFF_ARCHIVE))
+        make_archive(stage / GROUND_NIGHT_OFF, stage / GROUND_NIGHT_OFF_ARCHIVE, GROUND_NIGHT_OFF)
+        ground_night_archive_identity = identity(read_file(stage / GROUND_NIGHT_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1083,6 +1097,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({RETURN_CONVERT_OFF + "/" + PROJECT: lock["project"],
                                RETURN_CONVERT_OFF + "/" + PLACE: return_convert_off_lock["final_place"],
                                RETURN_CONVERT_OFF_ARCHIVE: return_convert_archive_identity})
+        expected_stage.update({GROUND_NIGHT_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in ground_night_off.items()})
+        expected_stage.update({GROUND_NIGHT_OFF + "/" + PROJECT: lock["project"],
+                               GROUND_NIGHT_OFF + "/" + PLACE: ground_night_off_lock["final_place"],
+                               GROUND_NIGHT_OFF_ARCHIVE: ground_night_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1162,6 +1181,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "field_loadouts_rollback_archive": field_loadouts_archive_identity,
             "return_convert_followup": lock["return_convert_followup"],
             "return_convert_rollback_archive": return_convert_archive_identity,
+            "ground_night_followup": lock["ground_night_followup"],
+            "ground_night_rollback_archive": ground_night_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1203,6 +1224,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "wing_warrior_parent_place": wing_warrior_off_lock["final_place"],
             "field_loadouts_parent_place": field_loadouts_off_lock["final_place"],
             "return_convert_parent_place": return_convert_off_lock["final_place"],
+            "ground_night_parent_place": ground_night_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

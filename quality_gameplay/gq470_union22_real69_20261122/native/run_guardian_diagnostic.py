@@ -116,9 +116,12 @@ def source_contract(root, profile, input_lock):
     wing_warrior = profile["wing_warrior_followup"]
     field_loadouts = profile["field_loadouts_followup"]
     return_convert = profile["return_convert_followup"]
+    ground_night = profile["ground_night_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    return_convert_parent_pins = current_pins | {
+    ground_night_parent_pins = current_pins | {
+        name: row["parent"]["after"] for name, row in ground_night["rows"].items()}
+    return_convert_parent_pins = ground_night_parent_pins | {
         name: row["parent"]["after"] for name, row in return_convert["rows"].items()}
     field_loadouts_parent_pins = return_convert_parent_pins | {
         name: row["parent"]["after"] for name, row in field_loadouts["rows"].items()}
@@ -164,6 +167,7 @@ def source_contract(root, profile, input_lock):
     item_parent_pins = vault_parent_pins | {compose.ITEM_SOURCE: item_parent_pin}
     native.require(current_pins == input_lock["sources"] and current_pins[rel] == profile["sources"][rel]["after"]
                    and native.source_snapshot(root / compose.RETURN_CONVERT_OFF / "sources") == return_convert_parent_pins
+                   and native.source_snapshot(root / compose.GROUND_NIGHT_OFF / "sources") == ground_night_parent_pins
                    and native.source_snapshot(root / compose.FIELD_LOADOUTS_OFF / "sources") == field_loadouts_parent_pins
                    and native.source_snapshot(root / compose.WING_WARRIOR_OFF / "sources") == wing_warrior_parent_pins
                    and native.source_snapshot(root / compose.NINJA_S4_OFF / "sources") == ninja_s4_parent_pins
@@ -200,7 +204,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == return_convert["repaired_place"]
+                   == ground_night["repaired_place"]
+                   and native.identity(native.read(root / compose.GROUND_NIGHT_OFF / compose.PLACE))
+                   == ground_night["parent_place"] == return_convert["repaired_place"]
                    and native.identity(native.read(root / compose.RETURN_CONVERT_OFF / compose.PLACE))
                    == return_convert["parent_place"] == field_loadouts["repaired_place"]
                    and native.identity(native.read(root / compose.FIELD_LOADOUTS_OFF / compose.PLACE))

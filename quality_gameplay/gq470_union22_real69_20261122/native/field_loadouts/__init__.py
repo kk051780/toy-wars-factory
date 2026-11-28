@@ -113,7 +113,9 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "FIELD_LOADOUTS_PROFILE_SCOPE")
     later = profile["return_convert_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in later.items()}
+    latest = profile["ground_night_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in latest.items()}
+              | {name: row["parent"]["after"] for name, row in later.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     off_root = source_root.parent / compose.FIELD_LOADOUTS_OFF / "sources"
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
