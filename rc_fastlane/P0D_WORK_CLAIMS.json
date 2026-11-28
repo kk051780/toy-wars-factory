@@ -51306,7 +51306,7 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "branch": "quality/gq219-private-route-mobility-healing-20261128",
         "formal_parent": "774d462c74d724b4370c315f1b896ed049012905",
         "tree": "23b8426629fdd5116d5d9db6bed156d5b5c2a7c4",
@@ -51540,21 +51540,15 @@
         "failed_exact_hosted_run": 46112233966,
         "failed_exact_hosted_job": 140878117897
       },
-      "source_head": "d8eade95bd377a7643cca79446733a7ca70b2f2b",
-      "prepared_candidate_head": "d8eade95bd377a7643cca79446733a7ca70b2f2b",
-      "prepared_candidate_tree": "6af226b57e0cb05ecc23a5414fafef5be4262415",
+      "source_head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+      "prepared_candidate_head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+      "prepared_candidate_tree": "23b8426629fdd5116d5d9db6bed156d5b5c2a7c4",
       "source_blob_submissions": [
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
           "mode": "100644",
           "blob": "546f509f8b56849e5f0c65da5b875d7ee16536d0",
           "bytes": 108084
-        },
-        {
-          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
-          "mode": "100644",
-          "blob": "b17f2f75798c3b81010ef296913331a702116a6d",
-          "bytes": 35262
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/bot_vault_base.template.luau",
@@ -51591,6 +51585,18 @@
           "mode": "100644",
           "blob": "a65cae216e7e53736c5abefa0115d65cdee4949c",
           "bytes": 4725
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fractional_hp_native.py",
+          "mode": "100644",
+          "blob": "1345eb435931c41113eed4ae841dc7418266fbe9",
+          "bytes": 4826
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "b17f2f75798c3b81010ef296913331a702116a6d",
+          "bytes": 35262
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
@@ -51653,16 +51659,16 @@
           "bytes": 13237
         },
         {
-          "path": "quality_gameplay/gq470_union22_real69_20261122/native/navigation_entry_sky/sky.py",
-          "mode": "100644",
-          "blob": "e973433f0f778b4c9ffe665691f7e4e963d321e5",
-          "bytes": 4308
-        },
-        {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/navigation_entry_sky/sky_cases.luau",
           "mode": "100644",
           "blob": "0e67e35f49f965b678558df711680f9cf63fe4ef",
           "bytes": 7151
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/navigation_entry_sky/sky.py",
+          "mode": "100644",
+          "blob": "e973433f0f778b4c9ffe665691f7e4e963d321e5",
+          "bytes": 4308
         },
         {
           "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_steps_objectives/__init__.py",
@@ -51727,6 +51733,21 @@
       ],
       "actual_candidate_readback": {
         "pr": 1066,
+        "exact_head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+        "exact_tree": "23b8426629fdd5116d5d9db6bed156d5b5c2a7c4",
+        "exact_parent": "774d462c74d724b4370c315f1b896ed049012905",
+        "previous_candidate": "d8eade95bd377a7643cca79446733a7ca70b2f2b",
+        "preserved_author_parent": "d8eade95bd377a7643cca79446733a7ca70b2f2b",
+        "source_lease": "6e26b39d7b9634a21f25d21f3fbbbe9d28a576df",
+        "source_lease_return": "3effbcdc7431430bc3266868a2ebb3607d7e2723",
+        "prepared_at": "2026-11-28T05:41:35.963Z"
+      },
+      "actual_binding_lease": {
+        "commit": "5ed4b38b9694594fdddc9fd0c8f9452b8117a729",
+        "operation_id": "75f5ebbc-7e44-4024-b56e-347be1dfe8dd"
+      },
+      "prior_candidate_readback": {
+        "pr": 1066,
         "exact_head": "d8eade95bd377a7643cca79446733a7ca70b2f2b",
         "exact_tree": "6af226b57e0cb05ecc23a5414fafef5be4262415",
         "exact_parent": "774d462c74d724b4370c315f1b896ed049012905",
@@ -51735,10 +51756,6 @@
         "source_lease": "b9567a99c56b68c0527fd8ee50b40983718c7ce2",
         "source_lease_return": "8dcf0653476a0ef7dac510be770c3e45d928eab2",
         "prepared_at": "2026-11-28T05:38:41.959Z"
-      },
-      "actual_binding_lease": {
-        "commit": "bfce18388f62c4575e7e88a313dda3c06b7c0a5b",
-        "operation_id": "9ca06480-e710-4344-9058-897207c427f4"
       }
     }
   ],
