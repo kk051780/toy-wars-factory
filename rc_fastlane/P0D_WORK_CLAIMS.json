@@ -49177,7 +49177,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-FOOTING-WARDS-REVERSAL-WAVES-20261128",
       "feature_id": "GQ219_PRIVATE_FOOTING_WARDS_REVERSAL_WAVES_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -49191,7 +49191,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Seven-role actual footing and Warrior true landing guard, Mage wards and Guardian swept projectile, Trapper reversal and lawful landing, Zombie two bounded attacks. PRIVATE REAL69 only.",
       "resources": [
@@ -49488,7 +49488,7 @@
         "operation_id": "547049aa-d6d9-4daa-9b51-c25d6d0563e0"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
         "permitted_head": "56747f29b4efda431f8cd923c39b488c04b04d32",
@@ -49519,7 +49519,28 @@
           "review": 6095333918,
           "trusted_queue_run": 46101378964,
           "trusted_queue_job": 140844358521
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "fda16a93c6f1e19c2be6f94c75ee0595e5b794d8",
+        "writer_return": "f359d4c5216416729f70b8612b751ac33c013ea5",
+        "adopted_head": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "adopted_at": "2026-11-28T03:12:42.236Z"
+      },
+      "actual_official_rc": {
+        "head": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "previous": "5e8ea8f06100c331705e76123e964a0ca92f18a3",
+        "tree": "3d0de70ef6cbb264a14fd12eed8b4a9d246bc785",
+        "private_ci": 46101745230,
+        "private_job": 140845514557,
+        "private_ci_steps": 48,
+        "private_artifact": 15246028502,
+        "private_zip_bytes": 49240652,
+        "private_zip_sha256": "063afb39e6b85090065f2c02d861b02d5bed6711b48159e7beedf6fd0c1aa9ad",
+        "private_place_bytes": 1392701,
+        "private_place_sha256": "4bfb98d020e37d423bb142b403fbc303d26712c59cdd9e247cafccb8e4946815",
+        "off_bytes": 1338979,
+        "source_lock_sha256": "28407565dc5d96a30dcfda86874c3ffd47854d9d82608f5dd6977f8ab5a45906",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7233135606"
       }
     },
     {
@@ -49530,7 +49551,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1062,
       "base_rc_sha": "56747f29b4efda431f8cd923c39b488c04b04d32",
       "base_rc_tree": "3d0de70ef6cbb264a14fd12eed8b4a9d246bc785",
       "prep_branch": "quality/gq219-private-ninja-beast-castle-20261128",
@@ -49598,7 +49619,7 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
+        "status": "CONSUMED_EXACT_EXISTING_PR_CORRECTION",
         "branch": "quality/gq219-private-ninja-beast-castle-20261128",
         "formal_parent": "56747f29b4efda431f8cd923c39b488c04b04d32",
         "tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
@@ -49716,6 +49737,110 @@
         "failed_exact_hosted_run": 46102020388,
         "failed_exact_hosted_job": 140846359812,
         "exact_previous_fixture_sha256": "9cafd2404a7e2a1bf3b4359a09911f6f6f49c7f28f0afb3a43b9b812acff23fd"
+      },
+      "source_head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+      "prepared_candidate_head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+      "prepared_candidate_tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "c0f529af1e5b10c7a29ef231b316740ed0e32fff",
+          "bytes": 92133
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/foliage_readability.py",
+          "mode": "100644",
+          "blob": "bb5769525126561b3ecee3192796ddd7d81e5ef5",
+          "bytes": 3554
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/__init__.py",
+          "mode": "100644",
+          "blob": "f9a5314ca89e30a84fd1bd0e4ecf2f8af785ce72",
+          "bytes": 13455
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "24dc92de5e136cfbdc3aa01b62454899cfbe136f",
+          "bytes": 35260
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "ebf3b2c99ad35540399cb6eb3b50d206377ebaec",
+          "bytes": 8739
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/__init__.py",
+          "mode": "100644",
+          "blob": "269a8f59e9f8abeba897050bfaff3185552be862",
+          "bytes": 11346
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/beast_cases.luau",
+          "mode": "100644",
+          "blob": "6f977b2db6f763c6d48115dfc7d3fd0944aa916f",
+          "bytes": 11022
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/castle_cases.luau",
+          "mode": "100644",
+          "blob": "31168c342626e7c91d284708d72d241fb5ffc0aa",
+          "bytes": 6784
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/ninja_cases.luau",
+          "mode": "100644",
+          "blob": "63b61ef4b319d62e9707d027007bac6f2ee627f1",
+          "bytes": 9329
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "c9edef808b179b77bbff02c735e3592873e81c8e",
+          "bytes": 28734
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "e9850249b3d9cb6175e83fe8b8571fbab6863139",
+          "bytes": 63397
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "fcde5fe6bcb6db69cf8350c5281e6d07e5be1f4f",
+          "bytes": 12934255
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "8dfd61c3f499583b4733fd827ba1df65660a911d",
+          "bytes": 192339
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "a1e4707f69fa5d0672592ac4b225f592a62bdc9e",
+          "bytes": 139443
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1062,
+        "exact_head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "exact_tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
+        "exact_parent": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "previous_candidate": "23369b4a822ec5a4de6d9c5d69cd801fb1a2315a",
+        "preserved_author_parent": "23369b4a822ec5a4de6d9c5d69cd801fb1a2315a",
+        "source_lease": "637b8e92a725b8cbd8b9ff0e9805fa894ad52928",
+        "source_lease_return": "9c0623c5990dc241e083e141bf0f37b91e5aabff",
+        "prepared_at": "2026-11-28T03:35:58.324Z"
+      },
+      "actual_binding_lease": {
+        "commit": "2941acae6e10a4319a726d828017a7f8ad834ea4",
+        "operation_id": "0d132a47-8eea-4382-af90-7f180dda1bcf"
       }
     }
   ],
