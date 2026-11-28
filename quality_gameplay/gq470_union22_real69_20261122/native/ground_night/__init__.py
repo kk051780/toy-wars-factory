@@ -101,7 +101,9 @@ def _prepare(source_root, profile, compose):
                  "GROUND_NIGHT_PROFILE_SCOPE")
     cover_orders = profile["cover_orders_followup"]["rows"]
     mage_field_arcs = profile["mage_field_arcs_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in mage_field_arcs.items()}
+    eclipse_sweep = profile["eclipse_sweep_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in eclipse_sweep.items()}
+              | {name: row["parent"]["after"] for name, row in mage_field_arcs.items()}
               | {name: row["parent"]["after"] for name, row in cover_orders.items()}
               | {name: row["parent"]["after"] for name, row in changed.items()})
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
@@ -158,7 +160,9 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
     output.mkdir()
     for name, raw in prepared[0].items():
         (output / name).write_bytes(raw)
-    for case in EXPECTED:
+    from case_batch import run_cases
+
+    def run_case(case):
         _binary(binary, binary_pin, compose)
         result = subprocess.run([str(binary.resolve()), *_args(case, binary)[1:]], cwd=output.parent,
                                 capture_output=True, env=environment, timeout=110)
@@ -166,5 +170,6 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
         (output / f"{case}.stderr.log").write_bytes(result.stderr)
         (output / f"{case}.status.txt").write_bytes(f"{result.returncode}\n".encode("ascii"))
         compose.need(result.returncode == 0, "GROUND_NIGHT_EXIT:" + case)
+    run_cases(EXPECTED, run_case)
     compose.write_json(output / "receipt.json", _receipt(output, binary, binary_pin, context, prepared, compose))
     return observe(source_root, output, binary, binary_pin, context, profile, compose)

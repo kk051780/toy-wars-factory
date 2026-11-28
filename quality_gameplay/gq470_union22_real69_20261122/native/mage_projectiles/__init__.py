@@ -171,7 +171,9 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
     generated = prepared[0]
     output.mkdir()
     (output / "generated.luau").write_bytes(generated)
-    for case in CASES:
+    from case_batch import run_cases
+
+    def run_case(case):
         _binary_ok(binary, binary_pin, compose)
         result = subprocess.run([str(binary.resolve()), PROGRAM_ARG, "-a", case], cwd=output.parent,
                                 capture_output=True, env=environment, timeout=110)
@@ -179,5 +181,6 @@ def run(source_root, out_folder, binary, binary_pin, context, profile, compose, 
         (output / f"{case}.stderr.log").write_bytes(result.stderr)
         (output / f"{case}.status.txt").write_bytes(f"{result.returncode}\n".encode("ascii"))
         compose.need(result.returncode == 0, "MAGE_PROJECTILES_NATIVE_EXIT:" + case)
+    run_cases(CASES, run_case)
     compose.write_json(output / "receipt.json", _result(output, binary, binary_pin, context, prepared, compose))
     return observe(source_root, output, binary, binary_pin, context, profile, compose)
