@@ -619,8 +619,20 @@ def verify_core(root, base, reports, context):
                 "NINJA-005", "NINJA-006", "NINJA-008"]
             and ninja_beast_castle["castle_approach_source"] == "PR-1009",
             "NINJA_BEAST_CASTLE_SCOPE")
+    spring_mist_forest = lock["spring_mist_forest_followup"]
+    require(set(spring_mist_forest["rows"]) == set(compose.SPRING_MIST_FOREST_SOURCES)
+            and spring_mist_forest["ability_ids"] == [
+                "BEAST-061", "BEAST-062", "BEAST-067", "BUILDER-025", "BUILDER-075",
+                "ZOMBIE-041", "ZOMBIE-044", "ZOMBIE-087"]
+            and spring_mist_forest["combo_ids"] == ["COMBO-015"]
+            and spring_mist_forest["forest_source"] == "PR-421", "SPRING_MIST_FOREST_SCOPE")
+    expected_spring_mist_forest_off, spring_mist_forest_off_lock, spring_mist_forest_off = verify_source_rollback(
+        root, root, lock, current, spring_mist_forest, spring_mist_forest["rows"],
+        ninja_beast_castle["repaired_place"], compose.SPRING_MIST_FOREST_OFF,
+        compose.SPRING_MIST_FOREST_OFF_ARCHIVE, "SPRING_MIST_FOREST")
     expected_ninja_beast_castle_off, ninja_beast_castle_off_lock, ninja_beast_castle_off = verify_source_rollback(
-        root, root, lock, current, ninja_beast_castle, ninja_beast_castle["rows"],
+        root, root / compose.SPRING_MIST_FOREST_OFF, spring_mist_forest_off_lock, spring_mist_forest_off,
+        ninja_beast_castle, ninja_beast_castle["rows"],
         footing_wards["repaired_place"], compose.NINJA_BEAST_CASTLE_OFF,
         compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE, "NINJA_BEAST_CASTLE")
     expected_footing_wards_off, footing_wards_off_lock, footing_wards_off = verify_source_rollback(
@@ -916,6 +928,8 @@ def verify_core(root, base, reports, context):
         "footing_wards_rollback_archive": digest(read(root / compose.FOOTING_WARDS_OFF_ARCHIVE)),
         "ninja_beast_castle_followup": ninja_beast_castle,
         "ninja_beast_castle_rollback_archive": digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE)),
+        "spring_mist_forest_followup": spring_mist_forest,
+        "spring_mist_forest_rollback_archive": digest(read(root / compose.SPRING_MIST_FOREST_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -966,6 +980,7 @@ def verify_core(root, base, reports, context):
             and core.get("builder_forms_parent_place") == builder_forms_off_lock["final_place"]
             and core.get("footing_wards_parent_place") == footing_wards_off_lock["final_place"]
             and core.get("ninja_beast_castle_parent_place") == ninja_beast_castle_off_lock["final_place"]
+            and core.get("spring_mist_forest_parent_place") == spring_mist_forest_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1079,6 +1094,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.NINJA_BEAST_CASTLE_OFF + "/" + name: pin
                            for name, pin in expected_ninja_beast_castle_off.items()})
     expected_stage[compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE] = digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE))
+    expected_stage.update({compose.SPRING_MIST_FOREST_OFF + "/" + name: pin
+                           for name, pin in expected_spring_mist_forest_off.items()})
+    expected_stage[compose.SPRING_MIST_FOREST_OFF_ARCHIVE] = digest(read(root / compose.SPRING_MIST_FOREST_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1154,7 +1172,9 @@ def verify_core(root, base, reports, context):
                         compose.FOOTING_WARDS_OFF: [name for name in lock["sources"]
                                                    if name in compose.FOOTING_WARDS_SOURCES],
                         compose.NINJA_BEAST_CASTLE_OFF: [name for name in lock["sources"]
-                                                        if name in compose.NINJA_BEAST_CASTLE_SOURCES]}
+                                                        if name in compose.NINJA_BEAST_CASTLE_SOURCES],
+                        compose.SPRING_MIST_FOREST_OFF: [name for name in lock["sources"]
+                                                        if name in compose.SPRING_MIST_FOREST_SOURCES]}
     # The independently verified payload must contain exactly these build stages.
     # Derive the three command checks from one ordered verifier-owned source map.
     expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
@@ -2238,7 +2258,7 @@ def verify_native(native, root, lock, context):
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
                  "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
-                 "ninja_beast_castle"):
+                 "ninja_beast_castle", "spring_mist_forest"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2515,7 +2535,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.GROUND_NIGHT_OFF_ARCHIVE, compose.COVER_ORDERS_OFF_ARCHIVE,
                             compose.MAGE_FIELD_ARCS_OFF_ARCHIVE, compose.ECLIPSE_SWEEP_OFF_ARCHIVE,
                             compose.BUILDER_FORMS_OFF_ARCHIVE, compose.FOOTING_WARDS_OFF_ARCHIVE,
-                            compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE,
+                            compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE, compose.SPRING_MIST_FOREST_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2671,6 +2691,9 @@ def admit_delivery(root, base, reports, native, context):
             "ninja_beast_castle_followup": verified["lock"]["ninja_beast_castle_followup"],
             "ninja_beast_castle_inverse_place": verified["lock"]["ninja_beast_castle_followup"]["parent_place"],
             "ninja_beast_castle_inverse_archive": digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE)),
+            "spring_mist_forest_followup": verified["lock"]["spring_mist_forest_followup"],
+            "spring_mist_forest_inverse_place": verified["lock"]["spring_mist_forest_followup"]["parent_place"],
+            "spring_mist_forest_inverse_archive": digest(read(root / compose.SPRING_MIST_FOREST_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2715,6 +2738,7 @@ def admit_delivery(root, base, reports, native, context):
             "builder_forms": runtime["builder_forms"],
             "footing_wards": runtime["footing_wards"],
             "ninja_beast_castle": runtime["ninja_beast_castle"],
+            "spring_mist_forest": runtime["spring_mist_forest"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

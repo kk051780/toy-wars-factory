@@ -123,11 +123,13 @@ def source_contract(root, profile, input_lock):
     builder_forms = profile["builder_forms_followup"]
     footing_wards = profile["footing_wards_followup"]
     ninja_beast_castle = profile["ninja_beast_castle_followup"]
+    spring_mist_forest = profile["spring_mist_forest_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
     builder_forms_parent_pins = compose.trial_sources_before(profile, "builder_forms_followup")
     footing_wards_parent_pins = compose.trial_sources_before(profile, "footing_wards_followup")
     ninja_beast_castle_parent_pins = compose.trial_sources_before(profile, "ninja_beast_castle_followup")
+    spring_mist_forest_parent_pins = compose.trial_sources_before(profile, "spring_mist_forest_followup")
     eclipse_sweep_parent_pins = builder_forms_parent_pins | {
         name: row["parent"]["after"] for name, row in eclipse_sweep["rows"].items()}
     mage_field_arcs_parent_pins = eclipse_sweep_parent_pins | {
@@ -190,6 +192,8 @@ def source_contract(root, profile, input_lock):
                    and native.source_snapshot(root / compose.FOOTING_WARDS_OFF / "sources") == footing_wards_parent_pins
                    and native.source_snapshot(root / compose.NINJA_BEAST_CASTLE_OFF / "sources")
                    == ninja_beast_castle_parent_pins
+                   and native.source_snapshot(root / compose.SPRING_MIST_FOREST_OFF / "sources")
+                   == spring_mist_forest_parent_pins
                    and native.source_snapshot(root / compose.FIELD_LOADOUTS_OFF / "sources") == field_loadouts_parent_pins
                    and native.source_snapshot(root / compose.WING_WARRIOR_OFF / "sources") == wing_warrior_parent_pins
                    and native.source_snapshot(root / compose.NINJA_S4_OFF / "sources") == ninja_s4_parent_pins
@@ -226,7 +230,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == ninja_beast_castle["repaired_place"]
+                   == spring_mist_forest["repaired_place"]
+                   and native.identity(native.read(root / compose.SPRING_MIST_FOREST_OFF / compose.PLACE))
+                   == spring_mist_forest["parent_place"] == ninja_beast_castle["repaired_place"]
                    and native.identity(native.read(root / compose.NINJA_BEAST_CASTLE_OFF / compose.PLACE))
                    == ninja_beast_castle["parent_place"] == footing_wards["repaired_place"]
                    and native.identity(native.read(root / compose.FOOTING_WARDS_OFF / compose.PLACE))
