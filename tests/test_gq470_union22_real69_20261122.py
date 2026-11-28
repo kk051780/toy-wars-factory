@@ -47,7 +47,8 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    mage_on = compose.eclipse_sweep_parent(*compose.builder_forms_parent(on, lock))
+    builder_on = compose.footing_wards_parent(on, lock)
+    mage_on = compose.eclipse_sweep_parent(*compose.builder_forms_parent(*builder_on))
     ground_on = compose.cover_orders_parent(*compose.mage_field_arcs_parent(*mage_on))
     field_on = compose.return_convert_parent(*compose.ground_night_parent(*ground_on))
     water_on = compose.ninja_s4_parent(*compose.wing_warrior_parent(*compose.field_loadouts_parent(*field_on)))
@@ -65,6 +66,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["footing_wards_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["builder_forms_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["eclipse_sweep_followup"]["rows"].items()
@@ -532,8 +535,13 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        eclipse_on, eclipse_lock = compose.builder_forms_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != eclipse_on[name]}, set(compose.BUILDER_FORMS_SOURCES))
+        builder_on, builder_lock = compose.footing_wards_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != builder_on[name]}, set(compose.FOOTING_WARDS_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "footing_wards_followup"),
+                         {name: compose.identity(raw) for name, raw in builder_on.items()})
+        eclipse_on, eclipse_lock = compose.builder_forms_parent(builder_on, builder_lock)
+        self.assertEqual({name for name in builder_on if builder_on[name] != eclipse_on[name]},
+                         set(compose.BUILDER_FORMS_SOURCES))
         self.assertEqual(compose.trial_sources_before(self.lock, "builder_forms_followup"),
                          {name: compose.identity(raw) for name, raw in eclipse_on.items()})
         mage_on, mage_lock = compose.eclipse_sweep_parent(eclipse_on, eclipse_lock)
@@ -1844,7 +1852,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["builder_forms_followup"], self.lock["eclipse_sweep_followup"],
+        for followup in (self.lock["footing_wards_followup"], self.lock["builder_forms_followup"],
+                         self.lock["eclipse_sweep_followup"],
                          self.lock["mage_field_arcs_followup"],
                          self.lock["cover_orders_followup"],
                          self.lock["ground_night_followup"],
@@ -1927,7 +1936,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(mage_field_arcs["repaired_place"], eclipse_sweep["parent_place"])
         builder_forms = self.lock["builder_forms_followup"]
         self.assertEqual(eclipse_sweep["repaired_place"], builder_forms["parent_place"])
-        self.assertEqual(builder_forms["repaired_place"], self.lock["final_place"])
+        footing_wards = self.lock["footing_wards_followup"]
+        self.assertEqual(builder_forms["repaired_place"], footing_wards["parent_place"])
+        self.assertEqual(footing_wards["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(footing_wards["rows"]), set(compose.FOOTING_WARDS_SOURCES))
         self.assertEqual(set(builder_forms["rows"]), set(compose.BUILDER_FORMS_SOURCES))
         self.assertEqual(set(eclipse_sweep["rows"]), set(compose.ECLIPSE_SWEEP_SOURCES))
         self.assertEqual(set(mage_field_arcs["rows"]), set(compose.MAGE_FIELD_ARCS_SOURCES))

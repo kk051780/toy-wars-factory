@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "5a9ce201587bca44973c832b1414f1da573cba4ad80929580c098d13a1af8f77"
+LOCK_SHA256 = "28407565dc5d96a30dcfda86874c3ffd47854d9d82608f5dd6977f8ab5a45906"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -154,8 +154,11 @@ BUILDER_FORMS_OFF = "off69_builder_forms_eclipse_sweep_parent"
 BUILDER_FORMS_OFF_ARCHIVE = "OFF69_BUILDER_FORMS_ECLIPSE_SWEEP_PARENT_ROLLBACK.tar.gz"
 BUILDER_FORMS_SOURCES = tuple(name for name in ECLIPSE_SWEEP_SOURCES
                               if name != "ServerScriptService/EGGRUMBLE_SwarmCombat.luau")
+FOOTING_WARDS_OFF = "off69_footing_wards_builder_forms_parent"
+FOOTING_WARDS_OFF_ARCHIVE = "OFF69_FOOTING_WARDS_BUILDER_FORMS_PARENT_ROLLBACK.tar.gz"
+FOOTING_WARDS_SOURCES = (*ECLIPSE_SWEEP_SOURCES, GUARDIAN_SOURCE)
 RECENT_TRIAL_STAGES = (
-    "builder_forms_followup", "eclipse_sweep_followup", "mage_field_arcs_followup",
+    "footing_wards_followup", "builder_forms_followup", "eclipse_sweep_followup", "mage_field_arcs_followup",
     "cover_orders_followup", "ground_night_followup", "return_convert_followup",
     "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
     "mage_water_chain_followup", "mage_projectile_followup",
@@ -644,6 +647,11 @@ def builder_forms_parent(on, lock):
                                 lock["eclipse_sweep_followup"]["repaired_place"], "BUILDER_FORMS")
 
 
+def footing_wards_parent(on, lock):
+    return paired_source_parent(on, lock, lock["footing_wards_followup"], FOOTING_WARDS_SOURCES,
+                                lock["builder_forms_followup"]["repaired_place"], "FOOTING_WARDS")
+
+
 def trial_sources_before(lock, followup):
     """Return the exact selected source vector of a recent stage's physical parent."""
     pins = {name: row["after"] for name, row in lock["sources"].items()}
@@ -821,7 +829,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    builder_forms_off, builder_forms_off_lock = builder_forms_parent(on, lock)
+    footing_wards_off, footing_wards_off_lock = footing_wards_parent(on, lock)
+    builder_forms_off, builder_forms_off_lock = builder_forms_parent(footing_wards_off, footing_wards_off_lock)
     eclipse_sweep_off, eclipse_sweep_off_lock = eclipse_sweep_parent(builder_forms_off, builder_forms_off_lock)
     mage_field_arcs_off, mage_field_arcs_off_lock = mage_field_arcs_parent(eclipse_sweep_off, eclipse_sweep_off_lock)
     cover_orders_off, cover_orders_off_lock = cover_orders_parent(mage_field_arcs_off, mage_field_arcs_off_lock)
@@ -916,7 +925,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / ECLIPSE_SWEEP_OFF, eclipse_sweep_off, eclipse_sweep_off_lock["final_place"],
                    ECLIPSE_SWEEP_SOURCES),
                   (stage / BUILDER_FORMS_OFF, builder_forms_off, builder_forms_off_lock["final_place"],
-                   BUILDER_FORMS_SOURCES))
+                   BUILDER_FORMS_SOURCES),
+                  (stage / FOOTING_WARDS_OFF, footing_wards_off, footing_wards_off_lock["final_place"],
+                   FOOTING_WARDS_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -1022,6 +1033,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         eclipse_sweep_archive_identity = identity(read_file(stage / ECLIPSE_SWEEP_OFF_ARCHIVE))
         make_archive(stage / BUILDER_FORMS_OFF, stage / BUILDER_FORMS_OFF_ARCHIVE, BUILDER_FORMS_OFF)
         builder_forms_archive_identity = identity(read_file(stage / BUILDER_FORMS_OFF_ARCHIVE))
+        make_archive(stage / FOOTING_WARDS_OFF, stage / FOOTING_WARDS_OFF_ARCHIVE, FOOTING_WARDS_OFF)
+        footing_wards_archive_identity = identity(read_file(stage / FOOTING_WARDS_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1191,6 +1204,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({BUILDER_FORMS_OFF + "/" + PROJECT: lock["project"],
                                BUILDER_FORMS_OFF + "/" + PLACE: builder_forms_off_lock["final_place"],
                                BUILDER_FORMS_OFF_ARCHIVE: builder_forms_archive_identity})
+        expected_stage.update({FOOTING_WARDS_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in footing_wards_off.items()})
+        expected_stage.update({FOOTING_WARDS_OFF + "/" + PROJECT: lock["project"],
+                               FOOTING_WARDS_OFF + "/" + PLACE: footing_wards_off_lock["final_place"],
+                               FOOTING_WARDS_OFF_ARCHIVE: footing_wards_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1280,6 +1298,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "eclipse_sweep_rollback_archive": eclipse_sweep_archive_identity,
             "builder_forms_followup": lock["builder_forms_followup"],
             "builder_forms_rollback_archive": builder_forms_archive_identity,
+            "footing_wards_followup": lock["footing_wards_followup"],
+            "footing_wards_rollback_archive": footing_wards_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1326,6 +1346,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_field_arcs_parent_place": mage_field_arcs_off_lock["final_place"],
             "eclipse_sweep_parent_place": eclipse_sweep_off_lock["final_place"],
             "builder_forms_parent_place": builder_forms_off_lock["final_place"],
+            "footing_wards_parent_place": footing_wards_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

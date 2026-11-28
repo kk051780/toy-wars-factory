@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "cc8c282d5fe0dacbe867189fa44cf14d031baa20e7be67ecb14db4e7fbace632"
+INPUT_LOCK_SHA256 = "0a1dbac731e1d4fdc4a89bec15f27ab1abefad865f3d428efa82d3ab90bc3ad1"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -824,6 +824,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from builder_forms import run as run_builder_forms
         run_builder_forms(root, output / "builder_forms", binary, pin, context, profile,
                           compose, clean_environment())
+        from footing_wards import FILES as footing_wards_files, PROCESS_COUNT as footing_wards_runs
+        from footing_wards import run as run_footing_wards
+        run_footing_wards(root, output / "footing_wards", binary, pin, context, profile,
+                          compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -854,7 +858,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         current_stage_files = (len(wing_warrior_files) + len(fixed_cue_files)
                                + len(field_loadout_files) + len(first90_role_files) + len(return_convert_files)
                                + len(ground_night_files) + len(cover_orders_files) + len(mage_field_arcs_files)
-                               + len(eclipse_sweep_files) + len(builder_forms_files))
+                               + len(eclipse_sweep_files) + len(builder_forms_files) + len(footing_wards_files))
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
                 + current_stage_files
                 and {name.removeprefix("wing_warrior/") for name in evidence
@@ -877,6 +881,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                      if name.startswith("eclipse_sweep/")} == eclipse_sweep_files
                 and {name.removeprefix("builder_forms/") for name in evidence
                      if name.startswith("builder_forms/")} == builder_forms_files
+                and {name.removeprefix("footing_wards/") for name in evidence
+                     if name.startswith("footing_wards/")} == footing_wards_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -929,6 +935,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "mage_field_arcs": identity(read(output / "mage_field_arcs/receipt.json")),
                    "eclipse_sweep": identity(read(output / "eclipse_sweep/receipt.json")),
                    "builder_forms": identity(read(output / "builder_forms/receipt.json")),
+                   "footing_wards": identity(read(output / "footing_wards/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -939,7 +946,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "native_process_count": 99 + projectile_runs + water_chain_runs + ninja_s4_runs
                    + wing_warrior_runs + fixed_cue_runs + field_loadout_runs
                    + first90_role_runs + return_convert_runs + ground_night_runs + cover_orders_runs
-                   + mage_field_arcs_runs + eclipse_sweep_runs + builder_forms_runs,
+                   + mage_field_arcs_runs + eclipse_sweep_runs + builder_forms_runs + footing_wards_runs,
                    "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
                    + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}
