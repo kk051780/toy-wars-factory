@@ -144,7 +144,9 @@ def _prepare(source_root, profile, compose):
     newest = profile["field_loadouts_followup"]["rows"]
     return_stage = profile["return_convert_followup"]["rows"]
     latest = profile["ground_night_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in latest.items()}
+    cover_orders = profile["cover_orders_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in cover_orders.items()}
+              | {name: row["parent"]["after"] for name, row in latest.items()}
               | {name: row["parent"]["after"] for name, row in return_stage.items()}
               | {name: row["parent"]["after"] for name, row in newest.items()}
               | {name: row["parent"]["after"] for name, row in later.items()}

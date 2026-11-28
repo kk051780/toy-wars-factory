@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "7b61b49f25241c5a6d0f7a078466160c79d064f1bfb25417a046794e67c48f6d"
+LOCK_SHA256 = "ac7a2d77a4e5a9e475ef820d34b467cb20044be39cb82544290d2bb1c382422d"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -141,6 +141,9 @@ GROUND_NIGHT_OFF = "off69_ground_night_return_convert_parent"
 GROUND_NIGHT_OFF_ARCHIVE = "OFF69_GROUND_NIGHT_RETURN_CONVERT_PARENT_ROLLBACK.tar.gz"
 GROUND_NIGHT_SOURCES = (*FIELD_LOADOUTS_SOURCES,
                         "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_CombatFeel.client.luau")
+COVER_ORDERS_OFF = "off69_cover_orders_ground_night_parent"
+COVER_ORDERS_OFF_ARCHIVE = "OFF69_COVER_ORDERS_GROUND_NIGHT_PARENT_ROLLBACK.tar.gz"
+COVER_ORDERS_SOURCES = (*FIELD_LOADOUTS_SOURCES, "ServerScriptService/EGGRUMBLE_MatchResultService.luau")
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -605,6 +608,11 @@ def ground_night_parent(on, lock):
                                 lock["return_convert_followup"]["repaired_place"], "GROUND_NIGHT")
 
 
+def cover_orders_parent(on, lock):
+    return paired_source_parent(on, lock, lock["cover_orders_followup"], COVER_ORDERS_SOURCES,
+                                lock["ground_night_followup"]["repaired_place"], "COVER_ORDERS")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -772,7 +780,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    ground_night_off, ground_night_off_lock = ground_night_parent(on, lock)
+    cover_orders_off, cover_orders_off_lock = cover_orders_parent(on, lock)
+    ground_night_off, ground_night_off_lock = ground_night_parent(cover_orders_off, cover_orders_off_lock)
     return_convert_off, return_convert_off_lock = return_convert_parent(ground_night_off, ground_night_off_lock)
     field_loadouts_off, field_loadouts_off_lock = field_loadouts_parent(return_convert_off, return_convert_off_lock)
     wing_warrior_off, wing_warrior_off_lock = wing_warrior_parent(field_loadouts_off, field_loadouts_off_lock)
@@ -855,7 +864,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / RETURN_CONVERT_OFF, return_convert_off, return_convert_off_lock["final_place"],
                    RETURN_CONVERT_SOURCES),
                   (stage / GROUND_NIGHT_OFF, ground_night_off, ground_night_off_lock["final_place"],
-                   GROUND_NIGHT_SOURCES))
+                   GROUND_NIGHT_SOURCES),
+                  (stage / COVER_ORDERS_OFF, cover_orders_off, cover_orders_off_lock["final_place"],
+                   COVER_ORDERS_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -953,6 +964,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         return_convert_archive_identity = identity(read_file(stage / RETURN_CONVERT_OFF_ARCHIVE))
         make_archive(stage / GROUND_NIGHT_OFF, stage / GROUND_NIGHT_OFF_ARCHIVE, GROUND_NIGHT_OFF)
         ground_night_archive_identity = identity(read_file(stage / GROUND_NIGHT_OFF_ARCHIVE))
+        make_archive(stage / COVER_ORDERS_OFF, stage / COVER_ORDERS_OFF_ARCHIVE, COVER_ORDERS_OFF)
+        cover_orders_archive_identity = identity(read_file(stage / COVER_ORDERS_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1102,6 +1115,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({GROUND_NIGHT_OFF + "/" + PROJECT: lock["project"],
                                GROUND_NIGHT_OFF + "/" + PLACE: ground_night_off_lock["final_place"],
                                GROUND_NIGHT_OFF_ARCHIVE: ground_night_archive_identity})
+        expected_stage.update({COVER_ORDERS_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in cover_orders_off.items()})
+        expected_stage.update({COVER_ORDERS_OFF + "/" + PROJECT: lock["project"],
+                               COVER_ORDERS_OFF + "/" + PLACE: cover_orders_off_lock["final_place"],
+                               COVER_ORDERS_OFF_ARCHIVE: cover_orders_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1183,6 +1201,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "return_convert_rollback_archive": return_convert_archive_identity,
             "ground_night_followup": lock["ground_night_followup"],
             "ground_night_rollback_archive": ground_night_archive_identity,
+            "cover_orders_followup": lock["cover_orders_followup"],
+            "cover_orders_rollback_archive": cover_orders_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1225,6 +1245,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "field_loadouts_parent_place": field_loadouts_off_lock["final_place"],
             "return_convert_parent_place": return_convert_off_lock["final_place"],
             "ground_night_parent_place": ground_night_off_lock["final_place"],
+            "cover_orders_parent_place": cover_orders_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

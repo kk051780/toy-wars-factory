@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "af90543c99f177cfa7378a3ee6bf8aa485cb1b5ea0b4b7b655ab53ce77f0acbb"
+INPUT_LOCK_SHA256 = "ab34679bcc911208a215cc72e27fb5b1c7eee9ba83676d836ba4fe937912e732"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -715,6 +715,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         host_parent = profile["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
         hud_parent = profile["fractional_hp_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"]
         water_chain_parent_pins = lock["sources"] | {
+            name: row["parent"]["after"] for name, row in profile["cover_orders_followup"]["rows"].items()
+        } | {
             name: row["parent"]["after"] for name, row in profile["ground_night_followup"]["rows"].items()
         } | {
             name: row["parent"]["after"] for name, row in profile["return_convert_followup"]["rows"].items()
@@ -823,6 +825,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from ground_night import run as run_ground_night
         run_ground_night(root, output / "ground_night", binary, pin, context, profile,
                          compose, clean_environment())
+        from cover_orders import FILES as cover_orders_files, PROCESS_COUNT as cover_orders_runs
+        from cover_orders import run as run_cover_orders
+        run_cover_orders(root, output / "cover_orders", binary, pin, context, profile,
+                         compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -852,7 +858,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         hp_files = sum(name.startswith("fractional_hp/") for name in evidence)
         current_stage_files = (len(wing_warrior_files) + len(fixed_cue_files)
                                + len(field_loadout_files) + len(first90_role_files) + len(return_convert_files)
-                               + len(ground_night_files))
+                               + len(ground_night_files) + len(cover_orders_files))
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
                 + current_stage_files
                 and {name.removeprefix("wing_warrior/") for name in evidence
@@ -867,6 +873,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                      if name.startswith("return_convert/")} == return_convert_files
                 and {name.removeprefix("ground_night/") for name in evidence
                      if name.startswith("ground_night/")} == ground_night_files
+                and {name.removeprefix("cover_orders/") for name in evidence
+                     if name.startswith("cover_orders/")} == cover_orders_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -915,6 +923,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "first90_role": identity(read(output / "first90_role/receipt.json")),
                    "return_convert": identity(read(output / "return_convert/receipt.json")),
                    "ground_night": identity(read(output / "ground_night/receipt.json")),
+                   "cover_orders": identity(read(output / "cover_orders/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -924,7 +933,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                           "hud_client_runtime_executed_in_growth": True},
                    "native_process_count": 99 + projectile_runs + water_chain_runs + ninja_s4_runs
                    + wing_warrior_runs + fixed_cue_runs + field_loadout_runs
-                   + first90_role_runs + return_convert_runs + ground_night_runs,
+                   + first90_role_runs + return_convert_runs + ground_night_runs + cover_orders_runs,
                    "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
                    + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}

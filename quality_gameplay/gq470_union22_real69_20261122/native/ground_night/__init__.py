@@ -99,7 +99,9 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == sources[name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "GROUND_NIGHT_PROFILE_SCOPE")
-    before = after | {name: row["parent"]["after"] for name, row in changed.items()}
+    cover_orders = profile["cover_orders_followup"]["rows"]
+    before = (after | {name: row["parent"]["after"] for name, row in cover_orders.items()}
+              | {name: row["parent"]["after"] for name, row in changed.items()})
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     off_root = source_root.parent / compose.GROUND_NIGHT_OFF / "sources"
     corpus = "\n".join(cases)

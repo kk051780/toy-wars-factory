@@ -66,6 +66,7 @@ def collect(root, folder, binary_pin, context, lock, compose, execute=None):
             compose.need(compose.identity(compose.read_file(selected.parent / compose.PLACE)) == identity,
                          "MAGE_CONTACT_PLACE")
             expected = {name: row["after"] for name, row in lock["sources"].items()}
+            expected.update({name: row["parent"]["after"] for name, row in lock["cover_orders_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["ground_night_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["return_convert_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["field_loadouts_followup"]["rows"].items()})
