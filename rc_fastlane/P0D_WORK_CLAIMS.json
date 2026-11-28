@@ -50831,12 +50831,12 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "branch": "quality/gq219-private-trapper-zombie-audio-camera-20261128",
         "formal_parent": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
-        "tree": "af9927839ac3785f73a6e5735235ce56e5e38986",
-        "local_head": "5989cbff37276885a0e0882fdb04df559e8686f5",
-        "permitted_create_draft": 1,
+        "tree": "675da71c078a26e66d9705f9ff2b405ea03299b6",
+        "local_head": "614b5dd217716585a99332eb496cbb42e83f9c7c",
+        "permitted_create_draft": 0,
         "allowed_changed_files": [
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -50849,6 +50849,12 @@
             "mode": "100644",
             "blob": "bd5a0e907cdc7136fc54f9f632f283105b7f5191",
             "bytes": 35261
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/role_readability_native.py",
+            "mode": "100644",
+            "blob": "0eaf8e910b8289074a8aaee5b0f9ce5cfaf89278",
+            "bytes": 7949
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
@@ -50947,10 +50953,10 @@
             "bytes": 144374
           }
         ],
-        "expires_at": "2026-11-28T05:40:56.796Z",
+        "expires_at": "2026-11-28T05:19:44.705Z",
         "issued_from": {
-          "lease": "d160c9d1206dfb8f33858f3dea58ef3421de5987",
-          "owner": "b9124ad0-f84f-4b7c-9c61-540753645cd4"
+          "lease": "f20db65a29d6a52f706db4a41297302a6fcdd510",
+          "owner": "23029a03-8ddb-4ffe-aa52-64e4635a02da"
         },
         "local_qa": {
           "place_bytes": 1530645,
@@ -50973,7 +50979,12 @@
           "reuse": 32,
           "old_archives": 43,
           "studio": "NOT_TESTED"
-        }
+        },
+        "expected_draft_head": "1f69f1fb5c9da8f8abcfb66b217075f52837493d",
+        "additional_correction_path": "quality_gameplay/gq470_union22_real69_20261122/native/role_readability_native.py",
+        "failed_exact_hosted_run": 46108784814,
+        "failed_exact_hosted_job": 140867420193,
+        "exact_pre_camera_fixture_sha256": "2d4145fdbd05359e89cf52ca41117ec416c7b6e7ad3d95aedac5c857bc3e34fe"
       },
       "source_head": "1f69f1fb5c9da8f8abcfb66b217075f52837493d",
       "prepared_candidate_head": "1f69f1fb5c9da8f8abcfb66b217075f52837493d",
