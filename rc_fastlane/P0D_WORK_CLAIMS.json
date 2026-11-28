@@ -50305,7 +50305,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-NINJA-WARRIOR-MAP-HORDE-20261128",
       "feature_id": "GQ219_PRIVATE_NINJA_WARRIOR_MAP_HORDE_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -50319,7 +50319,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Four directional Ninja skills, six exact Warrior field techniques, original PR960 own objective map and PR951 horde silhouettes on the same REAL69 session. Two individually reversible stages in one coherent trial bundle.",
       "resources": [
@@ -50697,7 +50697,7 @@
         "operation_id": "e338dc5a-babf-489f-9f99-42592680f7a1"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
         "permitted_head": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
@@ -50728,7 +50728,28 @@
           "review": 6095836930,
           "trusted_queue_run": 46108484586,
           "trusted_queue_job": 140866485559
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "4654c813732f01c9fadd298e5c880585150372d5",
+        "writer_return": "9eb3fb000f9c411a674068c7ba01c508289cde02",
+        "adopted_head": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
+        "adopted_at": "2026-11-28T04:39:55.856Z"
+      },
+      "actual_official_rc": {
+        "head": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
+        "previous": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+        "tree": "96f4b381cb599dd53f274e823a59d86437c73f03",
+        "private_ci": 46108593274,
+        "private_job": 140866832115,
+        "private_ci_steps": 48,
+        "private_artifact": 15249530019,
+        "private_zip_bytes": 60067395,
+        "private_zip_sha256": "3c9a04153c0677486b15432771fb88ef4bd954308a3954792a721be94d40a324",
+        "private_place_bytes": 1487010,
+        "private_place_sha256": "4bc874cef8a3dbe11230631dc6933d54a8d320078fbc84ebf67af893f145b9ee",
+        "off_bytes": 1462400,
+        "source_lock_sha256": "a5612f7bec18de823fbe8cfb53072d2c7946b165d5748df59c615d4addb7dc34",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7234299742"
       }
     },
     {
@@ -50739,7 +50760,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1065,
       "base_rc_sha": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
       "base_rc_tree": "96f4b381cb599dd53f274e823a59d86437c73f03",
       "prep_branch": "quality/gq219-private-trapper-zombie-audio-camera-20261128",
@@ -50810,7 +50831,7 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-trapper-zombie-audio-camera-20261128",
         "formal_parent": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
         "tree": "af9927839ac3785f73a6e5735235ce56e5e38986",
@@ -50953,6 +50974,134 @@
           "old_archives": 43,
           "studio": "NOT_TESTED"
         }
+      },
+      "source_head": "1f69f1fb5c9da8f8abcfb66b217075f52837493d",
+      "prepared_candidate_head": "1f69f1fb5c9da8f8abcfb66b217075f52837493d",
+      "prepared_candidate_tree": "af9927839ac3785f73a6e5735235ce56e5e38986",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "c1bb7776217d85f3161159f4d19a2a102996e582",
+          "bytes": 102460
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "bd5a0e907cdc7136fc54f9f632f283105b7f5191",
+          "bytes": 35261
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "a205be78d42a1b9751d6261a5c4b271fe0054500",
+          "bytes": 31444
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "fea9fe91ec986d4474e41dc0898d24e971389782",
+          "bytes": 66973
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/trapper_cast_audio/__init__.py",
+          "mode": "100644",
+          "blob": "eb703bdf005142b05b74056eb8faf85b6580021a",
+          "bytes": 10757
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/trapper_cast_audio/cast_cues.py",
+          "mode": "100644",
+          "blob": "c8078b6d1f9d1b8a750cf0279190ccdce906778b",
+          "bytes": 6467
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/trapper_cast_audio/field_cases.luau",
+          "mode": "100644",
+          "blob": "8e52863992bb1cef6fb248e74222d5ad6df57a59",
+          "bytes": 6056
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/trapper_cast_audio/field_off_cases.luau",
+          "mode": "100644",
+          "blob": "27645ac5350f8ccebd0eae271ebf2bb64f0ee312",
+          "bytes": 717
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/trapper_cast_audio/trapper_cases.luau",
+          "mode": "100644",
+          "blob": "d86be610edd659d33984c367ecb3755bca496e83",
+          "bytes": 10022
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/warrior_field_horde/__init__.py",
+          "mode": "100644",
+          "blob": "67241d430ddb6d51fbbba001ff4b96fb9108f3de",
+          "bytes": 10367
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/zombie_formation_camera/__init__.py",
+          "mode": "100644",
+          "blob": "c9891eed94e081cf964bfdba327fe8dfced34b2e",
+          "bytes": 10808
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/zombie_formation_camera/camera_rebind.py",
+          "mode": "100644",
+          "blob": "e22a30bc8bbc4e364a83551e65421326ac9c78a3",
+          "bytes": 3271
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/zombie_formation_camera/cases.luau",
+          "mode": "100644",
+          "blob": "819f14098320bd66f53f77d2ddf58f9537abc75b",
+          "bytes": 5408
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/zombie_formation_camera/fixture.luau",
+          "mode": "100644",
+          "blob": "2a48ae9400d246f42eacb028ed94ab945f6ade7a",
+          "bytes": 3580
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/zombie_formation_camera/zombie_cases.luau",
+          "mode": "100644",
+          "blob": "9422e5c3b20ea7dd29e94354d17a0be5b77a44a4",
+          "bytes": 10985
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "6cd2d7c9e629cc3711f8372b2f3c0ed345596f29",
+          "bytes": 20270012
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "497a0f1c2029ad8a7afcf5c0280dc4d8fbde9096",
+          "bytes": 202966
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "9108f0e2e200420328f8eb450a251e71fe2c6944",
+          "bytes": 144374
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1065,
+        "exact_head": "1f69f1fb5c9da8f8abcfb66b217075f52837493d",
+        "exact_tree": "af9927839ac3785f73a6e5735235ce56e5e38986",
+        "exact_parent": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "b5e6e6a4ebf4fd8418411c60c7ee50461fd9b2ef",
+        "source_lease_return": "67cdc9db94d3ccc73f3d916272356599173b2857",
+        "prepared_at": "2026-11-28T04:51:34.974Z"
+      },
+      "actual_binding_lease": {
+        "commit": "39057b85faa1ffe9c488081051f13b11f6bd9369",
+        "operation_id": "c213ce66-f59e-49f5-80e1-5f25eb7b8327"
       }
     }
   ],
