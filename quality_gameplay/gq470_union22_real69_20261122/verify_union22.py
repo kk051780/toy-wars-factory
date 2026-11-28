@@ -510,7 +510,7 @@ def verify_core(root, base, reports, context):
     require(current["non_source"] == prior["non_source"] == off["non_source"]
             and current["instances"] == prior["instances"] == off["instances"], "NON_SOURCE_DRIFT")
     changed = [p for p, row in lock["sources"].items() if row["before"] != row["after"]]
-    require(len(changed) == 37 and len(lock["sources"]) - len(changed) == 32, "CHANGE_COUNT")
+    require(len(changed) == 39 and len(lock["sources"]) - len(changed) == 30, "CHANGE_COUNT")
     for name, row in lock["sources"].items():
         require(independent_inverse(read(root / "sources" / name), row["inverse"])
                 == read(root / compose.OFF / "sources" / name) == inputs["sources"][name], "INVERSE_NOT_PRIOR_BR")
@@ -656,8 +656,16 @@ def verify_core(root, base, reports, context):
     require(set(common_healing["rows"]) == set(compose.COMMON_HEALING_SOURCES)
             and common_healing["ability_ids"] == ['COMMON-016', 'COMMON-019']
             and common_healing["channel_seconds"] == 1 and common_healing["maximum_allies"] == 2, "COMMON_HEALING_SCOPE")
+    shop_lifecycle = lock["shop_lifecycle_followup"]
+    require(set(shop_lifecycle["rows"]) == set(compose.SHOP_LIFECYCLE_SOURCES)
+            and shop_lifecycle["ability_ids"] == []
+            and shop_lifecycle["donor_pr"] == 1029 and shop_lifecycle["purchases_enabled"] is False, "SHOP_LIFECYCLE_SCOPE")
+    expected_shop_lifecycle_off, shop_lifecycle_off_lock, shop_lifecycle_off = verify_source_rollback(
+        root, root, lock, current, shop_lifecycle, shop_lifecycle["rows"], common_healing["repaired_place"],
+        compose.SHOP_LIFECYCLE_OFF, compose.SHOP_LIFECYCLE_OFF_ARCHIVE, "SHOP_LIFECYCLE")
     expected_common_healing_off, common_healing_off_lock, common_healing_off = verify_source_rollback(
-        root, root, lock, current, common_healing, common_healing["rows"], mobility_crests["repaired_place"],
+        root, root / compose.SHOP_LIFECYCLE_OFF, shop_lifecycle_off_lock, shop_lifecycle_off,
+        common_healing, common_healing["rows"], mobility_crests["repaired_place"],
         compose.COMMON_HEALING_OFF, compose.COMMON_HEALING_OFF_ARCHIVE, "COMMON_HEALING")
     expected_mobility_crests_off, mobility_crests_off_lock, mobility_crests_off = verify_source_rollback(
         root, root / compose.COMMON_HEALING_OFF, common_healing_off_lock, common_healing_off,
@@ -1002,6 +1010,8 @@ def verify_core(root, base, reports, context):
         "mobility_crests_rollback_archive": digest(read(root / compose.MOBILITY_CRESTS_OFF_ARCHIVE)),
         "common_healing_followup": common_healing,
         "common_healing_rollback_archive": digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE)),
+        "shop_lifecycle_followup": shop_lifecycle,
+        "shop_lifecycle_rollback_archive": digest(read(root / compose.SHOP_LIFECYCLE_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -1017,7 +1027,7 @@ def verify_core(root, base, reports, context):
                 for name in expected_reuse), "CORE_COMPILE_REUSE_PRIOR_BR_BYTES")
     require(core.get("status") == "PASS_SOURCE_BUILD_ONLY" and core.get("final_delivery_created") is False
             and core.get("context") == context and core.get("source_count") == 69
-            and core.get("changed_sources") == 37 and core.get("unchanged_sources") == 32
+            and core.get("changed_sources") == 39 and core.get("unchanged_sources") == 30
             and type(core.get("compile_count")) is int and type(core.get("rojo_build_count")) is int
             and core.get("item_cleanup_only_parent_place") == item_off_lock["final_place"]
             and core.get("empty_vault_only_parent_place") == vault_off_lock["final_place"]
@@ -1060,6 +1070,7 @@ def verify_core(root, base, reports, context):
             and core.get("navigation_entry_sky_parent_place") == navigation_entry_sky_off_lock["final_place"]
             and core.get("mobility_crests_parent_place") == mobility_crests_off_lock["final_place"]
             and core.get("common_healing_parent_place") == common_healing_off_lock["final_place"]
+            and core.get("shop_lifecycle_parent_place") == shop_lifecycle_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1197,6 +1208,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.COMMON_HEALING_OFF + "/" + name: pin
                            for name, pin in expected_common_healing_off.items()})
     expected_stage[compose.COMMON_HEALING_OFF_ARCHIVE] = digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE))
+    expected_stage.update({compose.SHOP_LIFECYCLE_OFF + "/" + name: pin
+                           for name, pin in expected_shop_lifecycle_off.items()})
+    expected_stage[compose.SHOP_LIFECYCLE_OFF_ARCHIVE] = digest(read(root / compose.SHOP_LIFECYCLE_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1288,7 +1302,9 @@ def verify_core(root, base, reports, context):
                         compose.MOBILITY_CRESTS_OFF: [name for name in lock["sources"]
                                                             if name in compose.MOBILITY_CRESTS_SOURCES],
                         compose.COMMON_HEALING_OFF: [name for name in lock["sources"]
-                                                            if name in compose.COMMON_HEALING_SOURCES]}
+                                                            if name in compose.COMMON_HEALING_SOURCES],
+                        compose.SHOP_LIFECYCLE_OFF: [name for name in lock["sources"]
+                                                            if name in compose.SHOP_LIFECYCLE_SOURCES]}
     # The independently verified payload must contain exactly these build stages.
     # Derive the three command checks from one ordered verifier-owned source map.
     expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
@@ -2372,7 +2388,7 @@ def verify_native(native, root, lock, context):
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
                  "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
-                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera", "navigation_entry_sky", "mobility_crests", "common_healing"):
+                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera", "navigation_entry_sky", "mobility_crests", "common_healing", "shop_lifecycle"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2657,6 +2673,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE,
                             compose.MOBILITY_CRESTS_OFF_ARCHIVE,
                             compose.COMMON_HEALING_OFF_ARCHIVE,
+                            compose.SHOP_LIFECYCLE_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2836,6 +2853,9 @@ def admit_delivery(root, base, reports, native, context):
             "common_healing_followup": verified["lock"]["common_healing_followup"],
             "common_healing_inverse_place": verified["lock"]["common_healing_followup"]["parent_place"],
             "common_healing_inverse_archive": digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE)),
+            "shop_lifecycle_followup": verified["lock"]["shop_lifecycle_followup"],
+            "shop_lifecycle_inverse_place": verified["lock"]["shop_lifecycle_followup"]["parent_place"],
+            "shop_lifecycle_inverse_archive": digest(read(root / compose.SHOP_LIFECYCLE_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2888,6 +2908,7 @@ def admit_delivery(root, base, reports, native, context):
             "navigation_entry_sky": runtime["navigation_entry_sky"],
             "mobility_crests": runtime["mobility_crests"],
             "common_healing": runtime["common_healing"],
+            "shop_lifecycle": runtime["shop_lifecycle"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

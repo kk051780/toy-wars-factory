@@ -131,6 +131,7 @@ def source_contract(root, profile, input_lock):
     navigation_entry_sky = profile["navigation_entry_sky_followup"]
     mobility_crests = profile["mobility_crests_followup"]
     common_healing = profile["common_healing_followup"]
+    shop_lifecycle = profile["shop_lifecycle_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
     builder_forms_parent_pins = compose.trial_sources_before(profile, "builder_forms_followup")
@@ -144,6 +145,7 @@ def source_contract(root, profile, input_lock):
     navigation_entry_sky_parent_pins = compose.trial_sources_before(profile, "navigation_entry_sky_followup")
     mobility_crests_parent_pins = compose.trial_sources_before(profile, "mobility_crests_followup")
     common_healing_parent_pins = compose.trial_sources_before(profile, "common_healing_followup")
+    shop_lifecycle_parent_pins = compose.trial_sources_before(profile, "shop_lifecycle_followup")
     eclipse_sweep_parent_pins = builder_forms_parent_pins | {
         name: row["parent"]["after"] for name, row in eclipse_sweep["rows"].items()}
     mage_field_arcs_parent_pins = eclipse_sweep_parent_pins | {
@@ -222,6 +224,8 @@ def source_contract(root, profile, input_lock):
                    == mobility_crests_parent_pins
                    and native.source_snapshot(root / compose.COMMON_HEALING_OFF / "sources")
                    == common_healing_parent_pins
+                   and native.source_snapshot(root / compose.SHOP_LIFECYCLE_OFF / "sources")
+                   == shop_lifecycle_parent_pins
                    and native.source_snapshot(root / compose.FIELD_LOADOUTS_OFF / "sources") == field_loadouts_parent_pins
                    and native.source_snapshot(root / compose.WING_WARRIOR_OFF / "sources") == wing_warrior_parent_pins
                    and native.source_snapshot(root / compose.NINJA_S4_OFF / "sources") == ninja_s4_parent_pins
@@ -258,7 +262,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == common_healing["repaired_place"]
+                   == shop_lifecycle["repaired_place"]
+                   and native.identity(native.read(root / compose.SHOP_LIFECYCLE_OFF / compose.PLACE))
+                   == shop_lifecycle["parent_place"] == common_healing["repaired_place"]
                    and native.identity(native.read(root / compose.COMMON_HEALING_OFF / compose.PLACE))
                    == common_healing["parent_place"] == mobility_crests["repaired_place"]
                    and native.identity(native.read(root / compose.MOBILITY_CRESTS_OFF / compose.PLACE))

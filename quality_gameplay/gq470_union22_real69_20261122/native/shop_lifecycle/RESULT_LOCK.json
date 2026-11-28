@@ -1,0 +1,201 @@
+{
+  "on_main": {
+    "exit": 0,
+    "stdout": {
+      "bytes": 3701,
+      "sha256": "28e8dd452405a8e87756faa6a1292e54fc0d9ec1f5810044cc67d9645efe52cb"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "summary": "SUMMARY\t40\t40\t0\tNOT_STUDIO",
+    "expected_red": []
+  },
+  "on_locked": {
+    "exit": 0,
+    "stdout": {
+      "bytes": 3869,
+      "sha256": "8722adbf0770331bc9427a0697fb6b665fa44aa85303c56f475b6e6f95bdb030"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "summary": "SUMMARY\t41\t41\t0\tNOT_STUDIO",
+    "expected_red": []
+  },
+  "on_external": {
+    "exit": 0,
+    "stdout": {
+      "bytes": 4851,
+      "sha256": "e125d984d932c9fa9de124baf5f24e9391d4c0dfac5a858b43654fd308f83aaf"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "summary": "SUMMARY\t50\t50\t0\tNOT_STUDIO",
+    "expected_red": []
+  },
+  "off_original": {
+    "exit": 1,
+    "stdout": {
+      "bytes": 4645,
+      "sha256": "f8ded0f379f6f7dbf4f0ff826fc303333dba3467ded24c872f6680cb7965ef87"
+    },
+    "stderr": {
+      "bytes": 94,
+      "sha256": "e7f357889e388cc0a13dcdd9d42c97e241b7c8759b506f1059da6a975dd3c159"
+    },
+    "summary": "SUMMARY\t38\t14\t24\tNOT_STUDIO",
+    "expected_red": [
+      [
+        "active_entry_rejected_in_both_modes",
+        "FAIL",
+        "@program@:536: ACTIVE entry mounted"
+      ],
+      [
+        "waiting_to_active_closes_without_mode_event",
+        "FAIL",
+        "@program@:536: phase-only ACTIVE left window open"
+      ],
+      [
+        "late_active_arena_arrival_closes_window",
+        "FAIL",
+        "@program@:536: late ACTIVE arena was missed"
+      ],
+      [
+        "opened_window_closes_on_character_replacement",
+        "FAIL",
+        "@program@:536: old avatar window remained"
+      ],
+      [
+        "opened_window_closes_on_death_or_elimination",
+        "FAIL",
+        "@program@:536: ineligible avatar window remained"
+      ],
+      [
+        "require_catalog_active_team",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "require_view_active_br",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_active_team",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "require_catalog_character_replaced",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_character_replaced",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "require_view_prompt_destroyed",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_prompt_destroyed",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_ancestor_detached",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_preview_revoked",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_outside_range",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "require_view_dead",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_eliminated",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "require_catalog_active_then_waiting",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "playergui_dead_then_alive",
+        "FAIL",
+        "@program@:536: stale dependency resume mounted"
+      ],
+      [
+        "pending_root_or_humanoid_identity_change_is_rejected",
+        "FAIL",
+        "@program@:536: changed avatar component revived old request"
+      ],
+      [
+        "playergui_timeout_terminates_and_allows_new_prompt",
+        "FAIL",
+        "@program@:536: PlayerGui wait is not bounded to five seconds"
+      ],
+      [
+        "old_A_resume_preserves_new_B_window_identity",
+        "FAIL",
+        "@program@:536: cancelled A blocked valid B"
+      ],
+      [
+        "old_A_timeout_does_not_unlock_pending_B",
+        "FAIL",
+        "@program@:536: new B did not own pending state"
+      ],
+      [
+        "pending_revalidation_without_heartbeat_still_rejects_stale",
+        "FAIL",
+        "@program@:536: resume relied only on periodic observer"
+      ]
+    ]
+  },
+  "mixed_missing_owned": {
+    "exit": 0,
+    "stdout": {
+      "bytes": 371,
+      "sha256": "95b9dfbf50139a15e561e85425008449b8949fea2cbdd9a4d160c83ddc104ee6"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "summary": "SUMMARY\t3\t3\t0\tNOT_STUDIO",
+    "expected_red": []
+  },
+  "mixed_old_kiosk": {
+    "exit": 0,
+    "stdout": {
+      "bytes": 229,
+      "sha256": "94407a4290c3df0f051709cb4a05107eff409b18c30d70615a282c09848389e5"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "summary": "SUMMARY\t2\t2\t0\tNOT_STUDIO",
+    "expected_red": []
+  }
+}

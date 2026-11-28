@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "0de00658b96216d24d9c954d287725f4fac311fc33087e59bdc244f4d910cf8d"
+LOCK_SHA256 = "4f15c1fc058d72d43018139554c3362ce58055041450429909ac093c0550e712"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -230,8 +230,14 @@ COMMON_HEALING_OFF_ARCHIVE = "OFF69_COMMON_HEALING_ROLLBACK.tar.gz"
 COMMON_HEALING_SOURCES = (
     VAULT_SOURCE, "ServerScriptService/EGGRUMBLE_SevenRoleCombat.luau",
 )
+SHOP_LIFECYCLE_OFF = "off69_shop_lifecycle_parent"
+SHOP_LIFECYCLE_OFF_ARCHIVE = "OFF69_SHOP_LIFECYCLE_ROLLBACK.tar.gz"
+SHOP_LIFECYCLE_SOURCES = (
+    "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau",
+    "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau",
+)
 RECENT_TRIAL_STAGES = (
-    "common_healing_followup", "mobility_crests_followup", "navigation_entry_sky_followup", "zombie_formation_camera_followup", "trapper_cast_audio_followup", "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
+    "shop_lifecycle_followup", "common_healing_followup", "mobility_crests_followup", "navigation_entry_sky_followup", "zombie_formation_camera_followup", "trapper_cast_audio_followup", "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
     "eclipse_sweep_followup", "mage_field_arcs_followup",
     "cover_orders_followup", "ground_night_followup", "return_convert_followup",
     "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
@@ -540,7 +546,7 @@ def transform(inputs, lock):
         off[name] = apply_hunks(on[name], row["inverse"])
         need(off[name] == inputs["sources"][name] and identity(off[name]) == row["before"],
              "INVERSE_NOT_EXACT:" + name)
-    need(sum(on[p] != inputs["sources"][p] for p in on) == 37, "CHANGED_SOURCE_COUNT")
+    need(sum(on[p] != inputs["sources"][p] for p in on) == 39, "CHANGED_SOURCE_COUNT")
     return on, off
 
 
@@ -771,6 +777,11 @@ def common_healing_parent(on, lock):
                                 lock["mobility_crests_followup"]["repaired_place"], "COMMON_HEALING")
 
 
+def shop_lifecycle_parent(on, lock):
+    return paired_source_parent(on, lock, lock["shop_lifecycle_followup"], SHOP_LIFECYCLE_SOURCES,
+                                lock["common_healing_followup"]["repaired_place"], "SHOP_LIFECYCLE")
+
+
 def trial_sources_before(lock, followup):
     """Return the exact selected source vector of a recent stage's physical parent."""
     pins = {name: row["after"] for name, row in lock["sources"].items()}
@@ -948,7 +959,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    common_healing_off, common_healing_off_lock = common_healing_parent(on, lock)
+    shop_lifecycle_off, shop_lifecycle_off_lock = shop_lifecycle_parent(on, lock)
+    common_healing_off, common_healing_off_lock = common_healing_parent(shop_lifecycle_off, shop_lifecycle_off_lock)
     mobility_crests_off, mobility_crests_off_lock = mobility_crests_parent(common_healing_off, common_healing_off_lock)
     navigation_entry_sky_off, navigation_entry_sky_off_lock = navigation_entry_sky_parent(mobility_crests_off, mobility_crests_off_lock)
     zombie_formation_camera_off, zombie_formation_camera_off_lock = zombie_formation_camera_parent(navigation_entry_sky_off, navigation_entry_sky_off_lock)
@@ -1075,7 +1087,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / MOBILITY_CRESTS_OFF, mobility_crests_off,
                    mobility_crests_off_lock["final_place"], MOBILITY_CRESTS_SOURCES),
                   (stage / COMMON_HEALING_OFF, common_healing_off,
-                   common_healing_off_lock["final_place"], COMMON_HEALING_SOURCES))
+                   common_healing_off_lock["final_place"], COMMON_HEALING_SOURCES),
+                  (stage / SHOP_LIFECYCLE_OFF, shop_lifecycle_off,
+                   shop_lifecycle_off_lock["final_place"], SHOP_LIFECYCLE_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -1201,6 +1215,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         mobility_crests_archive_identity = identity(read_file(stage / MOBILITY_CRESTS_OFF_ARCHIVE))
         make_archive(stage / COMMON_HEALING_OFF, stage / COMMON_HEALING_OFF_ARCHIVE, COMMON_HEALING_OFF)
         common_healing_archive_identity = identity(read_file(stage / COMMON_HEALING_OFF_ARCHIVE))
+        make_archive(stage / SHOP_LIFECYCLE_OFF, stage / SHOP_LIFECYCLE_OFF_ARCHIVE, SHOP_LIFECYCLE_OFF)
+        shop_lifecycle_archive_identity = identity(read_file(stage / SHOP_LIFECYCLE_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1420,6 +1436,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({COMMON_HEALING_OFF + "/" + PROJECT: lock["project"],
                                COMMON_HEALING_OFF + "/" + PLACE: common_healing_off_lock["final_place"],
                                COMMON_HEALING_OFF_ARCHIVE: common_healing_archive_identity})
+        expected_stage.update({SHOP_LIFECYCLE_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in shop_lifecycle_off.items()})
+        expected_stage.update({SHOP_LIFECYCLE_OFF + "/" + PROJECT: lock["project"],
+                               SHOP_LIFECYCLE_OFF + "/" + PLACE: shop_lifecycle_off_lock["final_place"],
+                               SHOP_LIFECYCLE_OFF_ARCHIVE: shop_lifecycle_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1529,6 +1550,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mobility_crests_rollback_archive": mobility_crests_archive_identity,
             "common_healing_followup": lock["common_healing_followup"],
             "common_healing_rollback_archive": common_healing_archive_identity,
+            "shop_lifecycle_followup": lock["shop_lifecycle_followup"],
+            "shop_lifecycle_rollback_archive": shop_lifecycle_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1540,7 +1563,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         core_report = {
             "schema": "GQ470_UNION22_CORE_BUILD_V1", "status": "PASS_SOURCE_BUILD_ONLY",
             "final_delivery_created": False, "context": context,
-            "source_count": 69, "changed_sources": 37, "unchanged_sources": 32,
+            "source_count": 69, "changed_sources": 39, "unchanged_sources": 30,
             "compile_count": sum(row["command"][1] == "--text" for row in logs),
             "rojo_build_count": sum(row["command"][1] == "build" for row in logs),
             "instances": 75,
@@ -1585,6 +1608,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "navigation_entry_sky_parent_place": navigation_entry_sky_off_lock["final_place"],
             "mobility_crests_parent_place": mobility_crests_off_lock["final_place"],
             "common_healing_parent_place": common_healing_off_lock["final_place"],
+            "shop_lifecycle_parent_place": shop_lifecycle_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

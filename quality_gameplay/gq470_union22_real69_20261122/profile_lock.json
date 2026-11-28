@@ -6591,8 +6591,8 @@
     "source_issue": 470
   },
   "final_place": {
-    "bytes": 1580946,
-    "sha256": "292e932ff94f03383bbbcf903736f740a7d5ed24dc63621f1b958961dfc5f46e"
+    "bytes": 1585158,
+    "sha256": "e77f2463694c7ba3b4af6ed67878fab095ab1b7706e550787135c9a22fdd2457"
   },
   "followup_repair": {
     "author_contexts": [
@@ -15722,16 +15722,158 @@
     },
     "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau": {
       "after": {
-        "bytes": 6116,
-        "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+        "bytes": 6530,
+        "sha256": "f13044a08a1ee839c53c480f39eef9a497afed22c90af83584b97cb353f2231e"
       },
       "before": {
         "bytes": 6116,
         "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
       },
       "class": "ModuleScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "start": 6,
+          "stop": 7,
+          "old": "function Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?):ScreenGui\n",
+          "new": "type Window={gui:ScreenGui,onClose:()->()}\nfunction Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?,window:Window?):ScreenGui\n",
+          "old_identity": {
+            "bytes": 93,
+            "sha256": "03285fa5272db7bffdb793d7938eb773ed69137304ea9f7933d13a82508c4c80"
+          },
+          "new_identity": {
+            "bytes": 151,
+            "sha256": "cac30609af2758a117ef9416b20248f9f2678d797770ef6aa5835d2487273fbe"
+          }
+        },
+        {
+          "start": 10,
+          "stop": 13,
+          "old": " if old then old:Destroy() end\n local gui=Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20;gui.Parent=parent\n",
+          "new": " local gui=if window then window.gui else Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20\n",
+          "old_identity": {
+            "bytes": 178,
+            "sha256": "38a295f928d47c9a988325f08fdfeaf36e5b5a0eb2cc105857f55f693d8bf83f"
+          },
+          "new_identity": {
+            "bytes": 160,
+            "sha256": "a50ffba3c245ca155ba59354c4c473e4f4f52669db2598d5acf4d01921a0380a"
+          }
+        },
+        {
+          "start": 28,
+          "stop": 29,
+          "old": " close.Activated:Connect(function() gui:Destroy() end)\n",
+          "new": " close.Activated:Connect(function()\n  if window then window.onClose() else gui:Destroy() end\n end)\n",
+          "old_identity": {
+            "bytes": 55,
+            "sha256": "4ae9470e904120adf50663fe3d40d7c224d172e4711eb4fa8cc691fc191c7dd2"
+          },
+          "new_identity": {
+            "bytes": 99,
+            "sha256": "b90a2d9c76d4fb05036043d88e4a124c39adf3af9fad8ffbebd470f8bef9a724"
+          }
+        },
+        {
+          "start": 101,
+          "stop": 101,
+          "old": "",
+          "new": " if old then old:Destroy() end\n gui.Parent=parent\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 50,
+            "sha256": "e04a5bc24fd0025efb3c88f4c242eff276e9ee1e5be2268a3b0bd49c78979449"
+          }
+        },
+        {
+          "start": 103,
+          "stop": 103,
+          "old": "",
+          "new": "\n-- The kiosk uses this entry point to require an owned window before mounting.\nfunction Shop.mountOwned(parent:Instance,snapshot:any,window:Window):ScreenGui\n assert(window.gui.Parent==nil,\"owned shop window must be detached\")\n return Shop.mount(parent,snapshot,nil,window)\nend\n\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 280,
+            "sha256": "0f1106c4fa9e95651b8f14c2aeb35c491e96c84b06b087dd3a5fc4f72ec30064"
+          }
+        }
+      ],
+      "inverse": [
+        {
+          "start": 6,
+          "stop": 8,
+          "old": "type Window={gui:ScreenGui,onClose:()->()}\nfunction Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?,window:Window?):ScreenGui\n",
+          "new": "function Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?):ScreenGui\n",
+          "old_identity": {
+            "bytes": 151,
+            "sha256": "cac30609af2758a117ef9416b20248f9f2678d797770ef6aa5835d2487273fbe"
+          },
+          "new_identity": {
+            "bytes": 93,
+            "sha256": "03285fa5272db7bffdb793d7938eb773ed69137304ea9f7933d13a82508c4c80"
+          }
+        },
+        {
+          "start": 11,
+          "stop": 13,
+          "old": " local gui=if window then window.gui else Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20\n",
+          "new": " if old then old:Destroy() end\n local gui=Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20;gui.Parent=parent\n",
+          "old_identity": {
+            "bytes": 160,
+            "sha256": "a50ffba3c245ca155ba59354c4c473e4f4f52669db2598d5acf4d01921a0380a"
+          },
+          "new_identity": {
+            "bytes": 178,
+            "sha256": "38a295f928d47c9a988325f08fdfeaf36e5b5a0eb2cc105857f55f693d8bf83f"
+          }
+        },
+        {
+          "start": 28,
+          "stop": 31,
+          "old": " close.Activated:Connect(function()\n  if window then window.onClose() else gui:Destroy() end\n end)\n",
+          "new": " close.Activated:Connect(function() gui:Destroy() end)\n",
+          "old_identity": {
+            "bytes": 99,
+            "sha256": "b90a2d9c76d4fb05036043d88e4a124c39adf3af9fad8ffbebd470f8bef9a724"
+          },
+          "new_identity": {
+            "bytes": 55,
+            "sha256": "4ae9470e904120adf50663fe3d40d7c224d172e4711eb4fa8cc691fc191c7dd2"
+          }
+        },
+        {
+          "start": 103,
+          "stop": 105,
+          "old": " if old then old:Destroy() end\n gui.Parent=parent\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 50,
+            "sha256": "e04a5bc24fd0025efb3c88f4c242eff276e9ee1e5be2268a3b0bd49c78979449"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 107,
+          "stop": 114,
+          "old": "\n-- The kiosk uses this entry point to require an owned window before mounting.\nfunction Shop.mountOwned(parent:Instance,snapshot:any,window:Window):ScreenGui\n assert(window.gui.Parent==nil,\"owned shop window must be detached\")\n return Shop.mount(parent,snapshot,nil,window)\nend\n\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 280,
+            "sha256": "0f1106c4fa9e95651b8f14c2aeb35c491e96c84b06b087dd3a5fc4f72ec30064"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
       "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView"
     },
     "ReplicatedStorage/GQ8Trade/GQ8_TradePolicy.luau": {
@@ -30354,16 +30496,326 @@
     },
     "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau": {
       "after": {
-        "bytes": 2170,
-        "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+        "bytes": 5968,
+        "sha256": "14a8ce530a0c7134a17241feadef09e09838b5dad87d8292fcdbc78ce7094974"
       },
       "before": {
         "bytes": 2170,
         "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
       },
       "class": "LocalScript",
-      "forward": [],
-      "inverse": [],
+      "forward": [
+        {
+          "start": 9,
+          "stop": 10,
+          "old": "local busy=false\n",
+          "new": "type Request={character:Model,root:BasePart,humanoid:Humanoid,prompt:ProximityPrompt,\n door:BasePart,building:Instance,pending:boolean,cancelled:boolean,container:PlayerGui?,gui:ScreenGui?,\n observer:RBXScriptConnection?,destroying:RBXScriptConnection?,published:boolean?}\nlocal current:Request?=nil\nlocal function inActiveMatch():boolean\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n if mode~=\"TEAM\" and mode~=\"BATTLE_ROYALE\" then return false end\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=world and world:FindFirstChild(mode..\"_Arena\")\n return arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\nend\nlocal function retire(request:Request)\n request.cancelled=true\n if current==request then current=nil end\n if request.observer then request.observer:Disconnect();request.observer=nil end\n if request.destroying then request.destroying:Disconnect();request.destroying=nil end\n local gui=request.gui;request.gui=nil\n -- A completed external Destroy clears the parent and children even when its signal is deferred.\n -- Still destroy a detached live view or an unpublished partial mount.\n if gui and (not request.published or gui.Parent~=nil or #gui:GetChildren()>0) then gui:Destroy() end\nend\nlocal function valid(request:Request,near:boolean):boolean\n if request.cancelled or current~=request or player.Character~=request.character\n  or request.character.Parent==nil or request.humanoid.Health<=0\n  or (request.container~=nil and player:FindFirstChildOfClass(\"PlayerGui\")~=request.container)\n  or request.character:FindFirstChild(\"HumanoidRootPart\")~=request.root\n  or request.character:FindFirstChildOfClass(\"Humanoid\")~=request.humanoid\n  or player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return false end\n local prompt=request.prompt\n if prompt.Name~=\"GQ805_ShopReadOnlyPrompt\" or prompt.Parent~=request.door\n  or not prompt:IsDescendantOf(workspace)\n  or prompt:FindFirstAncestor(\"GQ805_LobbyGuildShop\")~=request.building\n  or request.building:GetAttribute(\"EGGRUMBLE_ShopPreviewOnly\")~=true then return false end\n return not near or (request.root.Position-request.door.Position).Magnitude<=13\nend\n",
+          "old_identity": {
+            "bytes": 17,
+            "sha256": "d71dadc4428dc3ec6a1bd8afc063670f90ac8cffd13c471fa05c14e679550a39"
+          },
+          "new_identity": {
+            "bytes": 2229,
+            "sha256": "c00ce72dee22ea411d7be53e518ed6309baf265c6b6859363e985292629766d2"
+          }
+        },
+        {
+          "start": 18,
+          "stop": 19,
+          "old": " if not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+          "new": " if not ch or not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+          "old_identity": {
+            "bytes": 85,
+            "sha256": "a35f2b3390753cbdb4bc45799870ba99125c7a1d821659fac624a8f792c535e2"
+          },
+          "new_identity": {
+            "bytes": 95,
+            "sha256": "ba04a3b5fab1a3a898879d2e4641bb449bff2df67f295ab91d53d70e16f2d2e7"
+          }
+        },
+        {
+          "start": 21,
+          "stop": 24,
+          "old": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true then return end\n if busy then return end\n busy=true\n",
+          "new": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return end\n if current and current.pending then return end\n if current then retire(current) end\n local request:Request={character=ch,root=root,humanoid=hum,prompt=prompt,\n  door=door,building=building,pending=true,cancelled=false}\n current=request\n",
+          "old_identity": {
+            "bytes": 106,
+            "sha256": "9ef4c33e985d9fde57805d5aafb84e72956680b1f38b526f3214ac9290240a44"
+          },
+          "new_identity": {
+            "bytes": 326,
+            "sha256": "d9193d537a52146061102c68f35f28e1affc9e918faceb61785cf0328ff13cde"
+          }
+        },
+        {
+          "start": 29,
+          "stop": 30,
+          "old": "  busy=false\n",
+          "new": "  retire(request)\n",
+          "old_identity": {
+            "bytes": 13,
+            "sha256": "2eb82b4955f242a2f94aa28aabf44f1b98e881b826a7b998bf0ebfa2c4f2a6fa"
+          },
+          "new_identity": {
+            "bytes": 18,
+            "sha256": "9c5c6de722386d7b0c368b40aefdf792fa899777d490bcb7abb2926bc2dbabe3"
+          }
+        },
+        {
+          "start": 32,
+          "stop": 32,
+          "old": "",
+          "new": " -- Observe only this pending/open request, including late arena replication.\n -- Walking away after opening remains allowed; a pending open must stay near.\n request.observer=RunService.Heartbeat:Connect(function()\n  if not valid(request,request.pending) or (not request.pending and request.gui and request.gui.Parent~=request.container) then\n   retire(request)\n  end\n end)\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 374,
+            "sha256": "3763fd336713821cdd4625fb6e78eea1f3108a10060422af839ca5c43f1d85bf"
+          }
+        },
+        {
+          "start": 34,
+          "stop": 34,
+          "old": "",
+          "new": "  if not valid(request,true) then return end\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 45,
+            "sha256": "def22edfc8610ca471476999e318f45dc9e832ccd6863d58d171f49ba1fa1fa0"
+          }
+        },
+        {
+          "start": 35,
+          "stop": 35,
+          "old": "",
+          "new": "  if not valid(request,true) then return end\n  local mountOwned=View.mountOwned\n  assert(type(mountOwned)==\"function\",\"ShopView does not support an owned preview mount\")\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 170,
+            "sha256": "d9a1c3d202bea8f539c0a55e9994cdec914463acdfa133d184f06d156ac068da"
+          }
+        },
+        {
+          "start": 41,
+          "stop": 42,
+          "old": "  local gui=View.mount(player:WaitForChild(\"PlayerGui\"),snapshot,nil)\n",
+          "new": "  local parent=player:WaitForChild(\"PlayerGui\",5)\n  if not parent or not parent:IsA(\"PlayerGui\") or not valid(request,true)\n   or player:FindFirstChildOfClass(\"PlayerGui\")~=parent then return end\n  -- Own the exact window before the view can fail or a lifecycle signal can fire.\n  local gui=Instance.new(\"ScreenGui\")\n  request.container=parent\n  request.gui=gui\n",
+          "old_identity": {
+            "bytes": 70,
+            "sha256": "3e1962efa15bc1b75abb3f0e63c2a07439b869daabbc57a896073191dce1337c"
+          },
+          "new_identity": {
+            "bytes": 362,
+            "sha256": "b60088ba4d6f2541cc0f8afcc3fbd3279fef1383606bd96b3b40fdbfc0776164"
+          }
+        },
+        {
+          "start": 43,
+          "stop": 43,
+          "old": "",
+          "new": "  request.destroying=gui.Destroying:Connect(function()\n   if request.gui~=gui then return end\n   request.gui=nil\n   retire(request)\n  end)\n  local mounted=mountOwned(parent,snapshot,{gui=gui,onClose=function() retire(request) end})\n  assert(mounted==gui,\"ShopView did not mount the supplied window\")\n  local published=valid(request,true) and gui.Parent==parent\n  request.published=published\n  return published\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 410,
+            "sha256": "2f7b45c2465ecce52581a3bca88e878f54d1593c9b187ac4519afe429622fde4"
+          }
+        },
+        {
+          "start": 44,
+          "stop": 44,
+          "old": "",
+          "new": " request.pending=false\n",
+          "old_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "new_identity": {
+            "bytes": 23,
+            "sha256": "0fdaab83c16cb99b3509d06efcdbdaeee5bd260bcc113b35fdd5934cacdc9bab"
+          }
+        },
+        {
+          "start": 45,
+          "stop": 46,
+          "old": " busy=false\n",
+          "new": " if not ok or err~=true then retire(request) end\n",
+          "old_identity": {
+            "bytes": 12,
+            "sha256": "c2bfe22f4879229115599e0b7681620d1cd7305d91243d6ea87267958d470073"
+          },
+          "new_identity": {
+            "bytes": 49,
+            "sha256": "65ef64e80367f14eab4caf07c867b8ef4cb9bbf3d7d11d59d91c4c9b1a41cef1"
+          }
+        }
+      ],
+      "inverse": [
+        {
+          "start": 9,
+          "stop": 45,
+          "old": "type Request={character:Model,root:BasePart,humanoid:Humanoid,prompt:ProximityPrompt,\n door:BasePart,building:Instance,pending:boolean,cancelled:boolean,container:PlayerGui?,gui:ScreenGui?,\n observer:RBXScriptConnection?,destroying:RBXScriptConnection?,published:boolean?}\nlocal current:Request?=nil\nlocal function inActiveMatch():boolean\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n if mode~=\"TEAM\" and mode~=\"BATTLE_ROYALE\" then return false end\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=world and world:FindFirstChild(mode..\"_Arena\")\n return arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\nend\nlocal function retire(request:Request)\n request.cancelled=true\n if current==request then current=nil end\n if request.observer then request.observer:Disconnect();request.observer=nil end\n if request.destroying then request.destroying:Disconnect();request.destroying=nil end\n local gui=request.gui;request.gui=nil\n -- A completed external Destroy clears the parent and children even when its signal is deferred.\n -- Still destroy a detached live view or an unpublished partial mount.\n if gui and (not request.published or gui.Parent~=nil or #gui:GetChildren()>0) then gui:Destroy() end\nend\nlocal function valid(request:Request,near:boolean):boolean\n if request.cancelled or current~=request or player.Character~=request.character\n  or request.character.Parent==nil or request.humanoid.Health<=0\n  or (request.container~=nil and player:FindFirstChildOfClass(\"PlayerGui\")~=request.container)\n  or request.character:FindFirstChild(\"HumanoidRootPart\")~=request.root\n  or request.character:FindFirstChildOfClass(\"Humanoid\")~=request.humanoid\n  or player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return false end\n local prompt=request.prompt\n if prompt.Name~=\"GQ805_ShopReadOnlyPrompt\" or prompt.Parent~=request.door\n  or not prompt:IsDescendantOf(workspace)\n  or prompt:FindFirstAncestor(\"GQ805_LobbyGuildShop\")~=request.building\n  or request.building:GetAttribute(\"EGGRUMBLE_ShopPreviewOnly\")~=true then return false end\n return not near or (request.root.Position-request.door.Position).Magnitude<=13\nend\n",
+          "new": "local busy=false\n",
+          "old_identity": {
+            "bytes": 2229,
+            "sha256": "c00ce72dee22ea411d7be53e518ed6309baf265c6b6859363e985292629766d2"
+          },
+          "new_identity": {
+            "bytes": 17,
+            "sha256": "d71dadc4428dc3ec6a1bd8afc063670f90ac8cffd13c471fa05c14e679550a39"
+          }
+        },
+        {
+          "start": 53,
+          "stop": 54,
+          "old": " if not ch or not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+          "new": " if not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+          "old_identity": {
+            "bytes": 95,
+            "sha256": "ba04a3b5fab1a3a898879d2e4641bb449bff2df67f295ab91d53d70e16f2d2e7"
+          },
+          "new_identity": {
+            "bytes": 85,
+            "sha256": "a35f2b3390753cbdb4bc45799870ba99125c7a1d821659fac624a8f792c535e2"
+          }
+        },
+        {
+          "start": 56,
+          "stop": 62,
+          "old": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return end\n if current and current.pending then return end\n if current then retire(current) end\n local request:Request={character=ch,root=root,humanoid=hum,prompt=prompt,\n  door=door,building=building,pending=true,cancelled=false}\n current=request\n",
+          "new": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true then return end\n if busy then return end\n busy=true\n",
+          "old_identity": {
+            "bytes": 326,
+            "sha256": "d9193d537a52146061102c68f35f28e1affc9e918faceb61785cf0328ff13cde"
+          },
+          "new_identity": {
+            "bytes": 106,
+            "sha256": "9ef4c33e985d9fde57805d5aafb84e72956680b1f38b526f3214ac9290240a44"
+          }
+        },
+        {
+          "start": 67,
+          "stop": 68,
+          "old": "  retire(request)\n",
+          "new": "  busy=false\n",
+          "old_identity": {
+            "bytes": 18,
+            "sha256": "9c5c6de722386d7b0c368b40aefdf792fa899777d490bcb7abb2926bc2dbabe3"
+          },
+          "new_identity": {
+            "bytes": 13,
+            "sha256": "2eb82b4955f242a2f94aa28aabf44f1b98e881b826a7b998bf0ebfa2c4f2a6fa"
+          }
+        },
+        {
+          "start": 70,
+          "stop": 77,
+          "old": " -- Observe only this pending/open request, including late arena replication.\n -- Walking away after opening remains allowed; a pending open must stay near.\n request.observer=RunService.Heartbeat:Connect(function()\n  if not valid(request,request.pending) or (not request.pending and request.gui and request.gui.Parent~=request.container) then\n   retire(request)\n  end\n end)\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 374,
+            "sha256": "3763fd336713821cdd4625fb6e78eea1f3108a10060422af839ca5c43f1d85bf"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 79,
+          "stop": 80,
+          "old": "  if not valid(request,true) then return end\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 45,
+            "sha256": "def22edfc8610ca471476999e318f45dc9e832ccd6863d58d171f49ba1fa1fa0"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 81,
+          "stop": 84,
+          "old": "  if not valid(request,true) then return end\n  local mountOwned=View.mountOwned\n  assert(type(mountOwned)==\"function\",\"ShopView does not support an owned preview mount\")\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 170,
+            "sha256": "d9a1c3d202bea8f539c0a55e9994cdec914463acdfa133d184f06d156ac068da"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 90,
+          "stop": 97,
+          "old": "  local parent=player:WaitForChild(\"PlayerGui\",5)\n  if not parent or not parent:IsA(\"PlayerGui\") or not valid(request,true)\n   or player:FindFirstChildOfClass(\"PlayerGui\")~=parent then return end\n  -- Own the exact window before the view can fail or a lifecycle signal can fire.\n  local gui=Instance.new(\"ScreenGui\")\n  request.container=parent\n  request.gui=gui\n",
+          "new": "  local gui=View.mount(player:WaitForChild(\"PlayerGui\"),snapshot,nil)\n",
+          "old_identity": {
+            "bytes": 362,
+            "sha256": "b60088ba4d6f2541cc0f8afcc3fbd3279fef1383606bd96b3b40fdbfc0776164"
+          },
+          "new_identity": {
+            "bytes": 70,
+            "sha256": "3e1962efa15bc1b75abb3f0e63c2a07439b869daabbc57a896073191dce1337c"
+          }
+        },
+        {
+          "start": 98,
+          "stop": 108,
+          "old": "  request.destroying=gui.Destroying:Connect(function()\n   if request.gui~=gui then return end\n   request.gui=nil\n   retire(request)\n  end)\n  local mounted=mountOwned(parent,snapshot,{gui=gui,onClose=function() retire(request) end})\n  assert(mounted==gui,\"ShopView did not mount the supplied window\")\n  local published=valid(request,true) and gui.Parent==parent\n  request.published=published\n  return published\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 410,
+            "sha256": "2f7b45c2465ecce52581a3bca88e878f54d1593c9b187ac4519afe429622fde4"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 109,
+          "stop": 110,
+          "old": " request.pending=false\n",
+          "new": "",
+          "old_identity": {
+            "bytes": 23,
+            "sha256": "0fdaab83c16cb99b3509d06efcdbdaeee5bd260bcc113b35fdd5934cacdc9bab"
+          },
+          "new_identity": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "start": 111,
+          "stop": 112,
+          "old": " if not ok or err~=true then retire(request) end\n",
+          "new": " busy=false\n",
+          "old_identity": {
+            "bytes": 49,
+            "sha256": "65ef64e80367f14eab4caf07c867b8ef4cb9bbf3d7d11d59d91c4c9b1a41cef1"
+          },
+          "new_identity": {
+            "bytes": 12,
+            "sha256": "c2bfe22f4879229115599e0b7681620d1cd7305d91243d6ea87267958d470073"
+          }
+        }
+      ],
       "route": "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient"
     },
     "StarterPlayer/StarterPlayerScripts/GQ8_TradeReview.client.luau": {
@@ -139262,6 +139714,509 @@
     "repaired_place": {
       "bytes": 1580946,
       "sha256": "292e932ff94f03383bbbcf903736f740a7d5ed24dc63621f1b958961dfc5f46e"
+    }
+  },
+  "shop_lifecycle_followup": {
+    "ability_ids": [],
+    "donor_pr": 1029,
+    "purchases_enabled": false,
+    "rows": {
+      "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau": {
+        "parent": {
+          "after": {
+            "bytes": 6116,
+            "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+          },
+          "before": {
+            "bytes": 6116,
+            "sha256": "6beac564c1875ed77786fbd094ac1aea18dbee449dfc507acac40b32dde123fe"
+          },
+          "class": "ModuleScript",
+          "forward": [],
+          "inverse": [],
+          "route": "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView"
+        },
+        "forward": [
+          {
+            "start": 6,
+            "stop": 7,
+            "old": "function Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?):ScreenGui\n",
+            "new": "type Window={gui:ScreenGui,onClose:()->()}\nfunction Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?,window:Window?):ScreenGui\n",
+            "old_identity": {
+              "bytes": 93,
+              "sha256": "03285fa5272db7bffdb793d7938eb773ed69137304ea9f7933d13a82508c4c80"
+            },
+            "new_identity": {
+              "bytes": 151,
+              "sha256": "cac30609af2758a117ef9416b20248f9f2678d797770ef6aa5835d2487273fbe"
+            }
+          },
+          {
+            "start": 10,
+            "stop": 13,
+            "old": " if old then old:Destroy() end\n local gui=Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20;gui.Parent=parent\n",
+            "new": " local gui=if window then window.gui else Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20\n",
+            "old_identity": {
+              "bytes": 178,
+              "sha256": "38a295f928d47c9a988325f08fdfeaf36e5b5a0eb2cc105857f55f693d8bf83f"
+            },
+            "new_identity": {
+              "bytes": 160,
+              "sha256": "a50ffba3c245ca155ba59354c4c473e4f4f52669db2598d5acf4d01921a0380a"
+            }
+          },
+          {
+            "start": 28,
+            "stop": 29,
+            "old": " close.Activated:Connect(function() gui:Destroy() end)\n",
+            "new": " close.Activated:Connect(function()\n  if window then window.onClose() else gui:Destroy() end\n end)\n",
+            "old_identity": {
+              "bytes": 55,
+              "sha256": "4ae9470e904120adf50663fe3d40d7c224d172e4711eb4fa8cc691fc191c7dd2"
+            },
+            "new_identity": {
+              "bytes": 99,
+              "sha256": "b90a2d9c76d4fb05036043d88e4a124c39adf3af9fad8ffbebd470f8bef9a724"
+            }
+          },
+          {
+            "start": 101,
+            "stop": 101,
+            "old": "",
+            "new": " if old then old:Destroy() end\n gui.Parent=parent\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 50,
+              "sha256": "e04a5bc24fd0025efb3c88f4c242eff276e9ee1e5be2268a3b0bd49c78979449"
+            }
+          },
+          {
+            "start": 103,
+            "stop": 103,
+            "old": "",
+            "new": "\n-- The kiosk uses this entry point to require an owned window before mounting.\nfunction Shop.mountOwned(parent:Instance,snapshot:any,window:Window):ScreenGui\n assert(window.gui.Parent==nil,\"owned shop window must be detached\")\n return Shop.mount(parent,snapshot,nil,window)\nend\n\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 280,
+              "sha256": "0f1106c4fa9e95651b8f14c2aeb35c491e96c84b06b087dd3a5fc4f72ec30064"
+            }
+          }
+        ],
+        "inverse": [
+          {
+            "start": 6,
+            "stop": 8,
+            "old": "type Window={gui:ScreenGui,onClose:()->()}\nfunction Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?,window:Window?):ScreenGui\n",
+            "new": "function Shop.mount(parent:Instance,snapshot:any,onRequest:((string,string)->())?):ScreenGui\n",
+            "old_identity": {
+              "bytes": 151,
+              "sha256": "cac30609af2758a117ef9416b20248f9f2678d797770ef6aa5835d2487273fbe"
+            },
+            "new_identity": {
+              "bytes": 93,
+              "sha256": "03285fa5272db7bffdb793d7938eb773ed69137304ea9f7933d13a82508c4c80"
+            }
+          },
+          {
+            "start": 11,
+            "stop": 13,
+            "old": " local gui=if window then window.gui else Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20\n",
+            "new": " if old then old:Destroy() end\n local gui=Instance.new(\"ScreenGui\")\n gui.Name=\"EGGRUMBLE_LobbyShop\";gui.ResetOnSpawn=false;gui.Enabled=true;gui.DisplayOrder=20;gui.Parent=parent\n",
+            "old_identity": {
+              "bytes": 160,
+              "sha256": "a50ffba3c245ca155ba59354c4c473e4f4f52669db2598d5acf4d01921a0380a"
+            },
+            "new_identity": {
+              "bytes": 178,
+              "sha256": "38a295f928d47c9a988325f08fdfeaf36e5b5a0eb2cc105857f55f693d8bf83f"
+            }
+          },
+          {
+            "start": 28,
+            "stop": 31,
+            "old": " close.Activated:Connect(function()\n  if window then window.onClose() else gui:Destroy() end\n end)\n",
+            "new": " close.Activated:Connect(function() gui:Destroy() end)\n",
+            "old_identity": {
+              "bytes": 99,
+              "sha256": "b90a2d9c76d4fb05036043d88e4a124c39adf3af9fad8ffbebd470f8bef9a724"
+            },
+            "new_identity": {
+              "bytes": 55,
+              "sha256": "4ae9470e904120adf50663fe3d40d7c224d172e4711eb4fa8cc691fc191c7dd2"
+            }
+          },
+          {
+            "start": 103,
+            "stop": 105,
+            "old": " if old then old:Destroy() end\n gui.Parent=parent\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 50,
+              "sha256": "e04a5bc24fd0025efb3c88f4c242eff276e9ee1e5be2268a3b0bd49c78979449"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 107,
+            "stop": 114,
+            "old": "\n-- The kiosk uses this entry point to require an owned window before mounting.\nfunction Shop.mountOwned(parent:Instance,snapshot:any,window:Window):ScreenGui\n assert(window.gui.Parent==nil,\"owned shop window must be detached\")\n return Shop.mount(parent,snapshot,nil,window)\nend\n\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 280,
+              "sha256": "0f1106c4fa9e95651b8f14c2aeb35c491e96c84b06b087dd3a5fc4f72ec30064"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ]
+      },
+      "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau": {
+        "parent": {
+          "after": {
+            "bytes": 2170,
+            "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+          },
+          "before": {
+            "bytes": 2170,
+            "sha256": "b381bf0e4db6c5382f3621524eb3bc1e20f63b2977f3809c79adab85774b176d"
+          },
+          "class": "LocalScript",
+          "forward": [],
+          "inverse": [],
+          "route": "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient"
+        },
+        "forward": [
+          {
+            "start": 9,
+            "stop": 10,
+            "old": "local busy=false\n",
+            "new": "type Request={character:Model,root:BasePart,humanoid:Humanoid,prompt:ProximityPrompt,\n door:BasePart,building:Instance,pending:boolean,cancelled:boolean,container:PlayerGui?,gui:ScreenGui?,\n observer:RBXScriptConnection?,destroying:RBXScriptConnection?,published:boolean?}\nlocal current:Request?=nil\nlocal function inActiveMatch():boolean\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n if mode~=\"TEAM\" and mode~=\"BATTLE_ROYALE\" then return false end\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=world and world:FindFirstChild(mode..\"_Arena\")\n return arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\nend\nlocal function retire(request:Request)\n request.cancelled=true\n if current==request then current=nil end\n if request.observer then request.observer:Disconnect();request.observer=nil end\n if request.destroying then request.destroying:Disconnect();request.destroying=nil end\n local gui=request.gui;request.gui=nil\n -- A completed external Destroy clears the parent and children even when its signal is deferred.\n -- Still destroy a detached live view or an unpublished partial mount.\n if gui and (not request.published or gui.Parent~=nil or #gui:GetChildren()>0) then gui:Destroy() end\nend\nlocal function valid(request:Request,near:boolean):boolean\n if request.cancelled or current~=request or player.Character~=request.character\n  or request.character.Parent==nil or request.humanoid.Health<=0\n  or (request.container~=nil and player:FindFirstChildOfClass(\"PlayerGui\")~=request.container)\n  or request.character:FindFirstChild(\"HumanoidRootPart\")~=request.root\n  or request.character:FindFirstChildOfClass(\"Humanoid\")~=request.humanoid\n  or player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return false end\n local prompt=request.prompt\n if prompt.Name~=\"GQ805_ShopReadOnlyPrompt\" or prompt.Parent~=request.door\n  or not prompt:IsDescendantOf(workspace)\n  or prompt:FindFirstAncestor(\"GQ805_LobbyGuildShop\")~=request.building\n  or request.building:GetAttribute(\"EGGRUMBLE_ShopPreviewOnly\")~=true then return false end\n return not near or (request.root.Position-request.door.Position).Magnitude<=13\nend\n",
+            "old_identity": {
+              "bytes": 17,
+              "sha256": "d71dadc4428dc3ec6a1bd8afc063670f90ac8cffd13c471fa05c14e679550a39"
+            },
+            "new_identity": {
+              "bytes": 2229,
+              "sha256": "c00ce72dee22ea411d7be53e518ed6309baf265c6b6859363e985292629766d2"
+            }
+          },
+          {
+            "start": 18,
+            "stop": 19,
+            "old": " if not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+            "new": " if not ch or not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+            "old_identity": {
+              "bytes": 85,
+              "sha256": "a35f2b3390753cbdb4bc45799870ba99125c7a1d821659fac624a8f792c535e2"
+            },
+            "new_identity": {
+              "bytes": 95,
+              "sha256": "ba04a3b5fab1a3a898879d2e4641bb449bff2df67f295ab91d53d70e16f2d2e7"
+            }
+          },
+          {
+            "start": 21,
+            "stop": 24,
+            "old": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true then return end\n if busy then return end\n busy=true\n",
+            "new": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return end\n if current and current.pending then return end\n if current then retire(current) end\n local request:Request={character=ch,root=root,humanoid=hum,prompt=prompt,\n  door=door,building=building,pending=true,cancelled=false}\n current=request\n",
+            "old_identity": {
+              "bytes": 106,
+              "sha256": "9ef4c33e985d9fde57805d5aafb84e72956680b1f38b526f3214ac9290240a44"
+            },
+            "new_identity": {
+              "bytes": 326,
+              "sha256": "d9193d537a52146061102c68f35f28e1affc9e918faceb61785cf0328ff13cde"
+            }
+          },
+          {
+            "start": 29,
+            "stop": 30,
+            "old": "  busy=false\n",
+            "new": "  retire(request)\n",
+            "old_identity": {
+              "bytes": 13,
+              "sha256": "2eb82b4955f242a2f94aa28aabf44f1b98e881b826a7b998bf0ebfa2c4f2a6fa"
+            },
+            "new_identity": {
+              "bytes": 18,
+              "sha256": "9c5c6de722386d7b0c368b40aefdf792fa899777d490bcb7abb2926bc2dbabe3"
+            }
+          },
+          {
+            "start": 32,
+            "stop": 32,
+            "old": "",
+            "new": " -- Observe only this pending/open request, including late arena replication.\n -- Walking away after opening remains allowed; a pending open must stay near.\n request.observer=RunService.Heartbeat:Connect(function()\n  if not valid(request,request.pending) or (not request.pending and request.gui and request.gui.Parent~=request.container) then\n   retire(request)\n  end\n end)\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 374,
+              "sha256": "3763fd336713821cdd4625fb6e78eea1f3108a10060422af839ca5c43f1d85bf"
+            }
+          },
+          {
+            "start": 34,
+            "stop": 34,
+            "old": "",
+            "new": "  if not valid(request,true) then return end\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 45,
+              "sha256": "def22edfc8610ca471476999e318f45dc9e832ccd6863d58d171f49ba1fa1fa0"
+            }
+          },
+          {
+            "start": 35,
+            "stop": 35,
+            "old": "",
+            "new": "  if not valid(request,true) then return end\n  local mountOwned=View.mountOwned\n  assert(type(mountOwned)==\"function\",\"ShopView does not support an owned preview mount\")\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 170,
+              "sha256": "d9a1c3d202bea8f539c0a55e9994cdec914463acdfa133d184f06d156ac068da"
+            }
+          },
+          {
+            "start": 41,
+            "stop": 42,
+            "old": "  local gui=View.mount(player:WaitForChild(\"PlayerGui\"),snapshot,nil)\n",
+            "new": "  local parent=player:WaitForChild(\"PlayerGui\",5)\n  if not parent or not parent:IsA(\"PlayerGui\") or not valid(request,true)\n   or player:FindFirstChildOfClass(\"PlayerGui\")~=parent then return end\n  -- Own the exact window before the view can fail or a lifecycle signal can fire.\n  local gui=Instance.new(\"ScreenGui\")\n  request.container=parent\n  request.gui=gui\n",
+            "old_identity": {
+              "bytes": 70,
+              "sha256": "3e1962efa15bc1b75abb3f0e63c2a07439b869daabbc57a896073191dce1337c"
+            },
+            "new_identity": {
+              "bytes": 362,
+              "sha256": "b60088ba4d6f2541cc0f8afcc3fbd3279fef1383606bd96b3b40fdbfc0776164"
+            }
+          },
+          {
+            "start": 43,
+            "stop": 43,
+            "old": "",
+            "new": "  request.destroying=gui.Destroying:Connect(function()\n   if request.gui~=gui then return end\n   request.gui=nil\n   retire(request)\n  end)\n  local mounted=mountOwned(parent,snapshot,{gui=gui,onClose=function() retire(request) end})\n  assert(mounted==gui,\"ShopView did not mount the supplied window\")\n  local published=valid(request,true) and gui.Parent==parent\n  request.published=published\n  return published\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 410,
+              "sha256": "2f7b45c2465ecce52581a3bca88e878f54d1593c9b187ac4519afe429622fde4"
+            }
+          },
+          {
+            "start": 44,
+            "stop": 44,
+            "old": "",
+            "new": " request.pending=false\n",
+            "old_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "new_identity": {
+              "bytes": 23,
+              "sha256": "0fdaab83c16cb99b3509d06efcdbdaeee5bd260bcc113b35fdd5934cacdc9bab"
+            }
+          },
+          {
+            "start": 45,
+            "stop": 46,
+            "old": " busy=false\n",
+            "new": " if not ok or err~=true then retire(request) end\n",
+            "old_identity": {
+              "bytes": 12,
+              "sha256": "c2bfe22f4879229115599e0b7681620d1cd7305d91243d6ea87267958d470073"
+            },
+            "new_identity": {
+              "bytes": 49,
+              "sha256": "65ef64e80367f14eab4caf07c867b8ef4cb9bbf3d7d11d59d91c4c9b1a41cef1"
+            }
+          }
+        ],
+        "inverse": [
+          {
+            "start": 9,
+            "stop": 45,
+            "old": "type Request={character:Model,root:BasePart,humanoid:Humanoid,prompt:ProximityPrompt,\n door:BasePart,building:Instance,pending:boolean,cancelled:boolean,container:PlayerGui?,gui:ScreenGui?,\n observer:RBXScriptConnection?,destroying:RBXScriptConnection?,published:boolean?}\nlocal current:Request?=nil\nlocal function inActiveMatch():boolean\n local mode=player:GetAttribute(\"EGGRUMBLE_QueuedMode\")\n if mode~=\"TEAM\" and mode~=\"BATTLE_ROYALE\" then return false end\n local world=workspace:FindFirstChild(\"EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW\")\n local arena=world and world:FindFirstChild(mode..\"_Arena\")\n return arena~=nil and arena:IsA(\"Folder\")\n  and arena:GetAttribute(\"EGGRUMBLE_MatchPhase\")==\"ACTIVE\"\nend\nlocal function retire(request:Request)\n request.cancelled=true\n if current==request then current=nil end\n if request.observer then request.observer:Disconnect();request.observer=nil end\n if request.destroying then request.destroying:Disconnect();request.destroying=nil end\n local gui=request.gui;request.gui=nil\n -- A completed external Destroy clears the parent and children even when its signal is deferred.\n -- Still destroy a detached live view or an unpublished partial mount.\n if gui and (not request.published or gui.Parent~=nil or #gui:GetChildren()>0) then gui:Destroy() end\nend\nlocal function valid(request:Request,near:boolean):boolean\n if request.cancelled or current~=request or player.Character~=request.character\n  or request.character.Parent==nil or request.humanoid.Health<=0\n  or (request.container~=nil and player:FindFirstChildOfClass(\"PlayerGui\")~=request.container)\n  or request.character:FindFirstChild(\"HumanoidRootPart\")~=request.root\n  or request.character:FindFirstChildOfClass(\"Humanoid\")~=request.humanoid\n  or player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return false end\n local prompt=request.prompt\n if prompt.Name~=\"GQ805_ShopReadOnlyPrompt\" or prompt.Parent~=request.door\n  or not prompt:IsDescendantOf(workspace)\n  or prompt:FindFirstAncestor(\"GQ805_LobbyGuildShop\")~=request.building\n  or request.building:GetAttribute(\"EGGRUMBLE_ShopPreviewOnly\")~=true then return false end\n return not near or (request.root.Position-request.door.Position).Magnitude<=13\nend\n",
+            "new": "local busy=false\n",
+            "old_identity": {
+              "bytes": 2229,
+              "sha256": "c00ce72dee22ea411d7be53e518ed6309baf265c6b6859363e985292629766d2"
+            },
+            "new_identity": {
+              "bytes": 17,
+              "sha256": "d71dadc4428dc3ec6a1bd8afc063670f90ac8cffd13c471fa05c14e679550a39"
+            }
+          },
+          {
+            "start": 53,
+            "stop": 54,
+            "old": " if not ch or not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+            "new": " if not root or not root:IsA(\"BasePart\") or not hum or hum.Health<=0 then return end\n",
+            "old_identity": {
+              "bytes": 95,
+              "sha256": "ba04a3b5fab1a3a898879d2e4641bb449bff2df67f295ab91d53d70e16f2d2e7"
+            },
+            "new_identity": {
+              "bytes": 85,
+              "sha256": "a35f2b3390753cbdb4bc45799870ba99125c7a1d821659fac624a8f792c535e2"
+            }
+          },
+          {
+            "start": 56,
+            "stop": 62,
+            "old": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true or inActiveMatch() then return end\n if current and current.pending then return end\n if current then retire(current) end\n local request:Request={character=ch,root=root,humanoid=hum,prompt=prompt,\n  door=door,building=building,pending=true,cancelled=false}\n current=request\n",
+            "new": " if player:GetAttribute(\"EGGRUMBLE_Eliminated\")==true then return end\n if busy then return end\n busy=true\n",
+            "old_identity": {
+              "bytes": 326,
+              "sha256": "d9193d537a52146061102c68f35f28e1affc9e918faceb61785cf0328ff13cde"
+            },
+            "new_identity": {
+              "bytes": 106,
+              "sha256": "9ef4c33e985d9fde57805d5aafb84e72956680b1f38b526f3214ac9290240a44"
+            }
+          },
+          {
+            "start": 67,
+            "stop": 68,
+            "old": "  retire(request)\n",
+            "new": "  busy=false\n",
+            "old_identity": {
+              "bytes": 18,
+              "sha256": "9c5c6de722386d7b0c368b40aefdf792fa899777d490bcb7abb2926bc2dbabe3"
+            },
+            "new_identity": {
+              "bytes": 13,
+              "sha256": "2eb82b4955f242a2f94aa28aabf44f1b98e881b826a7b998bf0ebfa2c4f2a6fa"
+            }
+          },
+          {
+            "start": 70,
+            "stop": 77,
+            "old": " -- Observe only this pending/open request, including late arena replication.\n -- Walking away after opening remains allowed; a pending open must stay near.\n request.observer=RunService.Heartbeat:Connect(function()\n  if not valid(request,request.pending) or (not request.pending and request.gui and request.gui.Parent~=request.container) then\n   retire(request)\n  end\n end)\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 374,
+              "sha256": "3763fd336713821cdd4625fb6e78eea1f3108a10060422af839ca5c43f1d85bf"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 79,
+            "stop": 80,
+            "old": "  if not valid(request,true) then return end\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 45,
+              "sha256": "def22edfc8610ca471476999e318f45dc9e832ccd6863d58d171f49ba1fa1fa0"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 81,
+            "stop": 84,
+            "old": "  if not valid(request,true) then return end\n  local mountOwned=View.mountOwned\n  assert(type(mountOwned)==\"function\",\"ShopView does not support an owned preview mount\")\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 170,
+              "sha256": "d9a1c3d202bea8f539c0a55e9994cdec914463acdfa133d184f06d156ac068da"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 90,
+            "stop": 97,
+            "old": "  local parent=player:WaitForChild(\"PlayerGui\",5)\n  if not parent or not parent:IsA(\"PlayerGui\") or not valid(request,true)\n   or player:FindFirstChildOfClass(\"PlayerGui\")~=parent then return end\n  -- Own the exact window before the view can fail or a lifecycle signal can fire.\n  local gui=Instance.new(\"ScreenGui\")\n  request.container=parent\n  request.gui=gui\n",
+            "new": "  local gui=View.mount(player:WaitForChild(\"PlayerGui\"),snapshot,nil)\n",
+            "old_identity": {
+              "bytes": 362,
+              "sha256": "b60088ba4d6f2541cc0f8afcc3fbd3279fef1383606bd96b3b40fdbfc0776164"
+            },
+            "new_identity": {
+              "bytes": 70,
+              "sha256": "3e1962efa15bc1b75abb3f0e63c2a07439b869daabbc57a896073191dce1337c"
+            }
+          },
+          {
+            "start": 98,
+            "stop": 108,
+            "old": "  request.destroying=gui.Destroying:Connect(function()\n   if request.gui~=gui then return end\n   request.gui=nil\n   retire(request)\n  end)\n  local mounted=mountOwned(parent,snapshot,{gui=gui,onClose=function() retire(request) end})\n  assert(mounted==gui,\"ShopView did not mount the supplied window\")\n  local published=valid(request,true) and gui.Parent==parent\n  request.published=published\n  return published\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 410,
+              "sha256": "2f7b45c2465ecce52581a3bca88e878f54d1593c9b187ac4519afe429622fde4"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 109,
+            "stop": 110,
+            "old": " request.pending=false\n",
+            "new": "",
+            "old_identity": {
+              "bytes": 23,
+              "sha256": "0fdaab83c16cb99b3509d06efcdbdaeee5bd260bcc113b35fdd5934cacdc9bab"
+            },
+            "new_identity": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "start": 111,
+            "stop": 112,
+            "old": " if not ok or err~=true then retire(request) end\n",
+            "new": " busy=false\n",
+            "old_identity": {
+              "bytes": 49,
+              "sha256": "65ef64e80367f14eab4caf07c867b8ef4cb9bbf3d7d11d59d91c4c9b1a41cef1"
+            },
+            "new_identity": {
+              "bytes": 12,
+              "sha256": "c2bfe22f4879229115599e0b7681620d1cd7305d91243d6ea87267958d470073"
+            }
+          }
+        ]
+      }
+    },
+    "parent_place": {
+      "bytes": 1580946,
+      "sha256": "292e932ff94f03383bbbcf903736f740a7d5ed24dc63621f1b958961dfc5f46e"
+    },
+    "repaired_place": {
+      "bytes": 1585158,
+      "sha256": "e77f2463694c7ba3b4af6ed67878fab095ab1b7706e550787135c9a22fdd2457"
     }
   }
 }

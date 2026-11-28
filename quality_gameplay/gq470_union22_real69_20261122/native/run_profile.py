@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "cc4817bd654c8a686a772b25992bea89227ec5cfefcf819dd5d67e7b3ac7360a"
+INPUT_LOCK_SHA256 = "98dd90b2770186f20d54dd9705f7b7b10c898be562b803f510ebbb45c7f8fd4f"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -864,6 +864,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from common_healing import run as run_common_healing
         run_common_healing(root, output / "common_healing", binary, pin, context, profile,
                                    compose, clean_environment())
+        from shop_lifecycle import FILES as shop_lifecycle_files, PROCESS_COUNT as shop_lifecycle_runs
+        from shop_lifecycle import run as run_shop_lifecycle
+        run_shop_lifecycle(root, output / "shop_lifecycle", binary, pin, context, profile,
+                                   compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -896,7 +900,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                                + len(ground_night_files) + len(cover_orders_files) + len(mage_field_arcs_files)
                                + len(eclipse_sweep_files) + len(builder_forms_files) + len(footing_wards_files)
                                + len(ninja_beast_castle_files) + len(spring_mist_forest_files)
-                               + len(ninja_steps_objectives_files) + len(warrior_field_horde_files) + len(trapper_cast_audio_files) + len(zombie_formation_camera_files) + len(navigation_entry_sky_files) + len(mobility_crests_files) + len(common_healing_files))
+                               + len(ninja_steps_objectives_files) + len(warrior_field_horde_files) + len(trapper_cast_audio_files) + len(zombie_formation_camera_files) + len(navigation_entry_sky_files) + len(mobility_crests_files) + len(common_healing_files) + len(shop_lifecycle_files))
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
                 + current_stage_files
                 and {name.removeprefix("wing_warrior/") for name in evidence
@@ -939,6 +943,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                      if name.startswith("mobility_crests/")} == mobility_crests_files
                 and {name.removeprefix("common_healing/") for name in evidence
                      if name.startswith("common_healing/")} == common_healing_files
+                and {name.removeprefix("shop_lifecycle/") for name in evidence
+                     if name.startswith("shop_lifecycle/")} == shop_lifecycle_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -1001,6 +1007,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "navigation_entry_sky": identity(read(output / "navigation_entry_sky/receipt.json")),
                    "mobility_crests": identity(read(output / "mobility_crests/receipt.json")),
                    "common_healing": identity(read(output / "common_healing/receipt.json")),
+                   "shop_lifecycle": identity(read(output / "shop_lifecycle/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -1012,7 +1019,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    + wing_warrior_runs + fixed_cue_runs + field_loadout_runs
                    + first90_role_runs + return_convert_runs + ground_night_runs + cover_orders_runs
                    + mage_field_arcs_runs + eclipse_sweep_runs + builder_forms_runs + footing_wards_runs
-                   + ninja_beast_castle_runs + spring_mist_forest_runs + ninja_steps_objectives_runs + warrior_field_horde_runs + trapper_cast_audio_runs + zombie_formation_camera_runs + navigation_entry_sky_runs + mobility_crests_runs + common_healing_runs,
+                   + ninja_beast_castle_runs + spring_mist_forest_runs + ninja_steps_objectives_runs + warrior_field_horde_runs + trapper_cast_audio_runs + zombie_formation_camera_runs + navigation_entry_sky_runs + mobility_crests_runs + common_healing_runs + shop_lifecycle_runs,
                    "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
                    + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}

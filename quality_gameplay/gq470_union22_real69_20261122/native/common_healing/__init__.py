@@ -134,10 +134,12 @@ def _prepare(source_root, profile, compose):
     native = Path(compose.__file__).resolve().parent / "native"
     common, routes, template, base, material, fixtures = _inputs(native, compose)
     pins = _profile_pins(profile, compose)
+    previous = tuple(compose.RECENT_TRIAL_STAGES).index(FOLLOWUP) > 0
+    on_root = source_root.parent / compose.SHOP_LIFECYCLE_OFF / "sources" if previous else source_root
     off_root = source_root.parent / compose.COMMON_HEALING_OFF / "sources"
     generated = {
         name: _program(common, common._sources(root, pins[name], compose), routes, template, base, material, compose)
-        for name, root in ((ON_PROGRAM, source_root), (OFF_PROGRAM, off_root))
+        for name, root in ((ON_PROGRAM, on_root), (OFF_PROGRAM, off_root))
     }
     return generated, pins, fixtures
 

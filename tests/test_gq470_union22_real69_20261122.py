@@ -47,7 +47,8 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    healing_parent = compose.common_healing_parent(on, lock)
+    shop_parent = compose.shop_lifecycle_parent(on, lock)
+    healing_parent = compose.common_healing_parent(*shop_parent)
     mobility_parent = compose.mobility_crests_parent(*healing_parent)
     navigation_parent = compose.navigation_entry_sky_parent(*mobility_parent)
     formation_parent = compose.zombie_formation_camera_parent(*navigation_parent)
@@ -75,6 +76,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["shop_lifecycle_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["common_healing_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["mobility_crests_followup"]["rows"].items()
@@ -562,8 +565,13 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        healing_parent, healing_lock = compose.common_healing_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != healing_parent[name]},
+        shop_parent, shop_lock = compose.shop_lifecycle_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != shop_parent[name]},
+                         set(compose.SHOP_LIFECYCLE_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "shop_lifecycle_followup"),
+                         {name: compose.identity(raw) for name, raw in shop_parent.items()})
+        healing_parent, healing_lock = compose.common_healing_parent(shop_parent, shop_lock)
+        self.assertEqual({name for name in shop_parent if shop_parent[name] != healing_parent[name]},
                          set(compose.COMMON_HEALING_SOURCES))
         self.assertEqual(compose.trial_sources_before(self.lock, "common_healing_followup"),
                          {name: compose.identity(raw) for name, raw in healing_parent.items()})
@@ -1925,7 +1933,7 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["common_healing_followup"], self.lock["mobility_crests_followup"], self.lock["navigation_entry_sky_followup"], self.lock["zombie_formation_camera_followup"], self.lock["trapper_cast_audio_followup"], self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
+        for followup in (self.lock["shop_lifecycle_followup"], self.lock["common_healing_followup"], self.lock["mobility_crests_followup"], self.lock["navigation_entry_sky_followup"], self.lock["zombie_formation_camera_followup"], self.lock["trapper_cast_audio_followup"], self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
                          self.lock["ninja_beast_castle_followup"],
                          self.lock["footing_wards_followup"],
                          self.lock["builder_forms_followup"],
@@ -2032,7 +2040,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(navigation_entry_sky["repaired_place"], mobility_crests["parent_place"])
         common_healing = self.lock["common_healing_followup"]
         self.assertEqual(mobility_crests["repaired_place"], common_healing["parent_place"])
-        self.assertEqual(common_healing["repaired_place"], self.lock["final_place"])
+        shop_lifecycle = self.lock["shop_lifecycle_followup"]
+        self.assertEqual(common_healing["repaired_place"], shop_lifecycle["parent_place"])
+        self.assertEqual(shop_lifecycle["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(shop_lifecycle["rows"]), set(compose.SHOP_LIFECYCLE_SOURCES))
         self.assertEqual(set(common_healing["rows"]), set(compose.COMMON_HEALING_SOURCES))
         self.assertEqual(set(mobility_crests["rows"]), set(compose.MOBILITY_CRESTS_SOURCES))
         self.assertEqual(set(navigation_entry_sky["rows"]), set(compose.NAVIGATION_ENTRY_SKY_SOURCES))
