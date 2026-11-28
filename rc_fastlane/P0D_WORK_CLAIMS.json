@@ -52443,7 +52443,7 @@
     {
       "claim_id": "P0D-GQ470-PRIVATE-PLAYER-CONTACT-SHADOW-20261128",
       "feature_id": "GQ470_FB015_PLAYER_CONTACT_SHADOW_REAL69",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, mounted exact original donor)",
       "parent_issue": 420,
@@ -52457,7 +52457,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Reuse original #1001 contact shadow on the existing REAL69 ArtDistanceLOD Client route. One local own-avatar Part and one bounded ray, camera, arena, terrain, transparency, water, stealth, reduce and OFF guards. Preserve client effects and physical parent.",
       "resources": [
@@ -52733,7 +52733,7 @@
         "operation_id": "02406a91-d90a-47a4-8daa-e79c75eec100"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
         "permitted_head": "d72e324fc5b92f942367c12444e8a279e974754a",
@@ -52764,7 +52764,32 @@
           "review": 6096425463,
           "trusted_queue_run": 46120106328,
           "trusted_queue_job": 140902532177
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "c06b2471535dd64ee431772528693aee05d042bc",
+        "writer_return": "15afea83dad70d77a462746f7af2fb4be63ed8ca",
+        "adopted_head": "d72e324fc5b92f942367c12444e8a279e974754a",
+        "adopted_at": "2026-11-28T07:13:50.768Z"
+      },
+      "actual_official_rc": {
+        "head": "d72e324fc5b92f942367c12444e8a279e974754a",
+        "previous": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+        "tree": "1751330b503e5edf7910a3d5c3774ee02d0a1995",
+        "private_ci": 46120228455,
+        "private_job": 140902905947,
+        "private_ci_steps": 48,
+        "private_artifact": 15253183390,
+        "private_zip_bytes": 76840418,
+        "private_zip_sha256": "d5c8bafa52eaf68f3cf22cd687268c9ce462b4d88d2ca07d0cf2369ffd967710",
+        "private_place_bytes": 1592972,
+        "private_place_sha256": "b683831faaef4eff3b93d147abd8af21d5d98da84c62560d8dc6394d8ddd6bd8",
+        "off_bytes": 1585158,
+        "source_lock_sha256": "a53451b315ef2d9b512eb9d0299ccf607e9029525a2cac9ad01b5fd117520183",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7235990587"
+      },
+      "actual_final_closure_lease": {
+        "ref": "a0b420d99a17a2838a58e45d26e28f76a5c54c4b",
+        "operation": "ab69995b-9976-47db-ac7d-9595920227d6"
       }
     }
   ],
