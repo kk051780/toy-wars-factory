@@ -1,0 +1,112 @@
+name: GQ470 ART17 parent + Swarm Subject same-source lossless CI
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/gq470_swarm_subject_20261121/**'
+      - '.github/workflows/gq470-swarm-art17-compat-real69.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  true-art17-compatible-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FORMAL_SHA: e80973c354f14a0d0088577f3cc1a875454f0f8f
+      ART17_HEAD: f60bfb9488edef389aa6f3f5411ad39d045d7a08
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact official head, original #983 ART17 author head and original packets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL_SHA"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/pulls/983" --jq .head.sha)" = "$ART17_HEAD"
+          test "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/44864701798" --jq '.head_sha+" "+.conclusion')" = "$ART17_HEAD success"
+          mkdir -p /tmp/gq-art17-orig /tmp/gq-art17-in
+          gh run download 44695199140 --repo "$GITHUB_REPOSITORY" --name P0D-EGGRUMBLE-V3-REAL69-CANONICAL-PRIVATE-STUDIO --dir /tmp/gq-art17-orig
+          gh run download 44864701798 --repo "$GITHUB_REPOSITORY" --name GQ470-ART16-P0-17-REAL69-B220-PACKET-NOT-FORMAL --dir /tmp/gq-art17-in
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile,ZIP_DEFLATED
+          root=Path('/tmp/gq-art17-in')
+          paths=[p for p in root.rglob('*') if p.is_file()]
+          assert len(paths)==26, len(paths)
+          with ZipFile('/tmp/gq470-true-art17.zip','w',ZIP_DEFLATED) as z:
+              for p in paths:z.write(p,p.relative_to(root).as_posix())
+          PY
+          python3 quality_gameplay/gq470_swarm_subject_20261121/verify_art17_swarm_compat.py --formal /tmp/gq-art17-orig --art17-zip /tmp/gq470-true-art17.zip --output /tmp/gq-art17-on
+      - name: Real pinned Native Luau for original and composite69
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/luau-lang/luau.git /tmp/gq-art17-luau
+          git -C /tmp/gq-art17-luau checkout --quiet f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/gq-art17-luau -B /tmp/gq-art17-luau-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq-art17-luau-build --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,sys
+          sys.path.insert(0,'quality_gameplay/gq470_swarm_subject_20261121')
+          from patch_swarm_subject69 import selected
+          for root in (Path('/tmp/gq-art17-orig'),Path('/tmp/gq-art17-on')):
+              source=selected(root);assert len(source)==69
+              for p in source.values():
+                  subprocess.run(['/tmp/gq-art17-luau-build/luau-compile','--text',str(p)],check=True,stdout=subprocess.DEVNULL)
+          print('ART17_PLUS_SUBJECT_138_NATIVE_COMPILED')
+          PY
+      - name: Pinned real Rojo ART17 parent place exact and Subject-composite source
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq-art17-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq-art17-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq-art17-rojo.zip') as z:
+              p=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(p)==1
+              dst=Path('/tmp/gq-art17-rojo');dst.write_bytes(z.read(p[0]));dst.chmod(0o755)
+          PY
+          cp -a /tmp/gq-art17-on /tmp/gq-art17-parent
+          cp /tmp/gq-art17-parent/ART17_PARENT_SWARM_EXACT.luau /tmp/gq-art17-parent/sources/ServerScriptService/EGGRUMBLE_SwarmCombat.luau
+          /tmp/gq-art17-rojo build /tmp/gq-art17-parent/EGGRUMBLE_REAL69.project.json -o /tmp/gq-art17-parent/GQ470_ART17_PARENT_PLACE.rbxlx
+          /tmp/gq-art17-rojo build /tmp/gq-art17-on/EGGRUMBLE_REAL69.project.json -o /tmp/gq-art17-on/GQ470_ART17_SUBJECT_A_PRIVATE_PLACE.rbxlx
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          a=Path('/tmp/gq-art17-parent/GQ470_ART17_PARENT_PLACE.rbxlx').read_bytes()
+          assert len(a)==822713 and hashlib.sha256(a).hexdigest()=='443914a672f4f535fe4c6313b0dec524892a0afeb4684a8d935e4eebb1458305'
+          root=Path('/tmp/gq-art17-on')
+          new=root/'GQ470_ART17_SUBJECT_A_PRIVATE_PLACE.rbxlx'
+          report=root/'GQ470_ART17_SUBJECT_COMPAT_SOURCE_ONLY.json'
+          m=json.loads(report.read_text())
+          m.update({'art17_parent_place_identical':True,'native_luau_69_plus69':'PASS',
+                    'real_rojo_composite':'PASS_SOURCE_ONLY',
+                    'candidate_place_bytes':new.stat().st_size,
+                    'candidate_place_sha256':hashlib.sha256(new.read_bytes()).hexdigest(),
+                    'real_studio':'NOT_TESTED','formal_rc_integrated':False})
+          report.write_text(json.dumps(m,indent=2,sort_keys=True)+'\n')
+          print('ART17_NONLOSS_REAL_PLACE_BYTES',new.stat().st_size)
+          PY
+          python3 quality_gameplay/gq8_lss_real31_20261117/rehydrate_real31.py verify --project /tmp/gq-art17-on/EGGRUMBLE_REAL69.project.json --place /tmp/gq-art17-on/GQ470_ART17_SUBJECT_A_PRIVATE_PLACE.rbxlx --count 69
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/rc/p0d-s1-kids-rc01" --jq .object.sha)" = "$FORMAL_SHA"
+      - name: Upload nonformal 17-source composite and truthful report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: GQ470-ART17-SWARM-SUBJECT-COMPAT-NOT-FORMAL
+          path: |
+            /tmp/gq-art17-on/GQ470_ART17_SUBJECT_A_PRIVATE_PLACE.rbxlx
+            /tmp/gq-art17-on/GQ470_ART17_SUBJECT_COMPAT_SOURCE_ONLY.json
+            /tmp/gq-art17-on/REAL69_LEGACY_INTAKE_RECEIPT.json
+            /tmp/gq-art17-on/EGGRUMBLE_REAL69.project.json
+            /tmp/gq-art17-on/sources/**
+          if-no-files-found: error
+          retention-days: 7
