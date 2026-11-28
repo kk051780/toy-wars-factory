@@ -45440,7 +45440,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-MAGE-WING-WARRIOR-20261128",
       "feature_id": "GQ219_PRIVATE_WING_WARRIOR_ELEMENTAL_COMBOS_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -45454,7 +45454,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Private opt-in Mage and Warrior effect batch. Distinct projectile BURN, actual neutral frost slow, icicle penetration and grounded flight-then-sweep. Two stable sequenced combos reuse current Swarm/HP/Growth; current Tool metadata feeds the original visual/audio path. No new purchase, authority, Remote, default profile, or new select source count.",
       "resources": [
@@ -45843,7 +45843,7 @@
         "operation_id": "20a97f9e-7c93-4b47-8e61-e35deb2db2a5"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "90dac5a091b2b84666c253c1ad953f050c9862d6",
         "permitted_head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
@@ -45874,7 +45874,38 @@
           "review": 6094433685,
           "trusted_queue_run": 46084873135,
           "trusted_queue_job": 140791989381
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "b3caca4e0b64c86888c16dea029f837ae7964fac",
+        "writer_return": "9967e285b4ea55aa7043fffc5d6cac529b7936fd",
+        "adopted_head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+        "adopted_at": "2026-11-27T23:54:36.133Z"
+      },
+      "actual_official_rc": {
+        "head": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+        "previous": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "tree": "2e7156663bf2a5cb9969cc601a397528d573b59b",
+        "active_baseline_head": "90dac5a091b2b84666c253c1ad953f050c9862d6",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_place_bytes": 729423,
+        "active_zip_bytes": 227522,
+        "active_artifact": 15229761144,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46085048442,
+        "private_job": 140792549646,
+        "private_steps": 48,
+        "private_artifact": 15238628357,
+        "private_zip_bytes": 33251003,
+        "private_zip_digest": "sha256:f1de3394f9c29c57a0cf634923b225acada53f2e5ab51c79e43dc783febb1bc6",
+        "private_place_bytes": 1035363,
+        "private_place_sha256": "3a90a0b0c4598312da2c7f5eba37bcfb661345d602e48a808216d149eaeb0918",
+        "private_off_place_bytes": 987760,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7230627366",
+        "device_evidence": "NOT_TESTED_PER_V42",
+        "independent_context": "/root/p0_offer_review26",
+        "trial_profile": "PRIVATE_COMPANION REAL69_UNION22",
+        "trial_entry": "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
       }
     },
     {
@@ -45885,7 +45916,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1054,
       "base_rc_sha": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
       "base_rc_tree": "2e7156663bf2a5cb9969cc601a397528d573b59b",
       "prep_branch": "quality/gq219-private-field-loadouts-first90-20261128",
@@ -45959,7 +45990,7 @@
       },
       "authority_basis": "#1011 V4.2 scoped effect batch, genuine #218/#220, fixed #219 data and exact FB-004/#364 task. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-field-loadouts-first90-20261128",
         "formal_parent": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
         "tree": "a650cbc2fbe06e0efbc87686eaa0edeae34d42e7",
@@ -46105,6 +46136,140 @@
           "existing_bot_full_body_scenarios": 9,
           "device": "NOT_TESTED_V4.2"
         }
+      },
+      "source_head": "aa26d6c84a6f87f1112864be1edcdf3037c93c73",
+      "prepared_candidate_head": "aa26d6c84a6f87f1112864be1edcdf3037c93c73",
+      "prepared_candidate_tree": "a650cbc2fbe06e0efbc87686eaa0edeae34d42e7",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "c740fbe864b657e99d573e92401a37e93b2e9aad",
+          "bytes": 77858
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "5e11345be5ff9a7b11a8b9faab92f9ad9ce23b2f",
+          "bytes": 35258
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/__init__.py",
+          "mode": "100644",
+          "blob": "66a95f3027a9c1a68b6ffb865e8c934d2f28dd50",
+          "bytes": 11130
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/beast_cases.luau",
+          "mode": "100644",
+          "blob": "3e8518a40ae2eb443c54bba736dd9f3a86eb7e85",
+          "bytes": 8543
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/builder_cases.luau",
+          "mode": "100644",
+          "blob": "c20d43ed1c9484a06948e5b4400c32e4807f8a24",
+          "bytes": 9927
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/sky_cases.luau",
+          "mode": "100644",
+          "blob": "4cdec7763ef4bd7f6f367b49db8f80862561c5dd",
+          "bytes": 10408
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/trapper_cases.luau",
+          "mode": "100644",
+          "blob": "137a741b4b5c9f3f8911eabe7d61ae46121b75ef",
+          "bytes": 12176
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/first90_role/__init__.py",
+          "mode": "100644",
+          "blob": "7e2dfecd2c2b0c31b4e1ef354171828f38d8ef3a",
+          "bytes": 4324
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/first90_role/cases.luau",
+          "mode": "100644",
+          "blob": "0238ce01c4364308544fa6c9a4734a5d96227d0a",
+          "bytes": 2338
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "c6a8f50222ae3080ad787aa8eea096ff67d56001",
+          "bytes": 10996
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "6b29d9700e36fa85437344256aa921f45ace3f0a",
+          "bytes": 8433
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+          "mode": "100644",
+          "blob": "52d44f3abaa8ac7413c43e717973667844835fa0",
+          "bytes": 11328
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_s4/__init__.py",
+          "mode": "100644",
+          "blob": "501b835f7c915baa0a1d8e2702af18499cfb048d",
+          "bytes": 12914
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "3b575abce5f84c3d153c58520b97f77f0b5fe3f5",
+          "bytes": 24712
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "b7a2923a08c8b32159fae9ae85e712faa38014c2",
+          "bytes": 58952
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/__init__.py",
+          "mode": "100644",
+          "blob": "589180213dd834cc3e351540d61c87d0c53fc085",
+          "bytes": 10827
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "80a1396413a0742cdf402f28c782d0560654a289",
+          "bytes": 4281969
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "68d9b40b61dbad699bbb148d104357246395b9e5",
+          "bytes": 181888
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "476be83a5eb6040f5d8f7b2204fb9215768b2079",
+          "bytes": 133301
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1054,
+        "exact_head": "aa26d6c84a6f87f1112864be1edcdf3037c93c73",
+        "exact_tree": "a650cbc2fbe06e0efbc87686eaa0edeae34d42e7",
+        "exact_parent": "337967bb91b8a92aba82d8bc0c9faddcb45c6566",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "90c1cba1e03530cfd615f86a79a23c83eae7d1f4",
+        "source_lease_return": "439129a9250f1beb890585b55ea4eb6ca6ca6e46",
+        "prepared_at": "2026-11-28T00:06:36.458Z"
+      },
+      "actual_binding_lease": {
+        "commit": "f4513f291ffffac7d31dba63876b199f26e6d2bc",
+        "operation_id": "5bd0b20b-64cf-4695-ad8f-5acb39e693a8"
       }
     }
   ],
