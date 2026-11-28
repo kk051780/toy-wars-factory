@@ -49521,6 +49521,191 @@
           "trusted_queue_job": 140844358521
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-PRIVATE-NINJA-CUTS-BEAST-CASTLE-20261128",
+      "feature_id": "GQ219_PRIVATE_NINJA_CUTS_BEAST_MANEUVER_CASTLE_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "56747f29b4efda431f8cd923c39b488c04b04d32",
+      "base_rc_tree": "3d0de70ef6cbb264a14fd12eed8b4a9d246bc785",
+      "prep_branch": "quality/gq219-private-ninja-beast-castle-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Six exact Ninja cuts and three maneuvers on the same existing Beast; existing #1009 original CastleApproach low-cost presentation in REAL69 only.",
+      "resources": [
+        "PRIVATE_NINJA_001_002_004_005_006_008",
+        "PRIVATE_BEAST_001_007_028",
+        "ART420_AUTHOR1009_CASTLE_APPROACH"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/beast_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/castle_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/ninja_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7211006478",
+      "protected_overlap": {
+        "issues": [
+          960,
+          1009,
+          1059,
+          1061,
+          420,
+          470
+        ],
+        "part": "Existing damage authority and one pre-owned Beast; actual castle ramp only, original client draw distance and Touch limit. No collision, extra light or goal state changes. Exact rollback."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "b3f0226f-59b6-4fb3-b015-09459a34c465",
+      "issued_at": "2026-11-28T03:14:35.127Z",
+      "expires_at": "2026-11-28T05:14:35.127Z",
+      "actual_metadata_lease": {
+        "ref": "7f5a9ef4e82b4918776c0cf3e287f8995e21c7e8",
+        "blob": "484e0034d2679e9fdbb8a0608da518ed1bb411c1",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "b3f0226f-59b6-4fb3-b015-09459a34c465",
+          "task_id": null,
+          "epoch": 1131,
+          "acquired_at": "2026-11-28T03:14:21.056Z",
+          "expires_at": "2026-11-28T03:44:21.056Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq219-private-ninja-beast-castle-20261128",
+        "formal_parent": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "tree": "e4f1fb4c55df8327c93de8039abb2a6e25879416",
+        "local_head": "dee40c6f8b8a5131bed839304314276442edbb47",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "blob": "c0f529af1e5b10c7a29ef231b316740ed0e32fff",
+            "bytes": 92133
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "24dc92de5e136cfbdc3aa01b62454899cfbe136f",
+            "bytes": 35260
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/__init__.py",
+            "mode": "100644",
+            "blob": "f9a5314ca89e30a84fd1bd0e4ecf2f8af785ce72",
+            "bytes": 13455
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "mode": "100644",
+            "blob": "ebf3b2c99ad35540399cb6eb3b50d206377ebaec",
+            "bytes": 8739
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/__init__.py",
+            "mode": "100644",
+            "blob": "269a8f59e9f8abeba897050bfaff3185552be862",
+            "bytes": 11346
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/beast_cases.luau",
+            "mode": "100644",
+            "blob": "6f977b2db6f763c6d48115dfc7d3fd0944aa916f",
+            "bytes": 11022
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/castle_cases.luau",
+            "mode": "100644",
+            "blob": "31168c342626e7c91d284708d72d241fb5ffc0aa",
+            "bytes": 6784
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/ninja_cases.luau",
+            "mode": "100644",
+            "blob": "63b61ef4b319d62e9707d027007bac6f2ee627f1",
+            "bytes": 9329
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "blob": "c9edef808b179b77bbff02c735e3592873e81c8e",
+            "bytes": 28734
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "blob": "e9850249b3d9cb6175e83fe8b8571fbab6863139",
+            "bytes": 63397
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "blob": "fcde5fe6bcb6db69cf8350c5281e6d07e5be1f4f",
+            "bytes": 12934255
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "blob": "8dfd61c3f499583b4733fd827ba1df65660a911d",
+            "bytes": 192339
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "a1e4707f69fa5d0672592ac4b225f592a62bdc9e",
+            "bytes": 139443
+          }
+        ],
+        "expires_at": "2026-11-28T04:14:35.127Z",
+        "issued_from": {
+          "lease": "7f5a9ef4e82b4918776c0cf3e287f8995e21c7e8",
+          "owner": "b3f0226f-59b6-4fb3-b015-09459a34c465"
+        },
+        "local_qa": {
+          "place_bytes": 1427354,
+          "place_sha256": "1799d5e8eb8366b4175ed6752982d7c58bf70926611de1d767c24d54eed7591a",
+          "off_bytes": 1392701,
+          "off_sha256": "4bfb98d020e37d423bb142b403fbc303d26712c59cdd9e247cafccb8e4946815",
+          "unchanged_selected_sources": 65,
+          "prior_archives_byte_exact": 38,
+          "windows_compiles": 214,
+          "windows_rojo": 40,
+          "windows_compile_reuse": 32,
+          "actual_native_gameplay_cases": 26,
+          "existing_bot_full_body_scenarios": 9,
+          "team_full_native_round": true,
+          "local_mage38_elapsed": 35.715,
+          "device": "NOT_TESTED_V4.2"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
