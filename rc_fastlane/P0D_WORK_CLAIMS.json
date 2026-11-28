@@ -49546,7 +49546,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-NINJA-CUTS-BEAST-CASTLE-20261128",
       "feature_id": "GQ219_PRIVATE_NINJA_CUTS_BEAST_MANEUVER_CASTLE_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -49560,7 +49560,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Six exact Ninja cuts and three maneuvers on the same existing Beast; existing #1009 original CastleApproach low-cost presentation in REAL69 only.",
       "resources": [
@@ -49873,7 +49873,7 @@
         "operation_id": "1d027fea-4acb-42fe-880e-b659b8c9282c"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "56747f29b4efda431f8cd923c39b488c04b04d32",
         "permitted_head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
@@ -49904,7 +49904,28 @@
           "review": 6095551766,
           "trusted_queue_run": 46104620626,
           "trusted_queue_job": 140854480975
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "91d113039fa843702154d076325c3a7751d9375e",
+        "writer_return": "23ac7a2e16b5c94ca79378980bb0400956665997",
+        "adopted_head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "adopted_at": "2026-11-28T03:51:05.982Z"
+      },
+      "actual_official_rc": {
+        "head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "previous": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
+        "private_ci": 46104799090,
+        "private_job": 140855024707,
+        "private_ci_steps": 48,
+        "private_artifact": 15247995101,
+        "private_zip_bytes": 51567845,
+        "private_zip_sha256": "fab0457129a19a6362e6209b58051ea3e60f7e158d09bfd404c05b8d869fbc51",
+        "private_place_bytes": 1427354,
+        "private_place_sha256": "1799d5e8eb8366b4175ed6752982d7c58bf70926611de1d767c24d54eed7591a",
+        "off_bytes": 1392701,
+        "source_lock_sha256": "fb170b57d4941b0d0bc551ca08094d45f0c92367e0d5868294cefde2720e6a1f",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7233629519"
       }
     },
     {
@@ -49915,7 +49936,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1063,
       "base_rc_sha": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
       "base_rc_tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
       "prep_branch": "quality/gq219-private-spring-mist-forest-20261128",
@@ -49982,7 +50003,7 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-spring-mist-forest-20261128",
         "formal_parent": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
         "tree": "d52edfed7c4ac4ee1acb6f21043c92ca296da707",
@@ -50088,6 +50109,104 @@
           "old_archives_exact": 39,
           "studio": "NOT_TESTED"
         }
+      },
+      "source_head": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+      "prepared_candidate_head": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+      "prepared_candidate_tree": "d52edfed7c4ac4ee1acb6f21043c92ca296da707",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "f13f5af8fc2df535bc1f7d0375919550b143f2bb",
+          "bytes": 94253
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "877adddf2f748c62b99c2cea6a2e445d2012af5d",
+          "bytes": 35260
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/__init__.py",
+          "mode": "100644",
+          "blob": "e0638f8841142f9ec969fb4d1d4a95d8f109ed5e",
+          "bytes": 11446
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "c88320d3737137039adc10a13ecaa7befbdc2edc",
+          "bytes": 29258
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "b19a67fecd602c136fb9bc36eb2fc7876ca16ed3",
+          "bytes": 64074
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/spring_mist_forest/__init__.py",
+          "mode": "100644",
+          "blob": "6196a5ae12f1dc8fd8c039833abde7651f91b2a6",
+          "bytes": 13968
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/spring_mist_forest/beast_cases.luau",
+          "mode": "100644",
+          "blob": "0a98bb72f2d8cfd49f84e356d5f757f1f34a8d9f",
+          "bytes": 8925
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/spring_mist_forest/builder_cases.luau",
+          "mode": "100644",
+          "blob": "541d1cf1718dee7894703038669e02e08e0c28f8",
+          "bytes": 9092
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/spring_mist_forest/forest_cases.luau",
+          "mode": "100644",
+          "blob": "6cb8f6773f32ef2ac4cbc78b7d62b5a032cd0b8a",
+          "bytes": 6253
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/spring_mist_forest/zombie_cases.luau",
+          "mode": "100644",
+          "blob": "44fc79109070cf05bf110a2486e854a1247e9de6",
+          "bytes": 10832
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "dbdccfc5a269e724f30ffd7eb4db1ae727b8e9d1",
+          "bytes": 14447067
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "421440c728f0048444481340ed980bb8050c5073",
+          "bytes": 194461
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "69640dc7fc04c341aec9f9acb8cedfb40ee5adef",
+          "bytes": 140383
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1063,
+        "exact_head": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+        "exact_tree": "d52edfed7c4ac4ee1acb6f21043c92ca296da707",
+        "exact_parent": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "59a312f3f223f89e184d867a0fc5bb4c002ce2c6",
+        "source_lease_return": "5d2b9f361ff190481ec76c62a1e89bb940d2b322",
+        "prepared_at": "2026-11-28T04:03:52.089Z"
+      },
+      "actual_binding_lease": {
+        "commit": "2615ad997d2e644f50becdbfdf371ac767fea01b",
+        "operation_id": "b9ce2839-24a1-4e5c-8bbe-f70bc9e6e0b1"
       }
     }
   ],
