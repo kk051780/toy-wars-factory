@@ -47715,7 +47715,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Eight distinct fixed Mage abilities by projectile and terrain effect contract, two fixed Beast same-owned companion actions and COMBO-017. Existing Host, neutral HP/Growth, actual BeastEscort, no new authority.",
       "resources": [
@@ -48053,6 +48053,70 @@
       "actual_binding_lease": {
         "commit": "4f79f21cae7f678cb51fbc71fbf18cb108f866bd",
         "operation_id": "c4f75c1a-6cf6-4ae7-b291-d6c0c0e8345c"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1058#pullrequestreview-6094992637",
+        "review_id": 6094992637,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "ef4ccf422d37deaacb52e7363ff98080ccfaf276",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "4bd3eaaec784edbb15b62b9377ab50e1b3b8bc1a",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 1237731,
+        "private_place_sha256": "67c1037610c5330a1983dd8ec0000fd8f6748346f9c2a2c69ff735fdafee97bc",
+        "private_immediate_off_bytes": 1195843,
+        "private_ci": 46093983713,
+        "private_job": 140821051106,
+        "private_steps": 48,
+        "private_artifact": 15243300286,
+        "private_zip_bytes": 42259745,
+        "private_zip_digest": "sha256:4f14bcbfc61bb7b9d0155ccccf04a8579cd91aca0ccdf3e4555b285382a7afea",
+        "source_lock": "919ccdb79292bc95c336dd14ced758d9232fee492be001eeeec32e45cd579e90",
+        "device_evidence": "NOT_TESTED_PER_V42"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "1ede57c1f128fd9e3cc8f6abdbf4f0cfbfb3ea02",
+        "operation_id": "50db92d6-f10e-40ee-ab27-052689aa5826"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "4bd3eaaec784edbb15b62b9377ab50e1b3b8bc1a",
+        "permitted_head": "ef4ccf422d37deaacb52e7363ff98080ccfaf276",
+        "permitted_tree": "32da84bb089b925f8034f8adc67be89ebbed01b1",
+        "permitted_pr": 1058,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-28T02:16:33.188Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "PRIVATE REAL69 only, eight Mage effects and two Beast techniques/COMBO-017, five selected sources with other64 and 34 previous archives byte exact",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V4.2/#220",
+          "policy_updated_at": "2026-11-28T01:52:50Z",
+          "lease": "1ede57c1f128fd9e3cc8f6abdbf4f0cfbfb3ea02",
+          "owner": "50db92d6-f10e-40ee-ab27-052689aa5826",
+          "review": 6094992637,
+          "trusted_queue_run": 46094964373,
+          "trusted_queue_job": 140824108651
+        }
       }
     }
   ],
