@@ -49931,7 +49931,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-SPRING-MIST-FOREST-20261128",
       "feature_id": "GQ219_PRIVATE_BUILDER_SPRING_ZOMBIE_MIST_BEAST_ELEMENTS_FOREST_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -49945,7 +49945,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Actual Builder escort device and jumps, Zombie mist and guarded short gate, attacks by the same owned Beast, original PR421 forest palette in PRIVATE REAL69.",
       "resources": [
@@ -50247,7 +50247,7 @@
         "operation_id": "99bcc397-27d4-4c07-845e-a40ffbee2f38"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
         "permitted_head": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
@@ -50278,7 +50278,28 @@
           "review": 6095713583,
           "trusted_queue_run": 46106644250,
           "trusted_queue_job": 140860793115
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "4907cd2d705db8d9ff5fcfa7b9fde54171122502",
+        "writer_return": "2929b2ce1d57af965b3efbf426de6915f4ad797b",
+        "adopted_head": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+        "adopted_at": "2026-11-28T04:18:37.349Z"
+      },
+      "actual_official_rc": {
+        "head": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+        "previous": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "tree": "d52edfed7c4ac4ee1acb6f21043c92ca296da707",
+        "private_ci": 46106931169,
+        "private_job": 140861671740,
+        "private_ci_steps": 48,
+        "private_artifact": 15248367498,
+        "private_zip_bytes": 54704406,
+        "private_zip_sha256": "766519ba275caca8e69e23e441137dd1b9bf5541be0792bfa16b48ecfa62a85c",
+        "private_place_bytes": 1462400,
+        "private_place_sha256": "19a5fa62678ad05161f8b0a264713c235c9bf34e5478ce66a04f859e0fa3e84f",
+        "off_bytes": 1427354,
+        "source_lock_sha256": "77008c9c9489e73c205fb159156c99d545e922a628349b822ebebb684f066d15",
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7234128990"
       }
     },
     {
@@ -50289,7 +50310,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1064,
       "base_rc_sha": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
       "base_rc_tree": "d52edfed7c4ac4ee1acb6f21043c92ca296da707",
       "prep_branch": "quality/gq219-private-ninja-warrior-map-horde-20261128",
@@ -50362,7 +50383,7 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-ninja-warrior-map-horde-20261128",
         "formal_parent": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
         "tree": "96f4b381cb599dd53f274e823a59d86437c73f03",
@@ -50510,6 +50531,140 @@
           "old_archives": 41,
           "studio": "NOT_TESTED"
         }
+      },
+      "source_head": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
+      "prepared_candidate_head": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
+      "prepared_candidate_tree": "96f4b381cb599dd53f274e823a59d86437c73f03",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "5f809a7be364822b9dc618c0eb42b73eda6c7ed4",
+          "bytes": 98264
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "0e23be28192b45db434634243e73c917ca19eb8c",
+          "bytes": 35260
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/builder_forms/__init__.py",
+          "mode": "100644",
+          "blob": "87017b8292873b97a58da0f2ccdb80784df090e2",
+          "bytes": 10985
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/eclipse_sweep/__init__.py",
+          "mode": "100644",
+          "blob": "070234f76aa349ae5f85a1c9bee039ed83003ec9",
+          "bytes": 12663
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/__init__.py",
+          "mode": "100644",
+          "blob": "a7fbdd12051036be3dfcbe0e246efd0ee9fcff39",
+          "bytes": 13525
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_beast_castle/__init__.py",
+          "mode": "100644",
+          "blob": "3a9d272aa00ae1ab31166c8df591ffa3aec7a6fa",
+          "bytes": 11516
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_steps_objectives/__init__.py",
+          "mode": "100644",
+          "blob": "14f51b48d16d6f9aad6cbad509c327f99609bed8",
+          "bytes": 12221
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_steps_objectives/map_cases.luau",
+          "mode": "100644",
+          "blob": "f702ba93db5d20da851fb33391b937fc3c16f533",
+          "bytes": 7826
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_steps_objectives/round_case.luau",
+          "mode": "100644",
+          "blob": "8b6451c11ca97b45fe8a63e6728a3db84c77892c",
+          "bytes": 2838
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_steps_objectives/steps_cases.luau",
+          "mode": "100644",
+          "blob": "63ce0a4bdbabeae6fd11814661a1b80c64540c6c",
+          "bytes": 7241
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "183579e7aec51fae78b3cb50b286ccb032d32441",
+          "bytes": 30351
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "c7b11f749958f7f1eb04f24213f3266ba32b873e",
+          "bytes": 65539
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/spring_mist_forest/__init__.py",
+          "mode": "100644",
+          "blob": "53e53fad0456011b12a36ff7863f32187bfe9834",
+          "bytes": 14072
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/warrior_field_horde/__init__.py",
+          "mode": "100644",
+          "blob": "8f0f3dc0c9925deea4837a977fa7fb12513188f5",
+          "bytes": 10267
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/warrior_field_horde/horde_cases.luau",
+          "mode": "100644",
+          "blob": "e72d8827e9afdf5bbd1d481679a012efce2b15bb",
+          "bytes": 6673
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/warrior_field_horde/warrior_cases.luau",
+          "mode": "100644",
+          "blob": "f5ad9383a966a19175c70bd4c15abbb8cc34d5bd",
+          "bytes": 10301
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "488411ed85504e8e13b40c0854befd83299e58a1",
+          "bytes": 17178515
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "77e3e6f39e417f8b49169028a43d1b8186ab7d2b",
+          "bytes": 198728
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "3803314fa06f94bb2ccb4b70628c2a20f54c6679",
+          "bytes": 142360
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1064,
+        "exact_head": "317fa8d1cffc82e6fe793a168f7e7c0d2c80f0da",
+        "exact_tree": "96f4b381cb599dd53f274e823a59d86437c73f03",
+        "exact_parent": "be75c3a2ac5d3696c122408b6b3f058e6d44f2e7",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "cba45d7d3ebf018aa802633dcd078324b0ee08cf",
+        "source_lease_return": "059a0f45dde6f73bf74a3acd212708214839b57f",
+        "prepared_at": "2026-11-28T04:35:15.904Z"
+      },
+      "actual_binding_lease": {
+        "commit": "5b11744792468c1b35e09e187c9806afcd7b8ac6",
+        "operation_id": "311937d9-37da-4286-9a81-0ae96154bbed"
       }
     }
   ],
