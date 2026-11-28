@@ -86,14 +86,16 @@ def _source_pins(profile, compose):
     return {"ON": on, "OFF": off}
 
 
-def _read_sources(source_root, pins, compose):
+def _read_sources(source_root, pins, compose, profile):
     source_validator = Path(compose.__file__).resolve().parent / "native/mage_water_chain/__init__.py"
     definition = spec_from_file_location("shop_lifecycle_source_reader", source_validator)
     reader = module_from_spec(definition)
     definition.loader.exec_module(reader)
+    previous = tuple(compose.RECENT_TRIAL_STAGES).index(FOLLOWUP) > 0
+    on_root = source_root.parent / compose.PLAYER_CONTACT_SHADOW_OFF / "sources" if previous else source_root
     off_root = source_root.parent / compose.SHOP_LIFECYCLE_OFF / "sources"
     return {mode: reader._sources(root, pins[mode], compose)
-            for mode, root in (("ON", source_root), ("OFF", off_root))}
+            for mode, root in (("ON", on_root), ("OFF", off_root))}
 
 
 def _programs(all_sources, inputs, compose):
@@ -138,7 +140,7 @@ def _programs(all_sources, inputs, compose):
 def _prepare(source_root, profile, compose):
     inputs, fixture_pins, expected = _read_fixture(compose)
     source_pins = _source_pins(profile, compose)
-    programs = _programs(_read_sources(source_root, source_pins, compose), inputs, compose)
+    programs = _programs(_read_sources(source_root, source_pins, compose, profile), inputs, compose)
     return programs, fixture_pins, source_pins, expected
 
 

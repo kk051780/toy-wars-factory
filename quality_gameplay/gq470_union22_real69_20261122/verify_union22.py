@@ -660,8 +660,16 @@ def verify_core(root, base, reports, context):
     require(set(shop_lifecycle["rows"]) == set(compose.SHOP_LIFECYCLE_SOURCES)
             and shop_lifecycle["ability_ids"] == []
             and shop_lifecycle["donor_pr"] == 1029 and shop_lifecycle["purchases_enabled"] is False, "SHOP_LIFECYCLE_SCOPE")
+    player_contact_shadow = lock["player_contact_shadow_followup"]
+    require(set(player_contact_shadow["rows"]) == set(compose.PLAYER_CONTACT_SHADOW_SOURCES)
+            and player_contact_shadow["ability_ids"] == []
+            and player_contact_shadow["donor_pr"] == 1001 and player_contact_shadow["mobile_additional_parts"] == 1 and player_contact_shadow["desktop_additional_parts"] == 1, "PLAYER_CONTACT_SHADOW_SCOPE")
+    expected_player_contact_shadow_off, player_contact_shadow_off_lock, player_contact_shadow_off = verify_source_rollback(
+        root, root, lock, current, player_contact_shadow, player_contact_shadow["rows"], shop_lifecycle["repaired_place"],
+        compose.PLAYER_CONTACT_SHADOW_OFF, compose.PLAYER_CONTACT_SHADOW_OFF_ARCHIVE, "PLAYER_CONTACT_SHADOW")
     expected_shop_lifecycle_off, shop_lifecycle_off_lock, shop_lifecycle_off = verify_source_rollback(
-        root, root, lock, current, shop_lifecycle, shop_lifecycle["rows"], common_healing["repaired_place"],
+        root, root / compose.PLAYER_CONTACT_SHADOW_OFF, player_contact_shadow_off_lock, player_contact_shadow_off,
+        shop_lifecycle, shop_lifecycle["rows"], common_healing["repaired_place"],
         compose.SHOP_LIFECYCLE_OFF, compose.SHOP_LIFECYCLE_OFF_ARCHIVE, "SHOP_LIFECYCLE")
     expected_common_healing_off, common_healing_off_lock, common_healing_off = verify_source_rollback(
         root, root / compose.SHOP_LIFECYCLE_OFF, shop_lifecycle_off_lock, shop_lifecycle_off,
@@ -1012,6 +1020,8 @@ def verify_core(root, base, reports, context):
         "common_healing_rollback_archive": digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE)),
         "shop_lifecycle_followup": shop_lifecycle,
         "shop_lifecycle_rollback_archive": digest(read(root / compose.SHOP_LIFECYCLE_OFF_ARCHIVE)),
+        "player_contact_shadow_followup": player_contact_shadow,
+        "player_contact_shadow_rollback_archive": digest(read(root / compose.PLAYER_CONTACT_SHADOW_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -1071,6 +1081,7 @@ def verify_core(root, base, reports, context):
             and core.get("mobility_crests_parent_place") == mobility_crests_off_lock["final_place"]
             and core.get("common_healing_parent_place") == common_healing_off_lock["final_place"]
             and core.get("shop_lifecycle_parent_place") == shop_lifecycle_off_lock["final_place"]
+            and core.get("player_contact_shadow_parent_place") == player_contact_shadow_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1211,6 +1222,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.SHOP_LIFECYCLE_OFF + "/" + name: pin
                            for name, pin in expected_shop_lifecycle_off.items()})
     expected_stage[compose.SHOP_LIFECYCLE_OFF_ARCHIVE] = digest(read(root / compose.SHOP_LIFECYCLE_OFF_ARCHIVE))
+    expected_stage.update({compose.PLAYER_CONTACT_SHADOW_OFF + "/" + name: pin
+                           for name, pin in expected_player_contact_shadow_off.items()})
+    expected_stage[compose.PLAYER_CONTACT_SHADOW_OFF_ARCHIVE] = digest(read(root / compose.PLAYER_CONTACT_SHADOW_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1304,7 +1318,9 @@ def verify_core(root, base, reports, context):
                         compose.COMMON_HEALING_OFF: [name for name in lock["sources"]
                                                             if name in compose.COMMON_HEALING_SOURCES],
                         compose.SHOP_LIFECYCLE_OFF: [name for name in lock["sources"]
-                                                            if name in compose.SHOP_LIFECYCLE_SOURCES]}
+                                                            if name in compose.SHOP_LIFECYCLE_SOURCES],
+                        compose.PLAYER_CONTACT_SHADOW_OFF: [name for name in lock["sources"]
+                                                            if name in compose.PLAYER_CONTACT_SHADOW_SOURCES]}
     # The independently verified payload must contain exactly these build stages.
     # Derive the three command checks from one ordered verifier-owned source map.
     expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
@@ -2388,7 +2404,7 @@ def verify_native(native, root, lock, context):
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
                  "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
-                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera", "navigation_entry_sky", "mobility_crests", "common_healing", "shop_lifecycle"):
+                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera", "navigation_entry_sky", "mobility_crests", "common_healing", "shop_lifecycle", "player_contact_shadow"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2674,6 +2690,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.MOBILITY_CRESTS_OFF_ARCHIVE,
                             compose.COMMON_HEALING_OFF_ARCHIVE,
                             compose.SHOP_LIFECYCLE_OFF_ARCHIVE,
+                            compose.PLAYER_CONTACT_SHADOW_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2856,6 +2873,9 @@ def admit_delivery(root, base, reports, native, context):
             "shop_lifecycle_followup": verified["lock"]["shop_lifecycle_followup"],
             "shop_lifecycle_inverse_place": verified["lock"]["shop_lifecycle_followup"]["parent_place"],
             "shop_lifecycle_inverse_archive": digest(read(root / compose.SHOP_LIFECYCLE_OFF_ARCHIVE)),
+            "player_contact_shadow_followup": verified["lock"]["player_contact_shadow_followup"],
+            "player_contact_shadow_inverse_place": verified["lock"]["player_contact_shadow_followup"]["parent_place"],
+            "player_contact_shadow_inverse_archive": digest(read(root / compose.PLAYER_CONTACT_SHADOW_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2909,6 +2929,7 @@ def admit_delivery(root, base, reports, native, context):
             "mobility_crests": runtime["mobility_crests"],
             "common_healing": runtime["common_healing"],
             "shop_lifecycle": runtime["shop_lifecycle"],
+            "player_contact_shadow": runtime["player_contact_shadow"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

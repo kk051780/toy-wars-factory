@@ -47,7 +47,8 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    shop_parent = compose.shop_lifecycle_parent(on, lock)
+    shadow_parent = compose.player_contact_shadow_parent(on, lock)
+    shop_parent = compose.shop_lifecycle_parent(*shadow_parent)
     healing_parent = compose.common_healing_parent(*shop_parent)
     mobility_parent = compose.mobility_crests_parent(*healing_parent)
     navigation_parent = compose.navigation_entry_sky_parent(*mobility_parent)
@@ -76,6 +77,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["player_contact_shadow_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["shop_lifecycle_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["common_healing_followup"]["rows"].items()
@@ -565,8 +568,13 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        shop_parent, shop_lock = compose.shop_lifecycle_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != shop_parent[name]},
+        shadow_parent, shadow_lock = compose.player_contact_shadow_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != shadow_parent[name]},
+                         set(compose.PLAYER_CONTACT_SHADOW_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "player_contact_shadow_followup"),
+                         {name: compose.identity(raw) for name, raw in shadow_parent.items()})
+        shop_parent, shop_lock = compose.shop_lifecycle_parent(shadow_parent, shadow_lock)
+        self.assertEqual({name for name in shadow_parent if shadow_parent[name] != shop_parent[name]},
                          set(compose.SHOP_LIFECYCLE_SOURCES))
         self.assertEqual(compose.trial_sources_before(self.lock, "shop_lifecycle_followup"),
                          {name: compose.identity(raw) for name, raw in shop_parent.items()})
@@ -1933,7 +1941,7 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["shop_lifecycle_followup"], self.lock["common_healing_followup"], self.lock["mobility_crests_followup"], self.lock["navigation_entry_sky_followup"], self.lock["zombie_formation_camera_followup"], self.lock["trapper_cast_audio_followup"], self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
+        for followup in (self.lock["player_contact_shadow_followup"], self.lock["shop_lifecycle_followup"], self.lock["common_healing_followup"], self.lock["mobility_crests_followup"], self.lock["navigation_entry_sky_followup"], self.lock["zombie_formation_camera_followup"], self.lock["trapper_cast_audio_followup"], self.lock["warrior_field_horde_followup"], self.lock["ninja_steps_objectives_followup"], self.lock["spring_mist_forest_followup"],
                          self.lock["ninja_beast_castle_followup"],
                          self.lock["footing_wards_followup"],
                          self.lock["builder_forms_followup"],
@@ -2042,7 +2050,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(mobility_crests["repaired_place"], common_healing["parent_place"])
         shop_lifecycle = self.lock["shop_lifecycle_followup"]
         self.assertEqual(common_healing["repaired_place"], shop_lifecycle["parent_place"])
-        self.assertEqual(shop_lifecycle["repaired_place"], self.lock["final_place"])
+        player_contact_shadow = self.lock["player_contact_shadow_followup"]
+        self.assertEqual(shop_lifecycle["repaired_place"], player_contact_shadow["parent_place"])
+        self.assertEqual(player_contact_shadow["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(player_contact_shadow["rows"]), set(compose.PLAYER_CONTACT_SHADOW_SOURCES))
         self.assertEqual(set(shop_lifecycle["rows"]), set(compose.SHOP_LIFECYCLE_SOURCES))
         self.assertEqual(set(common_healing["rows"]), set(compose.COMMON_HEALING_SOURCES))
         self.assertEqual(set(mobility_crests["rows"]), set(compose.MOBILITY_CRESTS_SOURCES))

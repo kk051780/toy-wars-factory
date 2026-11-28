@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "4f15c1fc058d72d43018139554c3362ce58055041450429909ac093c0550e712"
+LOCK_SHA256 = "a53451b315ef2d9b512eb9d0299ccf607e9029525a2cac9ad01b5fd117520183"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -236,8 +236,13 @@ SHOP_LIFECYCLE_SOURCES = (
     "ReplicatedStorage/GQ805Shop/EGGRUMBLE_LobbyShopView.luau",
     "StarterPlayer/StarterPlayerScripts/GQ805_ShopKioskClient.client.luau",
 )
+PLAYER_CONTACT_SHADOW_OFF = "off69_player_contact_shadow_parent"
+PLAYER_CONTACT_SHADOW_OFF_ARCHIVE = "OFF69_PLAYER_CONTACT_SHADOW_ROLLBACK.tar.gz"
+PLAYER_CONTACT_SHADOW_SOURCES = (
+    "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_ArtDistanceLOD.client.luau",
+)
 RECENT_TRIAL_STAGES = (
-    "shop_lifecycle_followup", "common_healing_followup", "mobility_crests_followup", "navigation_entry_sky_followup", "zombie_formation_camera_followup", "trapper_cast_audio_followup", "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
+    "player_contact_shadow_followup", "shop_lifecycle_followup", "common_healing_followup", "mobility_crests_followup", "navigation_entry_sky_followup", "zombie_formation_camera_followup", "trapper_cast_audio_followup", "warrior_field_horde_followup", "ninja_steps_objectives_followup", "spring_mist_forest_followup", "ninja_beast_castle_followup", "footing_wards_followup", "builder_forms_followup",
     "eclipse_sweep_followup", "mage_field_arcs_followup",
     "cover_orders_followup", "ground_night_followup", "return_convert_followup",
     "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
@@ -782,6 +787,11 @@ def shop_lifecycle_parent(on, lock):
                                 lock["common_healing_followup"]["repaired_place"], "SHOP_LIFECYCLE")
 
 
+def player_contact_shadow_parent(on, lock):
+    return paired_source_parent(on, lock, lock["player_contact_shadow_followup"], PLAYER_CONTACT_SHADOW_SOURCES,
+                                lock["shop_lifecycle_followup"]["repaired_place"], "PLAYER_CONTACT_SHADOW")
+
+
 def trial_sources_before(lock, followup):
     """Return the exact selected source vector of a recent stage's physical parent."""
     pins = {name: row["after"] for name, row in lock["sources"].items()}
@@ -959,7 +969,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    shop_lifecycle_off, shop_lifecycle_off_lock = shop_lifecycle_parent(on, lock)
+    player_contact_shadow_off, player_contact_shadow_off_lock = player_contact_shadow_parent(on, lock)
+    shop_lifecycle_off, shop_lifecycle_off_lock = shop_lifecycle_parent(player_contact_shadow_off, player_contact_shadow_off_lock)
     common_healing_off, common_healing_off_lock = common_healing_parent(shop_lifecycle_off, shop_lifecycle_off_lock)
     mobility_crests_off, mobility_crests_off_lock = mobility_crests_parent(common_healing_off, common_healing_off_lock)
     navigation_entry_sky_off, navigation_entry_sky_off_lock = navigation_entry_sky_parent(mobility_crests_off, mobility_crests_off_lock)
@@ -1089,7 +1100,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / COMMON_HEALING_OFF, common_healing_off,
                    common_healing_off_lock["final_place"], COMMON_HEALING_SOURCES),
                   (stage / SHOP_LIFECYCLE_OFF, shop_lifecycle_off,
-                   shop_lifecycle_off_lock["final_place"], SHOP_LIFECYCLE_SOURCES))
+                   shop_lifecycle_off_lock["final_place"], SHOP_LIFECYCLE_SOURCES),
+                  (stage / PLAYER_CONTACT_SHADOW_OFF, player_contact_shadow_off,
+                   player_contact_shadow_off_lock["final_place"], PLAYER_CONTACT_SHADOW_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -1217,6 +1230,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         common_healing_archive_identity = identity(read_file(stage / COMMON_HEALING_OFF_ARCHIVE))
         make_archive(stage / SHOP_LIFECYCLE_OFF, stage / SHOP_LIFECYCLE_OFF_ARCHIVE, SHOP_LIFECYCLE_OFF)
         shop_lifecycle_archive_identity = identity(read_file(stage / SHOP_LIFECYCLE_OFF_ARCHIVE))
+        make_archive(stage / PLAYER_CONTACT_SHADOW_OFF, stage / PLAYER_CONTACT_SHADOW_OFF_ARCHIVE, PLAYER_CONTACT_SHADOW_OFF)
+        player_contact_shadow_archive_identity = identity(read_file(stage / PLAYER_CONTACT_SHADOW_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1441,6 +1456,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({SHOP_LIFECYCLE_OFF + "/" + PROJECT: lock["project"],
                                SHOP_LIFECYCLE_OFF + "/" + PLACE: shop_lifecycle_off_lock["final_place"],
                                SHOP_LIFECYCLE_OFF_ARCHIVE: shop_lifecycle_archive_identity})
+        expected_stage.update({PLAYER_CONTACT_SHADOW_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in player_contact_shadow_off.items()})
+        expected_stage.update({PLAYER_CONTACT_SHADOW_OFF + "/" + PROJECT: lock["project"],
+                               PLAYER_CONTACT_SHADOW_OFF + "/" + PLACE: player_contact_shadow_off_lock["final_place"],
+                               PLAYER_CONTACT_SHADOW_OFF_ARCHIVE: player_contact_shadow_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1552,6 +1572,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "common_healing_rollback_archive": common_healing_archive_identity,
             "shop_lifecycle_followup": lock["shop_lifecycle_followup"],
             "shop_lifecycle_rollback_archive": shop_lifecycle_archive_identity,
+            "player_contact_shadow_followup": lock["player_contact_shadow_followup"],
+            "player_contact_shadow_rollback_archive": player_contact_shadow_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1609,6 +1631,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mobility_crests_parent_place": mobility_crests_off_lock["final_place"],
             "common_healing_parent_place": common_healing_off_lock["final_place"],
             "shop_lifecycle_parent_place": shop_lifecycle_off_lock["final_place"],
+            "player_contact_shadow_parent_place": player_contact_shadow_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,
