@@ -27690,8 +27690,8 @@
       "expires_at": "2026-11-28T08:03:12.951Z",
       "grant_scope_version": 2,
       "draft_only_not_issued": false,
-      "PREP_READY": false,
-      "registered_source_approval": false,
+      "PREP_READY": true,
+      "registered_source_approval": true,
       "rc_write_authorized_by_this_claim": false,
       "rc_write_requires_separate_scoped_single_writer_lease": true,
       "no_main_or_publish": true,
@@ -28280,6 +28280,69 @@
       "actual_binding_lease": {
         "commit": "5981183d7d15257824d55cd0045898b0b73b1b19",
         "operation_id": "cfa7bac1-bd4c-4a6a-a915-7c87159b88c4"
+      },
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1029#pullrequestreview-6096267659",
+        "review_id": 6096267659,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 1585158,
+        "private_place_sha256": "e77f2463694c7ba3b4af6ed67878fab095ab1b7706e550787135c9a22fdd2457",
+        "private_immediate_off_bytes": 1580946,
+        "private_ci": 46115248212,
+        "private_job": 140887496819,
+        "private_steps": 48,
+        "private_artifact": 15252001230,
+        "private_zip_bytes": 75171082,
+        "private_zip_digest": "sha256:84e731b809ee21b03221a3031a3f4bbfb8dfa01ef01d9e73194a2a556bed38f8",
+        "source_lock": "4f15c1fc058d72d43018139554c3362ce58055041450429909ac093c0550e712",
+        "device_evidence": "NOT_TESTED_PER_V42"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "5f88ec45202fe89669c6b25dc8b4696fd9fb02c8",
+        "operation_id": "20313696-9116-459b-b887-5f4a60381a5c"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "8af38e3cf47d24a5a27545a94da1ea5f1c40981b",
+        "permitted_head": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+        "permitted_tree": "ab81c5b792381790263f04adaf260a3b06023dec",
+        "permitted_pr": 1029,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-28T06:49:27.029Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Continue original PR1029 with exact compatible read-only Kiosk + View donor and Deferred Destroy correction. Match entry, stale Character, mixed-version fail-closed, physical OFF. No purchasing behavior.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V4.2/#220",
+          "policy_updated_at": "2026-11-28T06:27:56Z",
+          "lease": "5f88ec45202fe89669c6b25dc8b4696fd9fb02c8",
+          "owner": "20313696-9116-459b-b887-5f4a60381a5c",
+          "review": 6096267659,
+          "trusted_queue_run": 46116695622,
+          "trusted_queue_job": 140892025343
+        }
       }
     },
     {
