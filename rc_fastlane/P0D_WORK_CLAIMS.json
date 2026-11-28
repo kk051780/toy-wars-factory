@@ -46761,6 +46761,230 @@
           "trusted_queue_job": 140806097177
         }
       }
+    },
+    {
+      "claim_id": "P0D-GQ219-PRIVATE-GROUND-NIGHT-CUES-20261128",
+      "feature_id": "GQ219_PRIVATE_GROUND_NIGHT_CONFIRMED_CUES_V1",
+      "state": "SOURCE_WIP",
+      "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
+      "owner": "/root (Codex parent, fixed scoped original-source development)",
+      "parent_issue": 219,
+      "integration_issue": 220,
+      "pr": null,
+      "base_rc_sha": "2832dde54429e287cc1af69c3f34929617d40632",
+      "base_rc_tree": "7d4cdfb499e80a215a706ad296365ced61842c73",
+      "prep_branch": "quality/gq219-private-ground-night-confirmed-cues-20261128",
+      "allowed_new_prs": 1,
+      "source_scope_granted": false,
+      "scope_only": false,
+      "source_write_requires_separate_live_source_lease": true,
+      "author_may_self_approve": false,
+      "PREP_READY": false,
+      "rc_write_authorized_by_this_claim": false,
+      "scope": "Four individually distinct real Mage ground spells, owned Ninja run/flight and landing-gated visual decoy, mounted into the existing REAL69 tool loop. Add 20 exact server-owned Tool presentation behaviors to the existing client cue/audio pool only.",
+      "resources": [
+        "PRIVATE_MAGE_006_022_058_069_GROUND",
+        "PRIVATE_NINJA_025_060_COMBO009",
+        "PRIVATE_CONFIRMED_CUE_IDS_20"
+      ],
+      "target_paths": [
+        "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+        "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/ability_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/mage_ground_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/ninja_flight_cases.luau",
+        "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/ninja_s4/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/return_convert/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+        "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/__init__.py",
+        "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+        "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+        "tests/test_gq470_union22_real69_20261122.py"
+      ],
+      "source_evidence": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-7211006478",
+      "protected_overlap": {
+        "issues": [
+          1055,
+          364,
+          910
+        ],
+        "part": "Reuse Host, Swarm, SevenRoleCombat, InteractionGuard, First90 and original CombatFeel; retain other 63 exact and 32 prior byte-exact archives."
+      },
+      "independent_reviewer_context": "/root/p0_offer_review26",
+      "issuer": "kk051780",
+      "issuer_user_id": 233213370,
+      "issuer_role": "OWNER_DELEGATED_COORDINATOR",
+      "issuer_operation_id": "e16bcb8d-432a-404a-8855-c365c9254ee4",
+      "issued_at": "2026-11-28T00:46:52.522Z",
+      "expires_at": "2026-11-28T02:46:52.522Z",
+      "actual_metadata_lease": {
+        "ref": "269f585342be65b9e2f313042752b27d0c7b64ee",
+        "blob": "cb175a2a678e0b5d1ad6c3a287a9ac9d4e95d7da",
+        "holder": {
+          "kind": "CONTROLLER",
+          "owner_id": "e16bcb8d-432a-404a-8855-c365c9254ee4",
+          "task_id": null,
+          "epoch": 1099,
+          "acquired_at": "2026-11-28T00:46:38.105Z",
+          "expires_at": "2026-11-28T01:16:38.105Z",
+          "base_main_sha": null,
+          "work_branch": "coord/p0d-work-claims",
+          "origin": "controller"
+        }
+      },
+      "authority_basis": "#1011 V3.5, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
+      "source_grant": {
+        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "branch": "quality/gq219-private-ground-night-confirmed-cues-20261128",
+        "formal_parent": "2832dde54429e287cc1af69c3f34929617d40632",
+        "tree": "fe4ff44295b80f3fab9ba5409c1f858e6f7d0caa",
+        "permitted_create_draft": 1,
+        "allowed_changed_files": [
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+            "mode": "100644",
+            "blob": "ece7f04d5067cd8090a9d9823b22de7bc35df2da",
+            "bytes": 81232
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "595d96a51c62a0b939df1fd3d3074bcd4e029575",
+            "bytes": 35258
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/__init__.py",
+            "mode": "100644",
+            "blob": "3cc31ee76068c2a34faf0782674a88cd5cf9ef3c",
+            "bytes": 11575
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/__init__.py",
+            "mode": "100644",
+            "blob": "44fe5effdefcef0ec64c00dd3976fee4c760dfe9",
+            "bytes": 5391
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/ability_cases.luau",
+            "mode": "100644",
+            "blob": "4dea12ffbad434c45ed3f64c1eb46ea809007bec",
+            "bytes": 3596
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/__init__.py",
+            "mode": "100644",
+            "blob": "709eda27055fd8564ec88df9637bd087e3dcd5fe",
+            "bytes": 10248
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/mage_ground_cases.luau",
+            "mode": "100644",
+            "blob": "c8ebe2e93df9b2b5962ab49b1840a6613c5d2288",
+            "bytes": 10810
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/ninja_flight_cases.luau",
+            "mode": "100644",
+            "blob": "cf215a5331d15588f24c2620c96b137fa67e2d95",
+            "bytes": 12710
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+            "mode": "100644",
+            "blob": "6e24b9babeb16e2513205a30094e67ee66430beb",
+            "bytes": 11218
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+            "mode": "100644",
+            "blob": "d0e5b66d26a51551122572d3eb0d3a8ab3ecc38e",
+            "bytes": 8681
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+            "mode": "100644",
+            "blob": "e3c2ce81c4215578347b85fe1d99d04d1406b15f",
+            "bytes": 11608
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_s4/__init__.py",
+            "mode": "100644",
+            "blob": "18bd2bf7e8c0d6c746479e9907cf3ee0f32978c6",
+            "bytes": 13194
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/return_convert/__init__.py",
+            "mode": "100644",
+            "blob": "27102e40a13eb380ed0dada37f2943b974c7d812",
+            "bytes": 10692
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+            "mode": "100644",
+            "blob": "c3c063f1162da7d3fa14cd1378e6a3855e13f07f",
+            "bytes": 25734
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+            "mode": "100644",
+            "blob": "0b555c3575bda5e2fe2a4a9ddc6bb3d7b67a7df8",
+            "bytes": 60452
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/__init__.py",
+            "mode": "100644",
+            "blob": "473231b1ef38ebca4de12ac5f96ab01075c09585",
+            "bytes": 11107
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+            "mode": "100644",
+            "blob": "97a89100b8832b264779d7a83a5702ac8e416a26",
+            "bytes": 5944782
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+            "mode": "100644",
+            "blob": "e284511fc481cbd2d9590e8f0401bc664b03f035",
+            "bytes": 186204
+          },
+          {
+            "path": "tests/test_gq470_union22_real69_20261122.py",
+            "mode": "100644",
+            "blob": "7f4e09d87a11e099bf168c557846afd20d30c695",
+            "bytes": 134655
+          }
+        ],
+        "expires_at": "2026-11-28T01:46:52.522Z",
+        "issued_from": {
+          "lease": "269f585342be65b9e2f313042752b27d0c7b64ee",
+          "owner": "e16bcb8d-432a-404a-8855-c365c9254ee4"
+        },
+        "local_qa": {
+          "place_bytes": 1164445,
+          "place_sha256": "c7ec6e323f20aca415e9721e01586bcec3c7325bb4a8807f125ec66148deab58",
+          "off_bytes": 1127649,
+          "off_sha256": "c016dd612e20e0517fab6e42174c48718c92c7726ca64286b7e976177592f1f3",
+          "unchanged_selected_sources": 63,
+          "prior_archives_byte_exact": 32,
+          "windows_compiles": 181,
+          "windows_rojo": 34,
+          "windows_compile_reuse": 32,
+          "windows_verify_seconds": 36.383,
+          "actual_native_gameplay_cases": 23,
+          "actual_client_cue_cases": 35,
+          "new_client_cues": 20,
+          "existing_bot_full_body_scenarios": 9,
+          "device": "NOT_TESTED_V4.2"
+        }
+      }
     }
   ],
   "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
