@@ -46370,7 +46370,7 @@
     {
       "claim_id": "P0D-GQ219-PRIVATE-RETURN-CONVERT-FB004-20261128",
       "feature_id": "GQ219_PRIVATE_RETURN_CONVERT_AND_TOOL_READOUT_V1",
-      "state": "SOURCE_WIP",
+      "state": "ADOPTED_OFFICIAL",
       "role": "A_PREP_AND_FINITE_B_REGISTERED_HANDOFF",
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
@@ -46384,7 +46384,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": true,
+      "PREP_READY": false,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Mount #219 actual Trapper verified reposition and Zombie existing conversion/order, followed by normal gear description from actual server recipes. Reuse sole current Host, Swarm, combat, CurseConversionPolicy and existing First90. Keep ACTIVE, legacy and existing authority.",
       "resources": [
@@ -46728,7 +46728,7 @@
         "operation_id": "f75b9d40-8191-487d-9e65-f513b415a9c9"
       },
       "bounded_rc_integration": {
-        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "status": "CONSUMED_EXACT_ADOPTION_RETURNED",
         "branch": "rc/p0d-s1-kids-rc01",
         "expected_rc": "aa26d6c84a6f87f1112864be1edcdf3037c93c73",
         "permitted_head": "2832dde54429e287cc1af69c3f34929617d40632",
@@ -46759,7 +46759,38 @@
           "review": 6094689694,
           "trusted_queue_run": 46089268868,
           "trusted_queue_job": 140806097177
-        }
+        },
+        "consumed": true,
+        "writer_acquire": "2760cfcdad87a8e4e00b2982f18967a956ccc27d",
+        "writer_return": "da890096529df307df1b1a2df95179b9ee9012a9",
+        "adopted_head": "2832dde54429e287cc1af69c3f34929617d40632",
+        "adopted_at": "2026-11-28T00:45:00.054Z"
+      },
+      "actual_official_rc": {
+        "head": "2832dde54429e287cc1af69c3f34929617d40632",
+        "previous": "aa26d6c84a6f87f1112864be1edcdf3037c93c73",
+        "tree": "7d4cdfb499e80a215a706ad296365ced61842c73",
+        "active_baseline_head": "aa26d6c84a6f87f1112864be1edcdf3037c93c73",
+        "active_ci": 46062505636,
+        "active_job": 140719886826,
+        "active_place_bytes": 729423,
+        "active_zip_bytes": 227522,
+        "active_artifact": 15229761144,
+        "active_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "private_ci": 46089543610,
+        "private_job": 140806984595,
+        "private_steps": 48,
+        "private_artifact": 15240951347,
+        "private_zip_bytes": 36564887,
+        "private_zip_digest": "sha256:82c8e8e104f9358493f3aa5511eaa12a801e5fa63119a03d91386b314bfdc195",
+        "private_place_bytes": 1127649,
+        "private_place_sha256": "c016dd612e20e0517fab6e42174c48718c92c7726ca64286b7e976177592f1f3",
+        "private_off_place_bytes": 1094772,
+        "postpush_release_comment": "https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-7231307550",
+        "device_evidence": "NOT_TESTED_PER_V42",
+        "independent_context": "/root/p0_offer_review26",
+        "trial_profile": "PRIVATE_COMPANION REAL69_UNION22",
+        "trial_entry": "EGGRUMBLE_REAL69_PRIVATE.rbxlx"
       }
     },
     {
@@ -46770,7 +46801,7 @@
       "owner": "/root (Codex parent, fixed scoped original-source development)",
       "parent_issue": 219,
       "integration_issue": 220,
-      "pr": null,
+      "pr": 1056,
       "base_rc_sha": "2832dde54429e287cc1af69c3f34929617d40632",
       "base_rc_tree": "7d4cdfb499e80a215a706ad296365ced61842c73",
       "prep_branch": "quality/gq219-private-ground-night-confirmed-cues-20261128",
@@ -46841,7 +46872,7 @@
       },
       "authority_basis": "#1011 V3.5, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "CONSUMED_EXACT_INITIAL_DRAFT_SOURCE",
         "branch": "quality/gq219-private-ground-night-confirmed-cues-20261128",
         "formal_parent": "2832dde54429e287cc1af69c3f34929617d40632",
         "tree": "fe4ff44295b80f3fab9ba5409c1f858e6f7d0caa",
@@ -46984,6 +47015,140 @@
           "existing_bot_full_body_scenarios": 9,
           "device": "NOT_TESTED_V4.2"
         }
+      },
+      "source_head": "7083347859ac9236dca8fb3d24359e43ebc1053c",
+      "prepared_candidate_head": "7083347859ac9236dca8fb3d24359e43ebc1053c",
+      "prepared_candidate_tree": "fe4ff44295b80f3fab9ba5409c1f858e6f7d0caa",
+      "source_blob_submissions": [
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
+          "mode": "100644",
+          "blob": "ece7f04d5067cd8090a9d9823b22de7bc35df2da",
+          "bytes": 81232
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+          "mode": "100644",
+          "blob": "595d96a51c62a0b939df1fd3d3074bcd4e029575",
+          "bytes": 35258
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/field_loadouts/__init__.py",
+          "mode": "100644",
+          "blob": "3cc31ee76068c2a34faf0782674a88cd5cf9ef3c",
+          "bytes": 11575
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/__init__.py",
+          "mode": "100644",
+          "blob": "44fe5effdefcef0ec64c00dd3976fee4c760dfe9",
+          "bytes": 5391
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/fixed_cues/ability_cases.luau",
+          "mode": "100644",
+          "blob": "4dea12ffbad434c45ed3f64c1eb46ea809007bec",
+          "bytes": 3596
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/__init__.py",
+          "mode": "100644",
+          "blob": "709eda27055fd8564ec88df9637bd087e3dcd5fe",
+          "bytes": 10248
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/mage_ground_cases.luau",
+          "mode": "100644",
+          "blob": "c8ebe2e93df9b2b5962ab49b1840a6613c5d2288",
+          "bytes": 10810
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ground_night/ninja_flight_cases.luau",
+          "mode": "100644",
+          "blob": "cf215a5331d15588f24c2620c96b137fa67e2d95",
+          "bytes": 12710
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/growth_musou.py",
+          "mode": "100644",
+          "blob": "6e24b9babeb16e2513205a30094e67ee66430beb",
+          "bytes": 11218
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
+          "mode": "100644",
+          "blob": "d0e5b66d26a51551122572d3eb0d3a8ab3ecc38e",
+          "bytes": 8681
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_water_chain/__init__.py",
+          "mode": "100644",
+          "blob": "e3c2ce81c4215578347b85fe1d99d04d1406b15f",
+          "bytes": 11608
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/ninja_s4/__init__.py",
+          "mode": "100644",
+          "blob": "18bd2bf7e8c0d6c746479e9907cf3ee0f32978c6",
+          "bytes": 13194
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/return_convert/__init__.py",
+          "mode": "100644",
+          "blob": "27102e40a13eb380ed0dada37f2943b974c7d812",
+          "bytes": 10692
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_guardian_diagnostic.py",
+          "mode": "100644",
+          "blob": "c3c063f1162da7d3fa14cd1378e6a3855e13f07f",
+          "bytes": 25734
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/run_profile.py",
+          "mode": "100644",
+          "blob": "0b555c3575bda5e2fe2a4a9ddc6bb3d7b67a7df8",
+          "bytes": 60452
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/native/wing_warrior/__init__.py",
+          "mode": "100644",
+          "blob": "473231b1ef38ebca4de12ac5f96ab01075c09585",
+          "bytes": 11107
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/profile_lock.json",
+          "mode": "100644",
+          "blob": "97a89100b8832b264779d7a83a5702ac8e416a26",
+          "bytes": 5944782
+        },
+        {
+          "path": "quality_gameplay/gq470_union22_real69_20261122/verify_union22.py",
+          "mode": "100644",
+          "blob": "e284511fc481cbd2d9590e8f0401bc664b03f035",
+          "bytes": 186204
+        },
+        {
+          "path": "tests/test_gq470_union22_real69_20261122.py",
+          "mode": "100644",
+          "blob": "7f4e09d87a11e099bf168c557846afd20d30c695",
+          "bytes": 134655
+        }
+      ],
+      "actual_candidate_readback": {
+        "pr": 1056,
+        "exact_head": "7083347859ac9236dca8fb3d24359e43ebc1053c",
+        "exact_tree": "fe4ff44295b80f3fab9ba5409c1f858e6f7d0caa",
+        "exact_parent": "2832dde54429e287cc1af69c3f34929617d40632",
+        "previous_candidate": null,
+        "preserved_author_parent": null,
+        "source_lease": "146a73b9a18f27c637df249e0901c8e44b3cd79e",
+        "source_lease_return": "64e78a43535efda318048fb7353c7979f6bd4c2e",
+        "prepared_at": "2026-11-28T00:58:13.382Z"
+      },
+      "actual_binding_lease": {
+        "commit": "63ff827a4eded3759b24cf1027b920e40fa47cfe",
+        "operation_id": "5e57d8c1-32d5-40e5-b795-005730036965"
       }
     }
   ],
