@@ -322,6 +322,14 @@ dependencies.EGGRUMBLE_SwarmCombat={start=function(session)
  count("Swarm.start");session.swarm={kills={}}
 end}
 dependencies.EGGRUMBLE_SevenRoleCombat={
+ -- Common Utility lobby surface; selected effects run in the separate real-Combat suites.
+ commonGuideEnabled=function()return workspace:GetAttribute("P0D_ENABLE_PRIVATE_COMMON_ROUTE_GUIDE")~=false end,
+ commonMobilityEnabled=function()return workspace:GetAttribute("P0D_ENABLE_PRIVATE_COMMON_MOBILITY")~=false end,
+ commonHealingEnabled=function()return workspace:GetAttribute("P0D_ENABLE_PRIVATE_COMMON_HEALING")~=false end,
+ clearCommonHealing=function()error("UNEXPECTED_UTILITY_FLAG_CHANGE_IN_BOT_FIXTURE")end,
+ nextCommonUtility=function()error("UNEXPECTED_UTILITY_SELECTION_IN_BOT_FIXTURE")end,
+ clearCommonGuide=function()error("UNEXPECTED_UTILITY_FLAG_CHANGE_IN_BOT_FIXTURE")end,
+ clearCommonMobility=function()error("UNEXPECTED_UTILITY_FLAG_CHANGE_IN_BOT_FIXTURE")end,
  roleOrder=function()return {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}end,
  info=function(role)return {name=role,weapon="fixture weapon",color=Color3.fromRGB(100,140,180)}end,
  equip=function(session,p,role)

@@ -41,9 +41,9 @@ HELPERS = {
 }
 
 BOT_INPUTS = {
-    "bot_vault_base.template.luau": {"bytes": 39006, "sha256": "ba71e926da72b3c60118751d4c89ba4086dfec24a9d67b0d2ee9a04877f81ad7"},
-    "bot_vault_cases.json": {"bytes": 71446, "sha256": "dc1434c328ab30853a75993d2f6042b01e1d0bdc8733c528d4a9b39b7557289c"},
-    "bot_vault_suite.py": {"bytes": 20273, "sha256": "e0f72127a01f9a6af8422a5d35d6f515f9a3f00eb75f43a2ef8624df1fb46c09"},
+    "bot_vault_base.template.luau": {"bytes": 39786, "sha256": "1f74ccb6b1061a333f25e1012c9c8faa1298265d74a40217d1fcb63fa83ad1ee"},
+    "bot_vault_cases.json": {"bytes": 71446, "sha256": "aaca8180579291218bc5e119ecb38c2d291aba094d9081cc1032189c3b17d4fa"},
+    "bot_vault_suite.py": {"bytes": 20273, "sha256": "7f70216ff29f68c0d8fa4b55d9d65007033566e4fd5c85640da126f46ec93f85"},
 }
 BOT_SCENARIOS = (
     "candidate_route62_TEAM_normal", "candidate_route62_TEAM_slow",
@@ -642,8 +642,34 @@ def verify_core(root, base, reports, context):
     require(set(zombie_formation_camera["rows"]) == set(compose.ZOMBIE_FORMATION_CAMERA_SOURCES)
             and zombie_formation_camera["ability_ids"] == ['ZOMBIE-020']
             and zombie_formation_camera["combo_ids"] == ["COMBO-020"] and zombie_formation_camera["camera_source"] == "PR-981", "ZOMBIE_FORMATION_CAMERA_SCOPE")
+    navigation_entry_sky = lock["navigation_entry_sky_followup"]
+    require(set(navigation_entry_sky["rows"]) == set(compose.NAVIGATION_ENTRY_SKY_SOURCES)
+            and navigation_entry_sky["ability_ids"] == ['COMMON-011', 'COMMON-020']
+            and navigation_entry_sky["first90_feedback"] == "FB-014" and navigation_entry_sky["sky_source"] == "PR-959"
+            and navigation_entry_sky["sky_pc"] == 12 and navigation_entry_sky["sky_touch"] == 9, "NAVIGATION_ENTRY_SKY_SCOPE")
+    mobility_crests = lock["mobility_crests_followup"]
+    require(set(mobility_crests["rows"]) == set(compose.MOBILITY_CRESTS_SOURCES)
+            and mobility_crests["ability_ids"] == ['COMMON-001', 'COMMON-003']
+            and mobility_crests["crest_source"] == "PR-976"
+            and mobility_crests["crest_pc"] == 6 and mobility_crests["crest_touch"] == 4, "MOBILITY_CRESTS_SCOPE")
+    common_healing = lock["common_healing_followup"]
+    require(set(common_healing["rows"]) == set(compose.COMMON_HEALING_SOURCES)
+            and common_healing["ability_ids"] == ['COMMON-016', 'COMMON-019']
+            and common_healing["channel_seconds"] == 1 and common_healing["maximum_allies"] == 2, "COMMON_HEALING_SCOPE")
+    expected_common_healing_off, common_healing_off_lock, common_healing_off = verify_source_rollback(
+        root, root, lock, current, common_healing, common_healing["rows"], mobility_crests["repaired_place"],
+        compose.COMMON_HEALING_OFF, compose.COMMON_HEALING_OFF_ARCHIVE, "COMMON_HEALING")
+    expected_mobility_crests_off, mobility_crests_off_lock, mobility_crests_off = verify_source_rollback(
+        root, root / compose.COMMON_HEALING_OFF, common_healing_off_lock, common_healing_off,
+        mobility_crests, mobility_crests["rows"], navigation_entry_sky["repaired_place"],
+        compose.MOBILITY_CRESTS_OFF, compose.MOBILITY_CRESTS_OFF_ARCHIVE, "MOBILITY_CRESTS")
+    expected_navigation_entry_sky_off, navigation_entry_sky_off_lock, navigation_entry_sky_off = verify_source_rollback(
+        root, root / compose.MOBILITY_CRESTS_OFF, mobility_crests_off_lock, mobility_crests_off,
+        navigation_entry_sky, navigation_entry_sky["rows"], zombie_formation_camera["repaired_place"],
+        compose.NAVIGATION_ENTRY_SKY_OFF, compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE, "NAVIGATION_ENTRY_SKY")
     expected_zombie_formation_camera_off, zombie_formation_camera_off_lock, zombie_formation_camera_off = verify_source_rollback(
-        root, root, lock, current, zombie_formation_camera, zombie_formation_camera["rows"], trapper_cast_audio["repaired_place"],
+        root, root / compose.NAVIGATION_ENTRY_SKY_OFF, navigation_entry_sky_off_lock, navigation_entry_sky_off,
+        zombie_formation_camera, zombie_formation_camera["rows"], trapper_cast_audio["repaired_place"],
         compose.ZOMBIE_FORMATION_CAMERA_OFF, compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE, "ZOMBIE_FORMATION_CAMERA")
     expected_trapper_cast_audio_off, trapper_cast_audio_off_lock, trapper_cast_audio_off = verify_source_rollback(
         root, root / compose.ZOMBIE_FORMATION_CAMERA_OFF, zombie_formation_camera_off_lock, zombie_formation_camera_off,
@@ -970,6 +996,12 @@ def verify_core(root, base, reports, context):
         "trapper_cast_audio_rollback_archive": digest(read(root / compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE)),
         "zombie_formation_camera_followup": zombie_formation_camera,
         "zombie_formation_camera_rollback_archive": digest(read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE)),
+        "navigation_entry_sky_followup": navigation_entry_sky,
+        "navigation_entry_sky_rollback_archive": digest(read(root / compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE)),
+        "mobility_crests_followup": mobility_crests,
+        "mobility_crests_rollback_archive": digest(read(root / compose.MOBILITY_CRESTS_OFF_ARCHIVE)),
+        "common_healing_followup": common_healing,
+        "common_healing_rollback_archive": digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -1025,6 +1057,9 @@ def verify_core(root, base, reports, context):
             and core.get("warrior_field_horde_parent_place") == warrior_field_horde_off_lock["final_place"]
             and core.get("trapper_cast_audio_parent_place") == trapper_cast_audio_off_lock["final_place"]
             and core.get("zombie_formation_camera_parent_place") == zombie_formation_camera_off_lock["final_place"]
+            and core.get("navigation_entry_sky_parent_place") == navigation_entry_sky_off_lock["final_place"]
+            and core.get("mobility_crests_parent_place") == mobility_crests_off_lock["final_place"]
+            and core.get("common_healing_parent_place") == common_healing_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1153,6 +1188,15 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.ZOMBIE_FORMATION_CAMERA_OFF + "/" + name: pin
                            for name, pin in expected_zombie_formation_camera_off.items()})
     expected_stage[compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE] = digest(read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE))
+    expected_stage.update({compose.NAVIGATION_ENTRY_SKY_OFF + "/" + name: pin
+                           for name, pin in expected_navigation_entry_sky_off.items()})
+    expected_stage[compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE] = digest(read(root / compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE))
+    expected_stage.update({compose.MOBILITY_CRESTS_OFF + "/" + name: pin
+                           for name, pin in expected_mobility_crests_off.items()})
+    expected_stage[compose.MOBILITY_CRESTS_OFF_ARCHIVE] = digest(read(root / compose.MOBILITY_CRESTS_OFF_ARCHIVE))
+    expected_stage.update({compose.COMMON_HEALING_OFF + "/" + name: pin
+                           for name, pin in expected_common_healing_off.items()})
+    expected_stage[compose.COMMON_HEALING_OFF_ARCHIVE] = digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1238,7 +1282,13 @@ def verify_core(root, base, reports, context):
                         compose.TRAPPER_CAST_AUDIO_OFF: [name for name in lock["sources"]
                                                             if name in compose.TRAPPER_CAST_AUDIO_SOURCES],
                         compose.ZOMBIE_FORMATION_CAMERA_OFF: [name for name in lock["sources"]
-                                                            if name in compose.ZOMBIE_FORMATION_CAMERA_SOURCES]}
+                                                            if name in compose.ZOMBIE_FORMATION_CAMERA_SOURCES],
+                        compose.NAVIGATION_ENTRY_SKY_OFF: [name for name in lock["sources"]
+                                                            if name in compose.NAVIGATION_ENTRY_SKY_SOURCES],
+                        compose.MOBILITY_CRESTS_OFF: [name for name in lock["sources"]
+                                                            if name in compose.MOBILITY_CRESTS_SOURCES],
+                        compose.COMMON_HEALING_OFF: [name for name in lock["sources"]
+                                                            if name in compose.COMMON_HEALING_SOURCES]}
     # The independently verified payload must contain exactly these build stages.
     # Derive the three command checks from one ordered verifier-owned source map.
     expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
@@ -2322,7 +2372,7 @@ def verify_native(native, root, lock, context):
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
                  "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
-                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera"):
+                 "ninja_beast_castle", "spring_mist_forest", "ninja_steps_objectives", "warrior_field_horde", "trapper_cast_audio", "zombie_formation_camera", "navigation_entry_sky", "mobility_crests", "common_healing"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2604,6 +2654,9 @@ def admit_delivery(root, base, reports, native, context):
                             compose.WARRIOR_FIELD_HORDE_OFF_ARCHIVE,
                             compose.TRAPPER_CAST_AUDIO_OFF_ARCHIVE,
                             compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE,
+                            compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE,
+                            compose.MOBILITY_CRESTS_OFF_ARCHIVE,
+                            compose.COMMON_HEALING_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2774,6 +2827,15 @@ def admit_delivery(root, base, reports, native, context):
             "zombie_formation_camera_followup": verified["lock"]["zombie_formation_camera_followup"],
             "zombie_formation_camera_inverse_place": verified["lock"]["zombie_formation_camera_followup"]["parent_place"],
             "zombie_formation_camera_inverse_archive": digest(read(root / compose.ZOMBIE_FORMATION_CAMERA_OFF_ARCHIVE)),
+            "navigation_entry_sky_followup": verified["lock"]["navigation_entry_sky_followup"],
+            "navigation_entry_sky_inverse_place": verified["lock"]["navigation_entry_sky_followup"]["parent_place"],
+            "navigation_entry_sky_inverse_archive": digest(read(root / compose.NAVIGATION_ENTRY_SKY_OFF_ARCHIVE)),
+            "mobility_crests_followup": verified["lock"]["mobility_crests_followup"],
+            "mobility_crests_inverse_place": verified["lock"]["mobility_crests_followup"]["parent_place"],
+            "mobility_crests_inverse_archive": digest(read(root / compose.MOBILITY_CRESTS_OFF_ARCHIVE)),
+            "common_healing_followup": verified["lock"]["common_healing_followup"],
+            "common_healing_inverse_place": verified["lock"]["common_healing_followup"]["parent_place"],
+            "common_healing_inverse_archive": digest(read(root / compose.COMMON_HEALING_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2823,6 +2885,9 @@ def admit_delivery(root, base, reports, native, context):
             "warrior_field_horde": runtime["warrior_field_horde"],
             "trapper_cast_audio": runtime["trapper_cast_audio"],
             "zombie_formation_camera": runtime["zombie_formation_camera"],
+            "navigation_entry_sky": runtime["navigation_entry_sky"],
+            "mobility_crests": runtime["mobility_crests"],
+            "common_healing": runtime["common_healing"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

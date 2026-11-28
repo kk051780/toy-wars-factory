@@ -51,6 +51,10 @@ def program(root, lock, compose):
         raw = selected(name, pin, path)
         render = region(raw, b"local elapsed=0\nRunService.RenderStepped:Connect(function(dt)\n",
                         b"-- GQ8_RC85_RC86_LEGACY_EXPLORE_DISCOVERY_TOAST_REAL69_20261120", compose)
+        if b"CommonGuideView.render(" in render:
+            guide = region(raw, b"-- COMMON-011/020. One private line",
+                           b"-- End COMMON route presentation.", compose)
+            render = guide + render
         programs.extend((f"local function {name}(fixed,requireFixed)".encode(),
                          template.replace(marker, b"\n".join((*functions, render))), b"end"))
     programs.extend((
