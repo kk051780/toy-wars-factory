@@ -49560,7 +49560,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Six exact Ninja cuts and three maneuvers on the same existing Beast; existing #1009 original CastleApproach low-cost presentation in REAL69 only.",
       "resources": [
@@ -49841,6 +49841,70 @@
       "actual_binding_lease": {
         "commit": "2941acae6e10a4319a726d828017a7f8ad834ea4",
         "operation_id": "0d132a47-8eea-4382-af90-7f180dda1bcf"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1062#pullrequestreview-6095551766",
+        "review_id": 6095551766,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 1427354,
+        "private_place_sha256": "1799d5e8eb8366b4175ed6752982d7c58bf70926611de1d767c24d54eed7591a",
+        "private_immediate_off_bytes": 1392701,
+        "private_ci": 46103569602,
+        "private_job": 140851210766,
+        "private_steps": 48,
+        "private_artifact": 15247085760,
+        "private_zip_bytes": 51555570,
+        "private_zip_digest": "sha256:00acf2793e90bffed0f962839c1e3354eaa433ce614b055cf2175470edfcebd6",
+        "source_lock": "fb170b57d4941b0d0bc551ca08094d45f0c92367e0d5868294cefde2720e6a1f",
+        "device_evidence": "NOT_TESTED_PER_V42"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "b065e77a15db37796f6ecd2afc2ee4ebbed83e97",
+        "operation_id": "1d027fea-4acb-42fe-880e-b659b8c9282c"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "56747f29b4efda431f8cd923c39b488c04b04d32",
+        "permitted_head": "5834d4239e91889fbf136d5a3bd3ff3c646f0bb2",
+        "permitted_tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
+        "permitted_pr": 1062,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-28T04:10:11.434Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Six exact Ninja cuts and three maneuvers on the same existing Beast; existing #1009 original CastleApproach low-cost presentation in REAL69 only.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V4.2/#220",
+          "policy_updated_at": "2026-11-28T03:32:46Z",
+          "lease": "b065e77a15db37796f6ecd2afc2ee4ebbed83e97",
+          "owner": "1d027fea-4acb-42fe-880e-b659b8c9282c",
+          "review": 6095551766,
+          "trusted_queue_run": 46104620626,
+          "trusted_queue_job": 140854480975
+        }
       }
     }
   ],
