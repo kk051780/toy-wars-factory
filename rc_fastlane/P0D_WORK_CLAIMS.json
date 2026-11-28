@@ -52457,7 +52457,7 @@
       "scope_only": false,
       "source_write_requires_separate_live_source_lease": true,
       "author_may_self_approve": false,
-      "PREP_READY": false,
+      "PREP_READY": true,
       "rc_write_authorized_by_this_claim": false,
       "scope": "Reuse original #1001 contact shadow on the existing REAL69 ArtDistanceLOD Client route. One local own-avatar Part and one bounded ray, camera, arena, terrain, transparency, water, stealth, reduce and OFF guards. Preserve client effects and physical parent.",
       "resources": [
@@ -52701,6 +52701,70 @@
       "actual_binding_lease": {
         "commit": "b0bb10f14e6bd2628694fdf62be2c021dffb4f61",
         "operation_id": "a4eba5c3-cf70-41bb-ac88-427e1f31ce27"
+      },
+      "registered_source_approval": true,
+      "independent_source_receipt": {
+        "review_url": "https://github.com/kk051780/toy-wars-factory/pull/1001#pullrequestreview-6096425463",
+        "review_id": 6096425463,
+        "registered_context": "/root/p0_offer_review26",
+        "head": "d72e324fc5b92f942367c12444e8a279e974754a",
+        "review_is_comment": true,
+        "author_self_approval": false
+      },
+      "local_and_hosted_quality": {
+        "classification": "PRIVATE_COMPANION_ONLY",
+        "active_baseline_head": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+        "active_required_check": "NOT_TRIGGERED_BY_SCOPED_PATHS",
+        "active_runtime_source_inputs_unchanged": true,
+        "private_place_bytes": 1592972,
+        "private_place_sha256": "b683831faaef4eff3b93d147abd8af21d5d98da84c62560d8dc6394d8ddd6bd8",
+        "private_immediate_off_bytes": 1585158,
+        "private_ci": 46118713883,
+        "private_job": 140898222714,
+        "private_steps": 48,
+        "private_artifact": 15253028032,
+        "private_zip_bytes": 76843769,
+        "private_zip_digest": "sha256:0341e251d6e059e3116e02afb39b4319583b3c98286557d177c236f79ae65a3d",
+        "source_lock": "a53451b315ef2d9b512eb9d0299ccf607e9029525a2cac9ad01b5fd117520183",
+        "device_evidence": "NOT_TESTED_PER_V42"
+      },
+      "actual_prep_ready_lease": {
+        "commit": "e84ec4381af5e09a571a57624d0866833feaf362",
+        "operation_id": "02406a91-d90a-47a4-8daa-e79c75eec100"
+      },
+      "bounded_rc_integration": {
+        "status": "GRANTED_ONE_EXACT_NONFORCE_CAS",
+        "branch": "rc/p0d-s1-kids-rc01",
+        "expected_rc": "1719f5f0c592b8d9b5a268f5b74520a058f62183",
+        "permitted_head": "d72e324fc5b92f942367c12444e8a279e974754a",
+        "permitted_tree": "1751330b503e5edf7910a3d5c3774ee02d0a1995",
+        "permitted_pr": 1001,
+        "sole_executor": {
+          "registered_context": "/root",
+          "authenticated_actor": "kk051780",
+          "account_id": 233213370,
+          "role": "FINITE_220_CODEX_PARENT_WRITER"
+        },
+        "one_exact_adoption_only": true,
+        "one_time_authorization_consumed": false,
+        "force_allowed": false,
+        "source_edits_allowed": false,
+        "future_unbounded_RC_writes_authorized": false,
+        "expires_at": "2026-11-28T07:32:52.861Z",
+        "source_or_metadata_lease_is_not_RC_lease": true,
+        "separate_live_rc_writer_lease_required": true,
+        "actual_protection_must_be_respected": true,
+        "formal_scope": "Reuse original #1001 contact shadow on the existing REAL69 ArtDistanceLOD Client route. One local own-avatar Part and one bounded ray, camera, arena, terrain, transparency, water, stealth, reduce and OFF guards. Preserve client effects and physical parent.",
+        "registered_postpush_reviewer": "/root/p0_offer_review26",
+        "actual_metadata_authority": {
+          "decision": "Required PRIVATE same-head CI, exact unchanged ACTIVE inputs and path filter, distinct review and trusted ready queue under #1011 V4.2/#220",
+          "policy_updated_at": "2026-11-28T06:27:56Z",
+          "lease": "e84ec4381af5e09a571a57624d0866833feaf362",
+          "owner": "02406a91-d90a-47a4-8daa-e79c75eec100",
+          "review": 6096425463,
+          "trusted_queue_run": 46120106328,
+          "trusted_queue_job": 140902532177
+        }
       }
     }
   ],
