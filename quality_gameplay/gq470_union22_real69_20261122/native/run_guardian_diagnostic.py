@@ -120,9 +120,11 @@ def source_contract(root, profile, input_lock):
     cover_orders = profile["cover_orders_followup"]
     mage_field_arcs = profile["mage_field_arcs_followup"]
     eclipse_sweep = profile["eclipse_sweep_followup"]
+    builder_forms = profile["builder_forms_followup"]
     rel = compose.GUARDIAN_SOURCE
     wall_parent = root / compose.GUARDIAN_WALL_OFF / "sources"
-    eclipse_sweep_parent_pins = current_pins | {
+    builder_forms_parent_pins = compose.trial_sources_before(profile, "builder_forms_followup")
+    eclipse_sweep_parent_pins = builder_forms_parent_pins | {
         name: row["parent"]["after"] for name, row in eclipse_sweep["rows"].items()}
     mage_field_arcs_parent_pins = eclipse_sweep_parent_pins | {
         name: row["parent"]["after"] for name, row in mage_field_arcs["rows"].items()}
@@ -180,6 +182,7 @@ def source_contract(root, profile, input_lock):
                    and native.source_snapshot(root / compose.COVER_ORDERS_OFF / "sources") == cover_orders_parent_pins
                    and native.source_snapshot(root / compose.MAGE_FIELD_ARCS_OFF / "sources") == mage_field_arcs_parent_pins
                    and native.source_snapshot(root / compose.ECLIPSE_SWEEP_OFF / "sources") == eclipse_sweep_parent_pins
+                   and native.source_snapshot(root / compose.BUILDER_FORMS_OFF / "sources") == builder_forms_parent_pins
                    and native.source_snapshot(root / compose.FIELD_LOADOUTS_OFF / "sources") == field_loadouts_parent_pins
                    and native.source_snapshot(root / compose.WING_WARRIOR_OFF / "sources") == wing_warrior_parent_pins
                    and native.source_snapshot(root / compose.NINJA_S4_OFF / "sources") == ninja_s4_parent_pins
@@ -216,7 +219,9 @@ def source_contract(root, profile, input_lock):
     native.require({path: native.identity(body) for path, body in bodies.items()} == previous_pins
                    and native.identity(donor_candidate) == repair["repaired_guardian"], "GUARDIAN_SOURCE_READ_DRIFT")
     native.require(native.identity(native.read(root / compose.PLACE)) == profile["final_place"]
-                   == eclipse_sweep["repaired_place"]
+                   == builder_forms["repaired_place"]
+                   and native.identity(native.read(root / compose.BUILDER_FORMS_OFF / compose.PLACE))
+                   == builder_forms["parent_place"] == eclipse_sweep["repaired_place"]
                    and native.identity(native.read(root / compose.ECLIPSE_SWEEP_OFF / compose.PLACE))
                    == eclipse_sweep["parent_place"] == mage_field_arcs["repaired_place"]
                    and native.identity(native.read(root / compose.MAGE_FIELD_ARCS_OFF / compose.PLACE))

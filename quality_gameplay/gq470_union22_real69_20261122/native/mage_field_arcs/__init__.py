@@ -97,9 +97,7 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == sources[name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "MAGE_FIELD_ARCS_PROFILE_SCOPE")
-    eclipse_sweep = profile["eclipse_sweep_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in eclipse_sweep.items()}
-              | {name: row["parent"]["after"] for name, row in changed.items()})
+    before = compose.trial_sources_before(profile, "mage_field_arcs_followup")
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     off_root = source_root.parent / compose.MAGE_FIELD_ARCS_OFF / "sources"
     corpus = "\n".join(cases)

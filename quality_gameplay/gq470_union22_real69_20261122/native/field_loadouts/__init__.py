@@ -112,17 +112,7 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == profile["sources"][name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "FIELD_LOADOUTS_PROFILE_SCOPE")
-    later = profile["return_convert_followup"]["rows"]
-    latest = profile["ground_night_followup"]["rows"]
-    cover_orders = profile["cover_orders_followup"]["rows"]
-    mage_field_arcs = profile["mage_field_arcs_followup"]["rows"]
-    eclipse_sweep = profile["eclipse_sweep_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in eclipse_sweep.items()}
-              | {name: row["parent"]["after"] for name, row in mage_field_arcs.items()}
-              | {name: row["parent"]["after"] for name, row in cover_orders.items()}
-              | {name: row["parent"]["after"] for name, row in latest.items()}
-              | {name: row["parent"]["after"] for name, row in later.items()}
-              | {name: row["parent"]["after"] for name, row in changed.items()})
+    before = compose.trial_sources_before(profile, "field_loadouts_followup")
     off_root = source_root.parent / compose.FIELD_LOADOUTS_OFF / "sources"
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     corpus = "\n".join(cases)

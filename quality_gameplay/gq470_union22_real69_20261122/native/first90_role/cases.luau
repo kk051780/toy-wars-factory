@@ -45,3 +45,23 @@ assert(cue(69)=="" and deployedAt==nil)
 player.attrs={EGGRUMBLE_SelectedRole="FAKE"}
 assert(cue(70)=="1/3  役職と対戦モードを選ぼう")
 print("FB004_READY_COMBAT_BUTTONS_OBJECTIVE_AND_ELIMINATION_PASS")
+
+workspace.attrs={}
+player.attrs={EGGRUMBLE_SelectedRole="NINJA",EGGRUMBLE_LobbyNinjaEclipseLoadoutName="月蝕潜航・二影斬・月蝕影舞"}
+assert(cue(0)=="月蝕潜航・二影斬・月蝕影舞\nモードを選んで出撃")
+workspace.attrs.P0D_ENABLE_PRIVATE_NINJA_ECLIPSE=false
+assert(string.find(cue(0),"双刃",1,true))
+player.attrs.EGGRUMBLE_LobbyNinjaFlightLoadoutName="走影・宵翼飛行・宵翼囮行"
+assert(cue(0)=="走影・宵翼飛行・宵翼囮行\nモードを選んで出撃")
+
+workspace.attrs={}
+player.attrs={EGGRUMBLE_SelectedRole="WARRIOR",EGGRUMBLE_LobbyWarriorTechLoadoutName="間合い三技"}
+assert(cue(0)=="間合い三技\nモードを選んで出撃")
+workspace.attrs.P0D_ENABLE_PRIVATE_WARRIOR_TECH=false
+player.attrs.EGGRUMBLE_LobbyWarriorSkyLoadoutName="天界百剣・天翼武装・天翼剣雨"
+assert(cue(0)=="天界百剣・天翼武装・天翼剣雨\nモードを選んで出撃")
+player.attrs.EGGRUMBLE_LobbyWarriorSkyLoadoutName="カタカナの技名・他の長い装備名・最後の技名"
+assert(cue(0)=="カタカナの技名ほか\nモードを選んで出撃")
+workspace.attrs.P0D_ENABLE_PRIVATE_WARRIOR_COMBO_001=false
+assert(string.find(cue(0),"大太刀",1,true))
+print("FB004_ECLIPSE_WARRIOR_CUES_AND_UTF8_KIT_TITLE_PASS")

@@ -105,15 +105,7 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == sources[name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "RETURN_CONVERT_PROFILE_SCOPE")
-    latest = profile["ground_night_followup"]["rows"]
-    cover_orders = profile["cover_orders_followup"]["rows"]
-    mage_field_arcs = profile["mage_field_arcs_followup"]["rows"]
-    eclipse_sweep = profile["eclipse_sweep_followup"]["rows"]
-    before = (after | {name: row["parent"]["after"] for name, row in eclipse_sweep.items()}
-              | {name: row["parent"]["after"] for name, row in mage_field_arcs.items()}
-              | {name: row["parent"]["after"] for name, row in cover_orders.items()}
-              | {name: row["parent"]["after"] for name, row in latest.items()}
-              | {name: row["parent"]["after"] for name, row in changed.items()})
+    before = compose.trial_sources_before(profile, "return_convert_followup")
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     off_root = source_root.parent / compose.RETURN_CONVERT_OFF / "sources"
     corpus = "\n".join(cases)

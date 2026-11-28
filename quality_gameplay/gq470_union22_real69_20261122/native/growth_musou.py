@@ -86,27 +86,7 @@ end
 def profile_sources(root, lock, compose):
     final = root / compose.ART_POLISH_OFF / "sources"
     parent = root / compose.GROWTH_MUSOU_OFF / "sources"
-    after = {name: row["after"] for name, row in lock["sources"].items()} | {
-        name: row["parent"]["after"] for name, row in lock["eclipse_sweep_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["mage_field_arcs_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["cover_orders_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["ground_night_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["return_convert_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["field_loadouts_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["wing_warrior_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["ninja_s4_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["mage_water_chain_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in lock["mage_projectile_followup"]["rows"].items()
-    } | {
+    after = compose.trial_sources_before(lock, "mage_projectile_followup") | {
         name: row["parent"]["after"] for name, row in lock["fractional_hp_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in lock["team_win_rule_followup"]["rows"].items()

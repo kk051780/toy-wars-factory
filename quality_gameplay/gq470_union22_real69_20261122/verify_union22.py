@@ -599,8 +599,18 @@ def verify_core(root, base, reports, context):
                 "NINJA-020", "NINJA-028", "TRAPPER-025", "TRAPPER-054", "WARRIOR-001", "WARRIOR-003",
                 "WARRIOR-005", "WARRIOR-008", "WARRIOR-015", "WARRIOR-018", "WARRIOR-021", "WARRIOR-027",
                 "WARRIOR-091"] and eclipse_sweep["combo_ids"] == ["COMBO-007", "COMBO-011"], "ECLIPSE_SWEEP_SCOPE")
+    builder_forms = lock["builder_forms_followup"]
+    require(set(builder_forms["rows"]) == set(compose.BUILDER_FORMS_SOURCES)
+            and builder_forms["ability_ids"] == [
+                "BUILDER-060", "ZOMBIE-001", "ZOMBIE-008", "ZOMBIE-009", "ZOMBIE-072", "ZOMBIE-073", "ZOMBIE-097"]
+            and builder_forms["combo_ids"] == ["COMBO-014"]
+            and builder_forms["loadout_feedback"] == "FB-004", "BUILDER_FORMS_SCOPE")
+    expected_builder_forms_off, builder_forms_off_lock, builder_forms_off = verify_source_rollback(
+        root, root, lock, current, builder_forms, builder_forms["rows"], eclipse_sweep["repaired_place"],
+        compose.BUILDER_FORMS_OFF, compose.BUILDER_FORMS_OFF_ARCHIVE, "BUILDER_FORMS")
     expected_eclipse_sweep_off, eclipse_sweep_off_lock, eclipse_sweep_off = verify_source_rollback(
-        root, root, lock, current, eclipse_sweep, eclipse_sweep["rows"], mage_field_arcs["repaired_place"],
+        root, root / compose.BUILDER_FORMS_OFF, builder_forms_off_lock, builder_forms_off,
+        eclipse_sweep, eclipse_sweep["rows"], mage_field_arcs["repaired_place"],
         compose.ECLIPSE_SWEEP_OFF, compose.ECLIPSE_SWEEP_OFF_ARCHIVE, "ECLIPSE_SWEEP")
     expected_mage_field_arcs_off, mage_field_arcs_off_lock, mage_field_arcs_off = verify_source_rollback(
         root, root / compose.ECLIPSE_SWEEP_OFF, eclipse_sweep_off_lock, eclipse_sweep_off,
@@ -877,6 +887,8 @@ def verify_core(root, base, reports, context):
         "mage_field_arcs_rollback_archive": digest(read(root / compose.MAGE_FIELD_ARCS_OFF_ARCHIVE)),
         "eclipse_sweep_followup": eclipse_sweep,
         "eclipse_sweep_rollback_archive": digest(read(root / compose.ECLIPSE_SWEEP_OFF_ARCHIVE)),
+        "builder_forms_followup": builder_forms,
+        "builder_forms_rollback_archive": digest(read(root / compose.BUILDER_FORMS_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -924,6 +936,7 @@ def verify_core(root, base, reports, context):
             and core.get("cover_orders_parent_place") == cover_orders_off_lock["final_place"]
             and core.get("mage_field_arcs_parent_place") == mage_field_arcs_off_lock["final_place"]
             and core.get("eclipse_sweep_parent_place") == eclipse_sweep_off_lock["final_place"]
+            and core.get("builder_forms_parent_place") == builder_forms_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1028,6 +1041,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.ECLIPSE_SWEEP_OFF + "/" + name: pin
                            for name, pin in expected_eclipse_sweep_off.items()})
     expected_stage[compose.ECLIPSE_SWEEP_OFF_ARCHIVE] = digest(read(root / compose.ECLIPSE_SWEEP_OFF_ARCHIVE))
+    expected_stage.update({compose.BUILDER_FORMS_OFF + "/" + name: pin
+                           for name, pin in expected_builder_forms_off.items()})
+    expected_stage[compose.BUILDER_FORMS_OFF_ARCHIVE] = digest(read(root / compose.BUILDER_FORMS_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1092,6 +1108,8 @@ def verify_core(root, base, reports, context):
                             for name in compose.MAGE_FIELD_ARCS_SOURCES)
     expected_compile.update(str(Path(stage) / compose.ECLIPSE_SWEEP_OFF / "sources" / name)
                             for name in compose.ECLIPSE_SWEEP_SOURCES)
+    expected_compile.update(str(Path(stage) / compose.BUILDER_FORMS_OFF / "sources" / name)
+                            for name in compose.BUILDER_FORMS_SOURCES)
     expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
     expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
     expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
@@ -1119,7 +1137,7 @@ def verify_core(root, base, reports, context):
                                compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF,
                                compose.WING_WARRIOR_OFF, compose.FIELD_LOADOUTS_OFF, compose.RETURN_CONVERT_OFF,
                                compose.GROUND_NIGHT_OFF, compose.COVER_ORDERS_OFF, compose.MAGE_FIELD_ARCS_OFF,
-                               compose.ECLIPSE_SWEEP_OFF)},
+                               compose.ECLIPSE_SWEEP_OFF, compose.BUILDER_FORMS_OFF)},
             "CORE_ROJO_PROJECT_SET")
     expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
@@ -1171,7 +1189,9 @@ def verify_core(root, base, reports, context):
                         compose.MAGE_FIELD_ARCS_OFF: [name for name in lock["sources"]
                                                     if name in compose.MAGE_FIELD_ARCS_SOURCES],
                         compose.ECLIPSE_SWEEP_OFF: [name for name in lock["sources"]
-                                                   if name in compose.ECLIPSE_SWEEP_SOURCES]}
+                                                   if name in compose.ECLIPSE_SWEEP_SOURCES],
+                        compose.BUILDER_FORMS_OFF: [name for name in lock["sources"]
+                                                   if name in compose.BUILDER_FORMS_SOURCES]}
     for prefix, selected in selected_sources.items():
         expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
                               if prefix != compose.OFF or p not in expected_reuse)
@@ -1800,27 +1820,7 @@ def verify_guardian_target(native, root, profile, input_pins, build, aggregate, 
     guard_source = compose.GUARDIAN_SOURCE
     # The Guardian matrix keeps its recorded historical parent context. The
     # current Host is exercised separately by the full and Bot/Vault suites.
-    guardian_context_pins = input_pins["sources"] | {
-        name: row["parent"]["after"] for name, row in profile["eclipse_sweep_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["mage_field_arcs_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["cover_orders_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["ground_night_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["return_convert_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["field_loadouts_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["wing_warrior_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["mage_water_chain_followup"]["rows"].items()
-    } | {
-        name: row["parent"]["after"] for name, row in profile["mage_projectile_followup"]["rows"].items()
-    } | {
+    guardian_context_pins = compose.trial_sources_before(profile, "mage_projectile_followup") | {
         name: row["parent"]["after"] for name, row in profile["fractional_hp_followup"]["rows"].items()
     } | {
         name: row["parent"]["after"] for name, row in profile["shorefoam_followup"]["rows"].items()
@@ -2253,7 +2253,7 @@ def verify_native(native, root, lock, context):
     ninja_s4_spec.loader.exec_module(ninja_s4)
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
-                 "cover_orders", "mage_field_arcs", "eclipse_sweep"):
+                 "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2529,6 +2529,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.FIELD_LOADOUTS_OFF_ARCHIVE, compose.RETURN_CONVERT_OFF_ARCHIVE,
                             compose.GROUND_NIGHT_OFF_ARCHIVE, compose.COVER_ORDERS_OFF_ARCHIVE,
                             compose.MAGE_FIELD_ARCS_OFF_ARCHIVE, compose.ECLIPSE_SWEEP_OFF_ARCHIVE,
+                            compose.BUILDER_FORMS_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2675,6 +2676,9 @@ def admit_delivery(root, base, reports, native, context):
             "eclipse_sweep_followup": verified["lock"]["eclipse_sweep_followup"],
             "eclipse_sweep_inverse_place": verified["lock"]["eclipse_sweep_followup"]["parent_place"],
             "eclipse_sweep_inverse_archive": digest(read(root / compose.ECLIPSE_SWEEP_OFF_ARCHIVE)),
+            "builder_forms_followup": verified["lock"]["builder_forms_followup"],
+            "builder_forms_inverse_place": verified["lock"]["builder_forms_followup"]["parent_place"],
+            "builder_forms_inverse_archive": digest(read(root / compose.BUILDER_FORMS_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2716,6 +2720,7 @@ def admit_delivery(root, base, reports, native, context):
             "cover_orders": runtime["cover_orders"],
             "mage_field_arcs": runtime["mage_field_arcs"],
             "eclipse_sweep": runtime["eclipse_sweep"],
+            "builder_forms": runtime["builder_forms"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],

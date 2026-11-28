@@ -19,7 +19,7 @@ import sys
 import time
 
 HERE = Path(__file__).resolve().parent
-INPUT_LOCK_SHA256 = "41d8cac0b4876dfbb96b89451c2f008f06d27f249c3724819ccd1e260074a43d"
+INPUT_LOCK_SHA256 = "cc8c282d5fe0dacbe867189fa44cf14d031baa20e7be67ecb14db4e7fbace632"
 CASE_FILES = {"combined_clear_los": "combined_cases_clear_los.luau",
               "objective_full_clear_los": "objective_full_cases_clear_los.luau",
               "beast_target_selection": "beast_cases.luau"}
@@ -714,28 +714,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         traversal_parent = profile["shorefoam_followup"]["rows"][compose.SHOREFOAM_SOURCE]["parent"]["after"]
         host_parent = profile["team_win_rule_followup"]["rows"][compose.VAULT_SOURCE]["parent"]["after"]
         hud_parent = profile["fractional_hp_followup"]["rows"][compose.HUD_SOURCE]["parent"]["after"]
-        water_chain_parent_pins = lock["sources"] | {
-            name: row["parent"]["after"] for name, row in profile["eclipse_sweep_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["mage_field_arcs_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["cover_orders_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["ground_night_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["return_convert_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["field_loadouts_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["wing_warrior_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["ninja_s4_followup"]["rows"].items()
-        } | {
-            name: row["parent"]["after"] for name, row in profile["mage_water_chain_followup"]["rows"].items()
-        }
-        projectile_parent_pins = water_chain_parent_pins | {
-            name: row["parent"]["after"] for name, row in profile["mage_projectile_followup"]["rows"].items()
-        }
+        projectile_parent_pins = compose.trial_sources_before(profile, "mage_projectile_followup")
         layout_pins = lock | {"sources": projectile_parent_pins | {compose.PORTRAIT_SOURCE: layout_parent,
                                                          compose.SHOREFOAM_SOURCE: traversal_parent,
                                                          compose.VAULT_SOURCE: host_parent,
@@ -841,6 +820,10 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         from eclipse_sweep import run as run_eclipse_sweep
         run_eclipse_sweep(root, output / "eclipse_sweep", binary, pin, context, profile,
                           compose, clean_environment())
+        from builder_forms import FILES as builder_forms_files, PROCESS_COUNT as builder_forms_runs
+        from builder_forms import run as run_builder_forms
+        run_builder_forms(root, output / "builder_forms", binary, pin, context, profile,
+                          compose, clean_environment())
         require(source_snapshot(root) == before, "SOURCE_CHANGED_AFTER_BOTH_SUITES")
         require(read(root.parent / compose.RECEIPT) == source_receipt_raw
                 and strict_json(read(root.parent / "CORE_BUILD_REPORT.json")) == core,
@@ -871,7 +854,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
         current_stage_files = (len(wing_warrior_files) + len(fixed_cue_files)
                                + len(field_loadout_files) + len(first90_role_files) + len(return_convert_files)
                                + len(ground_night_files) + len(cover_orders_files) + len(mage_field_arcs_files)
-                               + len(eclipse_sweep_files))
+                               + len(eclipse_sweep_files) + len(builder_forms_files))
         require(len(evidence) == 315 + len(projectile_files) + len(water_chain_files) + len(ninja_s4_files)
                 + current_stage_files
                 and {name.removeprefix("wing_warrior/") for name in evidence
@@ -892,6 +875,8 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                      if name.startswith("mage_field_arcs/")} == mage_field_arcs_files
                 and {name.removeprefix("eclipse_sweep/") for name in evidence
                      if name.startswith("eclipse_sweep/")} == eclipse_sweep_files
+                and {name.removeprefix("builder_forms/") for name in evidence
+                     if name.startswith("builder_forms/")} == builder_forms_files
                 and {name.removeprefix("ninja_s4/") for name in evidence
                      if name.startswith("ninja_s4/")} == ninja_s4_files
                 and {name.removeprefix("mage_water_chain/") for name in evidence
@@ -943,6 +928,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "cover_orders": identity(read(output / "cover_orders/receipt.json")),
                    "mage_field_arcs": identity(read(output / "mage_field_arcs/receipt.json")),
                    "eclipse_sweep": identity(read(output / "eclipse_sweep/receipt.json")),
+                   "builder_forms": identity(read(output / "builder_forms/receipt.json")),
                    "bot_vault_input_files": bot_before,
                    "full_body_coverage": {"original_dual28": 28, "beast_target_selection": 28, "bot_vault_each": 16,
                                           "distinct_server_union": 30, "selected_hud_policy": 1,
@@ -953,7 +939,7 @@ def run_profile(source_root, luau_source, build_dir, output, cmake, ninja, git, 
                    "native_process_count": 99 + projectile_runs + water_chain_runs + ninja_s4_runs
                    + wing_warrior_runs + fixed_cue_runs + field_loadout_runs
                    + first90_role_runs + return_convert_runs + ground_night_runs + cover_orders_runs
-                   + mage_field_arcs_runs + eclipse_sweep_runs,
+                   + mage_field_arcs_runs + eclipse_sweep_runs + builder_forms_runs,
                    "native_evidence_file_count": 316 + len(projectile_files) + len(water_chain_files)
                    + len(ninja_s4_files) + current_stage_files,
                    "source_only": True, "formal_rc_adoption_proven": False, "limitations": lock["limitations"]}

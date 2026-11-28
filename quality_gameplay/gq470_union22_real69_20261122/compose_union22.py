@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-LOCK_SHA256 = "69e79a2192858001b1a05ba45c29996714e0b12b4c75dab1ea6f9d7efae8c8fd"
+LOCK_SHA256 = "5a9ce201587bca44973c832b1414f1da573cba4ad80929580c098d13a1af8f77"
 FORMAL = "rc/p0d-s1-kids-rc01"
 REPOSITORY = "kk051780/toy-wars-factory"
 PROJECT = "EGGRUMBLE_REAL69.project.json"
@@ -150,6 +150,16 @@ MAGE_FIELD_ARCS_SOURCES = FIELD_LOADOUTS_SOURCES
 ECLIPSE_SWEEP_OFF = "off69_eclipse_sweep_mage_field_arcs_parent"
 ECLIPSE_SWEEP_OFF_ARCHIVE = "OFF69_ECLIPSE_SWEEP_MAGE_FIELD_ARCS_PARENT_ROLLBACK.tar.gz"
 ECLIPSE_SWEEP_SOURCES = (*FIELD_LOADOUTS_SOURCES, "ServerScriptService/EGGRUMBLE_InvulRuntime.luau")
+BUILDER_FORMS_OFF = "off69_builder_forms_eclipse_sweep_parent"
+BUILDER_FORMS_OFF_ARCHIVE = "OFF69_BUILDER_FORMS_ECLIPSE_SWEEP_PARENT_ROLLBACK.tar.gz"
+BUILDER_FORMS_SOURCES = tuple(name for name in ECLIPSE_SWEEP_SOURCES
+                              if name != "ServerScriptService/EGGRUMBLE_SwarmCombat.luau")
+RECENT_TRIAL_STAGES = (
+    "builder_forms_followup", "eclipse_sweep_followup", "mage_field_arcs_followup",
+    "cover_orders_followup", "ground_night_followup", "return_convert_followup",
+    "field_loadouts_followup", "wing_warrior_followup", "ninja_s4_followup",
+    "mage_water_chain_followup", "mage_projectile_followup",
+)
 ART_POLISH_SOURCES = (
     "ServerScriptService/EGGRUMBLE_CastleGuardianRuntime.luau",
     "ServerScriptService/EGGRUMBLE_FlagshipFieldArt.server.luau",
@@ -629,6 +639,21 @@ def eclipse_sweep_parent(on, lock):
                                 lock["mage_field_arcs_followup"]["repaired_place"], "ECLIPSE_SWEEP")
 
 
+def builder_forms_parent(on, lock):
+    return paired_source_parent(on, lock, lock["builder_forms_followup"], BUILDER_FORMS_SOURCES,
+                                lock["eclipse_sweep_followup"]["repaired_place"], "BUILDER_FORMS")
+
+
+def trial_sources_before(lock, followup):
+    """Return the exact selected source vector of a recent stage's physical parent."""
+    pins = {name: row["after"] for name, row in lock["sources"].items()}
+    for stage in RECENT_TRIAL_STAGES:
+        pins.update({name: row["parent"]["after"] for name, row in lock[stage]["rows"].items()})
+        if stage == followup:
+            return pins
+    raise GateError("RED_UNION22_UNKNOWN_RECENT_TRIAL_STAGE")
+
+
 def castle_parent(on, lock):
     repair = lock["castle_release_stock_followup"]
     return single_source_parent(on, lock, VAULT_SOURCE, repair, repair["parent_host_row"],
@@ -796,7 +821,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
          "OUTPUT_OVERLAPS_INPUT")
     validate_context(context, inputs["receipt"])
     on, off = transform(inputs, lock)
-    eclipse_sweep_off, eclipse_sweep_off_lock = eclipse_sweep_parent(on, lock)
+    builder_forms_off, builder_forms_off_lock = builder_forms_parent(on, lock)
+    eclipse_sweep_off, eclipse_sweep_off_lock = eclipse_sweep_parent(builder_forms_off, builder_forms_off_lock)
     mage_field_arcs_off, mage_field_arcs_off_lock = mage_field_arcs_parent(eclipse_sweep_off, eclipse_sweep_off_lock)
     cover_orders_off, cover_orders_off_lock = cover_orders_parent(mage_field_arcs_off, mage_field_arcs_off_lock)
     ground_night_off, ground_night_off_lock = ground_night_parent(cover_orders_off, cover_orders_off_lock)
@@ -888,7 +914,9 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
                   (stage / MAGE_FIELD_ARCS_OFF, mage_field_arcs_off, mage_field_arcs_off_lock["final_place"],
                    MAGE_FIELD_ARCS_SOURCES),
                   (stage / ECLIPSE_SWEEP_OFF, eclipse_sweep_off, eclipse_sweep_off_lock["final_place"],
-                   ECLIPSE_SWEEP_SOURCES))
+                   ECLIPSE_SWEEP_SOURCES),
+                  (stage / BUILDER_FORMS_OFF, builder_forms_off, builder_forms_off_lock["final_place"],
+                   BUILDER_FORMS_SOURCES))
         for folder, sources, wanted, changed_source in builds:
             folder.mkdir(exist_ok=True)
             (folder / PROJECT).write_bytes(inputs["project"])
@@ -992,6 +1020,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         mage_field_arcs_archive_identity = identity(read_file(stage / MAGE_FIELD_ARCS_OFF_ARCHIVE))
         make_archive(stage / ECLIPSE_SWEEP_OFF, stage / ECLIPSE_SWEEP_OFF_ARCHIVE, ECLIPSE_SWEEP_OFF)
         eclipse_sweep_archive_identity = identity(read_file(stage / ECLIPSE_SWEEP_OFF_ARCHIVE))
+        make_archive(stage / BUILDER_FORMS_OFF, stage / BUILDER_FORMS_OFF_ARCHIVE, BUILDER_FORMS_OFF)
+        builder_forms_archive_identity = identity(read_file(stage / BUILDER_FORMS_OFF_ARCHIVE))
         expected_stage = {"sources/" + name: identity(raw) for name, raw in on.items()}
         expected_stage.update({OFF + "/sources/" + name: identity(raw) for name, raw in off.items()})
         expected_stage.update({PROJECT: lock["project"], PLACE: lock["final_place"],
@@ -1156,6 +1186,11 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
         expected_stage.update({ECLIPSE_SWEEP_OFF + "/" + PROJECT: lock["project"],
                                ECLIPSE_SWEEP_OFF + "/" + PLACE: eclipse_sweep_off_lock["final_place"],
                                ECLIPSE_SWEEP_OFF_ARCHIVE: eclipse_sweep_archive_identity})
+        expected_stage.update({BUILDER_FORMS_OFF + "/sources/" + name: identity(raw)
+                               for name, raw in builder_forms_off.items()})
+        expected_stage.update({BUILDER_FORMS_OFF + "/" + PROJECT: lock["project"],
+                               BUILDER_FORMS_OFF + "/" + PLACE: builder_forms_off_lock["final_place"],
+                               BUILDER_FORMS_OFF_ARCHIVE: builder_forms_archive_identity})
         final_receipt = {
             "schema": "GQ470_UNION22_CURRENT_SOURCE_RECEIPT_V1",
             "feature_id": lock["feature_id"], "source_profile": "REAL69",
@@ -1243,6 +1278,8 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "mage_field_arcs_rollback_archive": mage_field_arcs_archive_identity,
             "eclipse_sweep_followup": lock["eclipse_sweep_followup"],
             "eclipse_sweep_rollback_archive": eclipse_sweep_archive_identity,
+            "builder_forms_followup": lock["builder_forms_followup"],
+            "builder_forms_rollback_archive": builder_forms_archive_identity,
             "legacy_48_all_ported": False, "owner_accepted": False,
             "art_gate": "ART_NO_GO", "product_gate": "PRODUCT_NO_GO",
             "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
@@ -1288,6 +1325,7 @@ def build_source_candidate(base, reports, output, compiler, rojo, context):
             "cover_orders_parent_place": cover_orders_off_lock["final_place"],
             "mage_field_arcs_parent_place": mage_field_arcs_off_lock["final_place"],
             "eclipse_sweep_parent_place": eclipse_sweep_off_lock["final_place"],
+            "builder_forms_parent_place": builder_forms_off_lock["final_place"],
             "guardian_only_compile_count": 1, "guardian_only_rojo_build_count": 1,
             "guardian_only_beast_parent_place": guardian_off_lock["final_place"],
             "changed_sources_from_beast_parent": 1, "unchanged_sources_from_beast_parent": 68,

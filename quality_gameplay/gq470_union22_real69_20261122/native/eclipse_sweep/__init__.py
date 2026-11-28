@@ -129,7 +129,7 @@ def _prepare(source_root, profile, compose):
                  and all(row["parent"]["before"] == sources[name]["before"]
                          and row["parent"]["after"] != after[name] for name, row in changed.items()),
                  "ECLIPSE_SWEEP_PROFILE_SCOPE")
-    before = after | {name: row["parent"]["after"] for name, row in changed.items()}
+    before = compose.trial_sources_before(profile, "eclipse_sweep_followup")
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
     off_root = source_root.parent / compose.ECLIPSE_SWEEP_OFF / "sources"
     corpus = "\n".join(cases)

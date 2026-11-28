@@ -65,17 +65,7 @@ def collect(root, folder, binary_pin, context, lock, compose, execute=None):
             identity = repair["parent_place" if before else "repaired_place"]
             compose.need(compose.identity(compose.read_file(selected.parent / compose.PLACE)) == identity,
                          "MAGE_CONTACT_PLACE")
-            expected = {name: row["after"] for name, row in lock["sources"].items()}
-            expected.update({name: row["parent"]["after"] for name, row in lock["eclipse_sweep_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["mage_field_arcs_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["cover_orders_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["ground_night_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["return_convert_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["field_loadouts_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["wing_warrior_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["ninja_s4_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["mage_water_chain_followup"]["rows"].items()})
-            expected.update({name: row["parent"]["after"] for name, row in lock["mage_projectile_followup"]["rows"].items()})
+            expected = compose.trial_sources_before(lock, "mage_projectile_followup")
             expected.update({name: row["parent"]["after"] for name, row in lock["fractional_hp_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["team_win_rule_followup"]["rows"].items()})
             expected.update({name: row["parent"]["after"] for name, row in lock["shorefoam_followup"]["rows"].items()})

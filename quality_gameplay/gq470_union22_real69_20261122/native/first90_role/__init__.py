@@ -9,7 +9,7 @@ PROGRAM_ARG = f"{OUTPUT}/generated.luau"
 FILES = {"generated.luau", "stdout.log", "stderr.log", "status.txt", "receipt.json"}
 PROCESS_COUNT = 1
 ROUTE = "StarterPlayer/StarterPlayerScripts/EGGRUMBLE_LegacyFirst90.client.luau"
-CASE_PIN = "cd9f56a169da11dfc6e1908eec9f3151f668c7cdb14aa994257ac9c3055dacb2"
+CASE_PIN = "d59eddc28d666c91594028da3b434d32bbae9127fdbcc76d452518190306747f"
 START = b"local roleIntroduction=table.freeze"
 END = b"task.spawn(function()\n while alive and player.Parent==Players do"
 BOUNDARY = b'''local player={attrs={}}
@@ -23,6 +23,7 @@ MARKERS = (
     b"FB004_EACH_REAL_ROLE_HAS_OWN_FIRST_ACTION_PASS",
     b"FB004_KIT_SELECTION_SAFE_ROLLBACK_AND_NARROW_FALLBACK_PASS",
     b"FB004_READY_COMBAT_BUTTONS_OBJECTIVE_AND_ELIMINATION_PASS",
+    b"FB004_ECLIPSE_WARRIOR_CUES_AND_UTF8_KIT_TITLE_PASS",
 )
 
 
