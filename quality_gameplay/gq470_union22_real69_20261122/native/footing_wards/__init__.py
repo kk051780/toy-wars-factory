@@ -137,9 +137,10 @@ def _prepare(source_root, profile, compose):
                          and row["parent"]["after"] == before[name] for name, row in changed.items())
                  and {name for name in after if after[name] != before[name]} == scope, "FOOTING_WARDS_PROFILE_SCOPE")
     pins = {ON_PROGRAM: after, OFF_PROGRAM: before}
+    on_root = source_root.parent / compose.NINJA_BEAST_CASTLE_OFF / "sources" if index else source_root
     off_root = source_root.parent / compose.FOOTING_WARDS_OFF / "sources"
     generated = {name: common._program(common._sources(root, pins[name], compose), routes, template, corpus, compose)
-                 for name, root in ((ON_PROGRAM, source_root), (OFF_PROGRAM, off_root))}
+                 for name, root in ((ON_PROGRAM, on_root), (OFF_PROGRAM, off_root))}
     return generated, pins, fixtures
 
 

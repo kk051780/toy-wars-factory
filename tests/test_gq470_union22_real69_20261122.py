@@ -47,7 +47,8 @@ def restore_combat(on, lock):
 
 
 def restore_pre_team_gate(on, lock):
-    builder_on = compose.footing_wards_parent(on, lock)
+    footing_on = compose.ninja_beast_castle_parent(on, lock)
+    builder_on = compose.footing_wards_parent(*footing_on)
     mage_on = compose.eclipse_sweep_parent(*compose.builder_forms_parent(*builder_on))
     ground_on = compose.cover_orders_parent(*compose.mage_field_arcs_parent(*mage_on))
     field_on = compose.return_convert_parent(*compose.ground_night_parent(*ground_on))
@@ -66,6 +67,8 @@ def before_guardian(lock):
     repair = lock["guardian_followup_repair"]
     return lock | {
         "sources": lock["sources"] | {
+            name: row["parent"] for name, row in lock["ninja_beast_castle_followup"]["rows"].items()
+        } | {
             name: row["parent"] for name, row in lock["footing_wards_followup"]["rows"].items()
         } | {
             name: row["parent"] for name, row in lock["builder_forms_followup"]["rows"].items()
@@ -535,8 +538,14 @@ class UnionBoundary(unittest.TestCase):
 
     def test_shorefoam_inverse_changes_only_traversal_and_rejects_older_archive(self):
         final = {name: (self.current / "sources" / name).read_bytes() for name in self.lock["sources"]}
-        builder_on, builder_lock = compose.footing_wards_parent(final, self.lock)
-        self.assertEqual({name for name in final if final[name] != builder_on[name]}, set(compose.FOOTING_WARDS_SOURCES))
+        footing_on, footing_lock = compose.ninja_beast_castle_parent(final, self.lock)
+        self.assertEqual({name for name in final if final[name] != footing_on[name]},
+                         set(compose.NINJA_BEAST_CASTLE_SOURCES))
+        self.assertEqual(compose.trial_sources_before(self.lock, "ninja_beast_castle_followup"),
+                         {name: compose.identity(raw) for name, raw in footing_on.items()})
+        builder_on, builder_lock = compose.footing_wards_parent(footing_on, footing_lock)
+        self.assertEqual({name for name in footing_on if footing_on[name] != builder_on[name]},
+                         set(compose.FOOTING_WARDS_SOURCES))
         self.assertEqual(compose.trial_sources_before(self.lock, "footing_wards_followup"),
                          {name: compose.identity(raw) for name, raw in builder_on.items()})
         eclipse_on, eclipse_lock = compose.builder_forms_parent(builder_on, builder_lock)
@@ -1852,7 +1861,8 @@ class UnionOfflineContract(unittest.TestCase):
         shorefoam = self.lock["shorefoam_followup"]
         team_win = self.lock["team_win_rule_followup"]
         hp = self.lock["fractional_hp_followup"]
-        for followup in (self.lock["footing_wards_followup"], self.lock["builder_forms_followup"],
+        for followup in (self.lock["ninja_beast_castle_followup"], self.lock["footing_wards_followup"],
+                         self.lock["builder_forms_followup"],
                          self.lock["eclipse_sweep_followup"],
                          self.lock["mage_field_arcs_followup"],
                          self.lock["cover_orders_followup"],
@@ -1938,7 +1948,10 @@ class UnionOfflineContract(unittest.TestCase):
         self.assertEqual(eclipse_sweep["repaired_place"], builder_forms["parent_place"])
         footing_wards = self.lock["footing_wards_followup"]
         self.assertEqual(builder_forms["repaired_place"], footing_wards["parent_place"])
-        self.assertEqual(footing_wards["repaired_place"], self.lock["final_place"])
+        ninja_beast_castle = self.lock["ninja_beast_castle_followup"]
+        self.assertEqual(footing_wards["repaired_place"], ninja_beast_castle["parent_place"])
+        self.assertEqual(ninja_beast_castle["repaired_place"], self.lock["final_place"])
+        self.assertEqual(set(ninja_beast_castle["rows"]), set(compose.NINJA_BEAST_CASTLE_SOURCES))
         self.assertEqual(set(footing_wards["rows"]), set(compose.FOOTING_WARDS_SOURCES))
         self.assertEqual(set(builder_forms["rows"]), set(compose.BUILDER_FORMS_SOURCES))
         self.assertEqual(set(eclipse_sweep["rows"]), set(compose.ECLIPSE_SWEEP_SOURCES))

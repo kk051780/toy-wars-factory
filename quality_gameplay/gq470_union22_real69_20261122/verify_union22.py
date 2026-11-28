@@ -612,8 +612,20 @@ def verify_core(root, base, reports, context):
                 "ZOMBIE-093", "ZOMBIE-098"]
             and footing_wards["combo_ids"] == ["COMBO-003", "COMBO-006", "COMBO-012"],
             "FOOTING_WARDS_SCOPE")
+    ninja_beast_castle = lock["ninja_beast_castle_followup"]
+    require(set(ninja_beast_castle["rows"]) == set(compose.NINJA_BEAST_CASTLE_SOURCES)
+            and ninja_beast_castle["ability_ids"] == [
+                "BEAST-001", "BEAST-007", "BEAST-028", "NINJA-001", "NINJA-002", "NINJA-004",
+                "NINJA-005", "NINJA-006", "NINJA-008"]
+            and ninja_beast_castle["castle_approach_source"] == "PR-1009",
+            "NINJA_BEAST_CASTLE_SCOPE")
+    expected_ninja_beast_castle_off, ninja_beast_castle_off_lock, ninja_beast_castle_off = verify_source_rollback(
+        root, root, lock, current, ninja_beast_castle, ninja_beast_castle["rows"],
+        footing_wards["repaired_place"], compose.NINJA_BEAST_CASTLE_OFF,
+        compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE, "NINJA_BEAST_CASTLE")
     expected_footing_wards_off, footing_wards_off_lock, footing_wards_off = verify_source_rollback(
-        root, root, lock, current, footing_wards, footing_wards["rows"], builder_forms["repaired_place"],
+        root, root / compose.NINJA_BEAST_CASTLE_OFF, ninja_beast_castle_off_lock, ninja_beast_castle_off,
+        footing_wards, footing_wards["rows"], builder_forms["repaired_place"],
         compose.FOOTING_WARDS_OFF, compose.FOOTING_WARDS_OFF_ARCHIVE, "FOOTING_WARDS")
     expected_builder_forms_off, builder_forms_off_lock, builder_forms_off = verify_source_rollback(
         root, root / compose.FOOTING_WARDS_OFF, footing_wards_off_lock, footing_wards_off,
@@ -902,6 +914,8 @@ def verify_core(root, base, reports, context):
         "builder_forms_rollback_archive": digest(read(root / compose.BUILDER_FORMS_OFF_ARCHIVE)),
         "footing_wards_followup": footing_wards,
         "footing_wards_rollback_archive": digest(read(root / compose.FOOTING_WARDS_OFF_ARCHIVE)),
+        "ninja_beast_castle_followup": ninja_beast_castle,
+        "ninja_beast_castle_rollback_archive": digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE)),
         "legacy_48_all_ported": False, "owner_accepted": False, "art_gate": "ART_NO_GO",
         "product_gate": "PRODUCT_NO_GO", "studio_solo": "NOT_TESTED", "studio_two_client": "NOT_TESTED",
         "android_15min": "NOT_TESTED", "fun": "NOT_TESTED", "roblox_publish": False, "paid_trade": False,
@@ -951,6 +965,7 @@ def verify_core(root, base, reports, context):
             and core.get("eclipse_sweep_parent_place") == eclipse_sweep_off_lock["final_place"]
             and core.get("builder_forms_parent_place") == builder_forms_off_lock["final_place"]
             and core.get("footing_wards_parent_place") == footing_wards_off_lock["final_place"]
+            and core.get("ninja_beast_castle_parent_place") == ninja_beast_castle_off_lock["final_place"]
             and core.get("guardian_only_compile_count") == 1 and core.get("guardian_only_rojo_build_count") == 1
             and core.get("guardian_only_beast_parent_place") == guardian_off_lock["final_place"]
             and core.get("changed_sources_from_beast_parent") == 1
@@ -1061,6 +1076,9 @@ def verify_core(root, base, reports, context):
     expected_stage.update({compose.FOOTING_WARDS_OFF + "/" + name: pin
                            for name, pin in expected_footing_wards_off.items()})
     expected_stage[compose.FOOTING_WARDS_OFF_ARCHIVE] = digest(read(root / compose.FOOTING_WARDS_OFF_ARCHIVE))
+    expected_stage.update({compose.NINJA_BEAST_CASTLE_OFF + "/" + name: pin
+                           for name, pin in expected_ninja_beast_castle_off.items()})
+    expected_stage[compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE] = digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE))
     expected_stage.update({compose.PROJECT: lock["project"], compose.PLACE: lock["final_place"],
                            compose.OFF_ARCHIVE: digest(read(root / compose.OFF_ARCHIVE))})
     require(core.get("staged_payload_verified_after_all_commands") is True
@@ -1081,84 +1099,6 @@ def verify_core(root, base, reports, context):
             and core["build_command_namespace"].get("committed_root") == str(root)
             and core["build_command_namespace"].get("commands_are_actual_pre_rename_paths") is True,
             "CORE_COMMAND_NAMESPACE")
-    expected_compile = {str(Path(stage) / prefix / "sources" / p)
-                        for prefix in ("", compose.OFF) for p in lock["sources"]
-                        if prefix != compose.OFF or p not in expected_reuse}
-    expected_compile.add(str(Path(stage) / compose.HUD_OFF / "sources" / compose.HUD_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.BOT_OFF / "sources" / compose.BOT_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.BEAST_OFF / "sources" / compose.BEAST_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.GUARDIAN_OFF / "sources" / compose.GUARDIAN_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.GUARDIAN_WALL_OFF / "sources" / compose.GUARDIAN_SOURCE))
-    expected_compile.update(str(Path(stage) / compose.COMBAT_VISUAL_OFF / "sources" / name)
-                            for name in compose.COMBAT_VISUAL_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.GROWTH_MUSOU_OFF / "sources" / name)
-                            for name in compose.GROWTH_MUSOU_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.ART_POLISH_OFF / "sources" / name)
-                            for name in compose.ART_POLISH_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.MAGE_CONTACT_OFF / "sources" / name)
-                            for name in compose.MAGE_CONTACT_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.RELAY_ELIGIBILITY_OFF / "sources" / name)
-                            for name in compose.RELAY_ELIGIBILITY_SOURCES)
-    expected_compile.add(str(Path(stage) / compose.MOGURON_OFF / "sources" / compose.MOGURON_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.PRIVATE_TOUCH_OFF / "sources" / compose.PRIVATE_TOUCH_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.PORTRAIT_OFF / "sources" / compose.PORTRAIT_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.SHOREFOAM_OFF / "sources" / compose.SHOREFOAM_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.TEAM_WIN_RULE_OFF / "sources" / compose.VAULT_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.FRACTIONAL_HP_OFF / "sources" / compose.HUD_SOURCE))
-    expected_compile.update(str(Path(stage) / compose.MAGE_PROJECTILES_OFF / "sources" / name)
-                            for name in compose.MAGE_PROJECTILES_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.MAGE_WATER_CHAIN_OFF / "sources" / name)
-                            for name in compose.MAGE_WATER_CHAIN_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.NINJA_S4_OFF / "sources" / name)
-                            for name in compose.NINJA_S4_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.WING_WARRIOR_OFF / "sources" / name)
-                            for name in compose.WING_WARRIOR_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.FIELD_LOADOUTS_OFF / "sources" / name)
-                            for name in compose.FIELD_LOADOUTS_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.RETURN_CONVERT_OFF / "sources" / name)
-                            for name in compose.RETURN_CONVERT_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.GROUND_NIGHT_OFF / "sources" / name)
-                            for name in compose.GROUND_NIGHT_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.COVER_ORDERS_OFF / "sources" / name)
-                            for name in compose.COVER_ORDERS_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.MAGE_FIELD_ARCS_OFF / "sources" / name)
-                            for name in compose.MAGE_FIELD_ARCS_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.ECLIPSE_SWEEP_OFF / "sources" / name)
-                            for name in compose.ECLIPSE_SWEEP_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.BUILDER_FORMS_OFF / "sources" / name)
-                            for name in compose.BUILDER_FORMS_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.FOOTING_WARDS_OFF / "sources" / name)
-                            for name in compose.FOOTING_WARDS_SOURCES)
-    expected_compile.add(str(Path(stage) / compose.ITEM_OFF / "sources" / compose.ITEM_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.VAULT_OFF / "sources" / compose.VAULT_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.CASTLE_OFF / "sources" / compose.VAULT_SOURCE))
-    expected_compile.add(str(Path(stage) / compose.SCORE_OFF / "sources" / compose.SCORE_SOURCE))
-    expected_compile.update(str(Path(stage) / compose.RELAY_PRESENTATION_OFF / "sources" / name)
-                            for name in compose.RELAY_PRESENTATION_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.BR_CANYON_OFF / "sources" / name)
-                            for name in compose.BR_CANYON_SOURCES)
-    expected_compile.update(str(Path(stage) / compose.ROLE_READABILITY_OFF / "sources" / name)
-                            for name in compose.ROLE_READABILITY_SOURCES)
-    expected_compile.add(str(Path(stage) / compose.FIELD_PROMPT_OFF / "sources" / compose.VAULT_SOURCE))
-    expected_compile.update(str(Path(stage) / compose.NEUTRAL_NAMES_OFF / "sources" / name)
-                            for name in compose.VISUAL_READABILITY_SOURCES)
-    require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
-    require({(c["command"][2], c["command"][4]) for c in rojo_commands}
-            == {(str(Path(stage) / prefix / compose.PROJECT), str(Path(stage) / prefix / compose.PLACE))
-                for prefix in ("", compose.OFF, compose.BOT_OFF, compose.HUD_OFF, compose.BEAST_OFF,
-                               compose.GUARDIAN_OFF, compose.ITEM_OFF, compose.VAULT_OFF, compose.CASTLE_OFF,
-                               compose.SCORE_OFF, compose.RELAY_PRESENTATION_OFF, compose.BR_CANYON_OFF,
-                               compose.ROLE_READABILITY_OFF, compose.FIELD_PROMPT_OFF, compose.NEUTRAL_NAMES_OFF,
-                               compose.GUARDIAN_WALL_OFF, compose.COMBAT_VISUAL_OFF, compose.GROWTH_MUSOU_OFF,
-                               compose.ART_POLISH_OFF, compose.MAGE_CONTACT_OFF, compose.RELAY_ELIGIBILITY_OFF,
-                               compose.MOGURON_OFF, compose.PRIVATE_TOUCH_OFF, compose.PORTRAIT_OFF,
-                               compose.SHOREFOAM_OFF, compose.TEAM_WIN_RULE_OFF, compose.FRACTIONAL_HP_OFF,
-                               compose.MAGE_PROJECTILES_OFF, compose.MAGE_WATER_CHAIN_OFF, compose.NINJA_S4_OFF,
-                               compose.WING_WARRIOR_OFF, compose.FIELD_LOADOUTS_OFF, compose.RETURN_CONVERT_OFF,
-                               compose.GROUND_NIGHT_OFF, compose.COVER_ORDERS_OFF, compose.MAGE_FIELD_ARCS_OFF,
-                               compose.ECLIPSE_SWEEP_OFF, compose.BUILDER_FORMS_OFF, compose.FOOTING_WARDS_OFF)},
-            "CORE_ROJO_PROJECT_SET")
-    expected_order = []
     selected_sources = {"": lock["sources"], compose.OFF: lock["sources"],
                         compose.BOT_OFF: [compose.BOT_SOURCE], compose.HUD_OFF: [compose.HUD_SOURCE],
                         compose.BEAST_OFF: [compose.BEAST_SOURCE], compose.GUARDIAN_OFF: [compose.GUARDIAN_SOURCE],
@@ -1212,11 +1152,34 @@ def verify_core(root, base, reports, context):
                         compose.BUILDER_FORMS_OFF: [name for name in lock["sources"]
                                                    if name in compose.BUILDER_FORMS_SOURCES],
                         compose.FOOTING_WARDS_OFF: [name for name in lock["sources"]
-                                                   if name in compose.FOOTING_WARDS_SOURCES]}
+                                                   if name in compose.FOOTING_WARDS_SOURCES],
+                        compose.NINJA_BEAST_CASTLE_OFF: [name for name in lock["sources"]
+                                                        if name in compose.NINJA_BEAST_CASTLE_SOURCES]}
+    # The independently verified payload must contain exactly these build stages.
+    # Derive the three command checks from one ordered verifier-owned source map.
+    expected_place_stages = {"" if name == compose.PLACE else name.rsplit("/", 1)[0]
+                             for name in expected_stage
+                             if name == compose.PLACE or
+                             (name.count("/") == 1 and name.endswith("/" + compose.PLACE))}
+    require(set(selected_sources) == expected_place_stages
+            and all(selected and len(selected) == len(set(selected))
+                    and set(selected) <= set(lock["sources"])
+                    for selected in selected_sources.values()), "CORE_BUILD_STAGE_MAP")
+    expected_order = []
+    expected_compile = set()
+    expected_rojo = set()
     for prefix, selected in selected_sources.items():
-        expected_order.extend(("--text", str(Path(stage) / prefix / "sources" / p)) for p in selected
-                              if prefix != compose.OFF or p not in expected_reuse)
-        expected_order.append(("build", str(Path(stage) / prefix / compose.PROJECT)))
+        folder = Path(stage) / prefix
+        paths = [str(folder / "sources" / name) for name in selected
+                 if prefix != compose.OFF or name not in expected_reuse]
+        expected_compile.update(paths)
+        expected_order.extend(("--text", path) for path in paths)
+        project, place = str(folder / compose.PROJECT), str(folder / compose.PLACE)
+        expected_rojo.add((project, place))
+        expected_order.append(("build", project))
+    require({c["command"][2] for c in compile_commands} == expected_compile, "CORE_COMPILED_SOURCE_SET")
+    require({(c["command"][2], c["command"][4]) for c in rojo_commands} == expected_rojo,
+            "CORE_ROJO_PROJECT_SET")
     require([(c["command"][1], c["command"][2]) for c in commands] == expected_order,
             "CORE_BUILD_STAGE_ORDER")
     require(core["rojo"] == {k: lock["rojo"][k] for k in ("bytes", "sha256")}, "CORE_ROJO_IDENTITY")
@@ -2274,7 +2237,8 @@ def verify_native(native, root, lock, context):
     ninja_s4_spec.loader.exec_module(ninja_s4)
     stage_native = {}
     for name in ("wing_warrior", "fixed_cues", "field_loadouts", "first90_role", "return_convert", "ground_night",
-                 "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards"):
+                 "cover_orders", "mage_field_arcs", "eclipse_sweep", "builder_forms", "footing_wards",
+                 "ninja_beast_castle"):
         selected_spec = importlib.util.spec_from_file_location(
             "union22_" + name + "_verify", HERE / ("native/" + name + "/__init__.py"))
         contract = importlib.util.module_from_spec(selected_spec)
@@ -2551,6 +2515,7 @@ def admit_delivery(root, base, reports, native, context):
                             compose.GROUND_NIGHT_OFF_ARCHIVE, compose.COVER_ORDERS_OFF_ARCHIVE,
                             compose.MAGE_FIELD_ARCS_OFF_ARCHIVE, compose.ECLIPSE_SWEEP_OFF_ARCHIVE,
                             compose.BUILDER_FORMS_OFF_ARCHIVE, compose.FOOTING_WARDS_OFF_ARCHIVE,
+                            compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE,
                             "CORE_BUILD_REPORT.json")
     expected_stage = {name: pin for name, pin in before.items()
                       if name.startswith(("sources/", "prior_boundary/"))
@@ -2703,6 +2668,9 @@ def admit_delivery(root, base, reports, native, context):
             "footing_wards_followup": verified["lock"]["footing_wards_followup"],
             "footing_wards_inverse_place": verified["lock"]["footing_wards_followup"]["parent_place"],
             "footing_wards_inverse_archive": digest(read(root / compose.FOOTING_WARDS_OFF_ARCHIVE)),
+            "ninja_beast_castle_followup": verified["lock"]["ninja_beast_castle_followup"],
+            "ninja_beast_castle_inverse_place": verified["lock"]["ninja_beast_castle_followup"]["parent_place"],
+            "ninja_beast_castle_inverse_archive": digest(read(root / compose.NINJA_BEAST_CASTLE_OFF_ARCHIVE)),
             "relay_eligibility_inverse_archive_members": 71,
             "changed_sources_from_h72_parent": 1, "unchanged_sources_from_h72_parent": 68,
             "bot_only_hud_parent_inverse_place": verified["lock"]["bot_followup_repair"]["parent_place"],
@@ -2746,6 +2714,7 @@ def admit_delivery(root, base, reports, native, context):
             "eclipse_sweep": runtime["eclipse_sweep"],
             "builder_forms": runtime["builder_forms"],
             "footing_wards": runtime["footing_wards"],
+            "ninja_beast_castle": runtime["ninja_beast_castle"],
             "native_full_body_coverage": runtime["aggregate"]["full_body_coverage"],
             "native_process_count": runtime["aggregate"]["native_process_count"],
             "native_evidence_file_count": runtime["aggregate"]["native_evidence_file_count"],
