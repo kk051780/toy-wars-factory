@@ -49598,12 +49598,12 @@
       },
       "authority_basis": "#1011 V4.2, #218/#220 and linked #364/#910 actual P0 feedback. Preparation only, independent formal grant required.",
       "source_grant": {
-        "status": "ONE_EXACT_NEW_DRAFT_SOURCE",
+        "status": "ONE_NONFORCE_EXISTING_PR_SCOPED_CORRECTION",
         "branch": "quality/gq219-private-ninja-beast-castle-20261128",
         "formal_parent": "56747f29b4efda431f8cd923c39b488c04b04d32",
-        "tree": "e4f1fb4c55df8327c93de8039abb2a6e25879416",
-        "local_head": "dee40c6f8b8a5131bed839304314276442edbb47",
-        "permitted_create_draft": 1,
+        "tree": "01248bccec5c25c207d3b10dc12243eecd0ef26e",
+        "local_head": "6c18e8e5778d1b1cdf3aa14bd2312b71b6095590",
+        "permitted_create_draft": 0,
         "allowed_changed_files": [
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/compose_union22.py",
@@ -49612,16 +49612,22 @@
             "bytes": 92133
           },
           {
-            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/foliage_readability.py",
             "mode": "100644",
-            "blob": "24dc92de5e136cfbdc3aa01b62454899cfbe136f",
-            "bytes": 35260
+            "blob": "bb5769525126561b3ecee3192796ddd7d81e5ef5",
+            "bytes": 3554
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/footing_wards/__init__.py",
             "mode": "100644",
             "blob": "f9a5314ca89e30a84fd1bd0e4ecf2f8af785ce72",
             "bytes": 13455
+          },
+          {
+            "path": "quality_gameplay/gq470_union22_real69_20261122/native/INPUT_LOCK.json",
+            "mode": "100644",
+            "blob": "24dc92de5e136cfbdc3aa01b62454899cfbe136f",
+            "bytes": 35260
           },
           {
             "path": "quality_gameplay/gq470_union22_real69_20261122/native/mage_contact_native.py",
@@ -49684,10 +49690,10 @@
             "bytes": 139443
           }
         ],
-        "expires_at": "2026-11-28T04:14:35.127Z",
+        "expires_at": "2026-11-28T03:52:48.613Z",
         "issued_from": {
-          "lease": "7f5a9ef4e82b4918776c0cf3e287f8995e21c7e8",
-          "owner": "b3f0226f-59b6-4fb3-b015-09459a34c465"
+          "lease": "f8b397aea8d142a9cd70cca670b4bd36b8c4e257",
+          "owner": "2c1ef97c-b357-4b35-9bed-6e702ddb65b7"
         },
         "local_qa": {
           "place_bytes": 1427354,
@@ -49704,7 +49710,12 @@
           "team_full_native_round": true,
           "local_mage38_elapsed": 35.715,
           "device": "NOT_TESTED_V4.2"
-        }
+        },
+        "expected_draft_head": "23369b4a822ec5a4de6d9c5d69cd801fb1a2315a",
+        "additional_correction_path": "quality_gameplay/gq470_union22_real69_20261122/native/foliage_readability.py",
+        "failed_exact_hosted_run": 46102020388,
+        "failed_exact_hosted_job": 140846359812,
+        "exact_previous_fixture_sha256": "9cafd2404a7e2a1bf3b4359a09911f6f6f49c7f28f0afb3a43b9b812acff23fd"
       }
     }
   ],
